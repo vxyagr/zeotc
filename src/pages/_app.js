@@ -5,11 +5,36 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   EthereumClient,
   modalConnectors,
-  walletConnectProvider
+  walletConnectProvider,
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { Provider } from 'react-redux';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+
+import '@rainbow-me/rainbowkit/styles.css';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+//import { YourComponent } from './YourComponent';
+
+const { chains, provider } = configureChains(
+  [chain.goerli],
+  [
+    alchemyProvider({ alchemyId: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
+    publicProvider(),
+  ],
+);
+
+const { connectors } = getDefaultWallets({
+  appName: 'My RainbowKit App',
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+});
 
 import createEmotionCache from 'createEmotionCache';
 import { store } from 'redux/store';
@@ -28,12 +53,13 @@ if (!process.env.NEXT_PUBLIC_PROJECT_ID)
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [chain.mainnet, chain.goerli];
-const { provider, } = configureChains(chains, [
-  walletConnectProvider({
-    projectId,
-  })
-]);
+//const chains = [chain.mainnet, chain.goerli];
+//const { provider, } = configureChains(chains, [
+//  walletConnectProvider({
+//    projectId,
+// })
+//]);
+/*
 const wagmiClient = createClient({
   autoConnect: true,
   connectors: modalConnectors({
@@ -43,7 +69,7 @@ const wagmiClient = createClient({
     accentColor: 'default',
   }),
   provider,
-});
+}); */
 
 // 3. Configure modal ethereum client
 const ethereumClient = new EthereumClient(wagmiClient, chains);
@@ -51,7 +77,7 @@ const ethereumClient = new EthereumClient(wagmiClient, chains);
 const queryClient = new QueryClient();
 
 function MyApp(props) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps, } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
     <>
@@ -62,7 +88,9 @@ function MyApp(props) {
               <GlobalStyles />
 
               <WagmiConfig client={wagmiClient}>
-                <Component {...pageProps} />
+                <RainbowKitProvider chains={chains}>
+                  <Component {...pageProps} />
+                </RainbowKitProvider>
               </WagmiConfig>
             </ThemeConfig>
           </Provider>

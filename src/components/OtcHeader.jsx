@@ -10,14 +10,14 @@ import {
   useQueriesGetSwapHistory,
   useQueryCounterOfferIdList,
   useQueryMyZeSwapId,
-  useQueryOfferId
+  useQueryOfferId,
 } from 'hooks/react-query/queries';
 import { tradesTabs } from 'redux/slice/otcTrades';
 
 const TABS_DATA = [
   {
     title: 'Swaps',
-    number: 3,
+    number: 2,
   },
   {
     title: 'Counter Offers',
@@ -25,7 +25,7 @@ const TABS_DATA = [
   },
   {
     title: 'Swap History',
-  }
+  },
 ];
 export default function OtcHeader() {
   const dispatch = useDispatch();
@@ -33,13 +33,13 @@ export default function OtcHeader() {
   const activeButton = useSelector((state) => state.otcTrades.currentTab);
 
   const [age, setAge] = React.useState('');
-  const { data: counterOfferIdList, } = useQueryCounterOfferIdList();
+  const { data: counterOfferIdList } = useQueryCounterOfferIdList();
 
   const offerId = useQueriesFilterMarketPlaceData(counterOfferIdList, true);
 
   const [searchInput, setSearchInput] = useState();
 
-  const { data: zeSwapIdsList, } = useQueryMyZeSwapId();
+  const { data: zeSwapIdsList } = useQueryMyZeSwapId();
 
   // const { data: offerIdList, } = useQueryOfferId();
 
@@ -223,10 +223,7 @@ export default function OtcHeader() {
             width: '100%',
           }}
         >
-          <Box
-            component='img'
-            src='/assets/svg/search.svg'
-          />
+          <Box component='img' src='/assets/svg/search.svg' />
 
           <Box
             component='input'
@@ -257,10 +254,7 @@ export default function OtcHeader() {
             px: 2,
           }}
         >
-          <Box
-            component='img'
-            src='/assets/svg/menu.svg'
-          />
+          <Box component='img' src='/assets/svg/menu.svg' />
         </IconButton>
       </Box>
     </Box>
