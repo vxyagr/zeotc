@@ -7,7 +7,7 @@ const initialState = {
   signer: null,
   zeoTC_Contract: null,
   uniSwap_Contract: null,
-  privateInputValue: null,
+  privateInputValue:null,
 };
 
 export const web3Slice = createSlice({
@@ -36,12 +36,6 @@ export const web3Slice = createSlice({
   },
 });
 
-export const {
-  changeAccount,
-  changeChainId,
-  changeProvider,
-  changeContract,
-  changeSigner,
-  privateInput,
-} = web3Slice.actions;
+export const { changeAccount, changeChainId, changeProvider, changeContract, changeSigner, privateInput} =
+  web3Slice.actions;
 export default web3Slice.reducer;

@@ -16,7 +16,7 @@ import {
   useMutationAccept,
   useMutationReject,
   useMutationSwapAccept,
-  useMutationSwapCounterOffer,
+  useMutationSwapCounterOffer
 } from 'hooks/react-query/mutation';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 
@@ -28,21 +28,20 @@ export default function MarketPlaceSection({
   zeSwapList,
   isSwapHistory,
 }) {
-  const { account } = useSelectWeb3();
-  const { mutate: CounterOfferMutate, isLoading: isCounterOfferLoading } =
+  const { account, } = useSelectWeb3();
+  const { mutate: CounterOfferMutate, isLoading: isCounterOfferLoading, } =
     useMutationSwapCounterOffer();
 
-  const { mutate: acceptMutate } = useMutationSwapAccept();
+  const { mutate: acceptMutate, } = useMutationSwapAccept();
 
-  const { mutate: rejectOffer } = useMutationReject();
+  const { mutate: rejectOffer, } = useMutationReject();
 
-  const { mutate } = useMutationAccept();
+  const { mutate, } = useMutationAccept();
   const [appStatus, setAppStatus] = useState('');
   const ProductA = zeSwapList?.productA;
   const ProductB = zeSwapList?.productB;
-  const counterOfferStatus = zeSwapList?.swap?.allow_counter_offer;
+
   const status = zeSwapList?.swap?.status;
-  const offr = zeSwapList?.swap?.offers;
   const offer_id = zeSwapList?.swap?.offers?.[0];
   const supplier = zeSwapList?.swap?.supplier;
   const isSupplier = supplier === account;
@@ -85,8 +84,6 @@ export default function MarketPlaceSection({
       } else if (status === 4) {
         setAppStatus('Canceled');
       }
-
-      //if(expire)
     }
   }, [isMarketPlace, isSwap, isSwapHistory, status]);
 
@@ -136,11 +133,11 @@ export default function MarketPlaceSection({
       (ProductB?.length !== 0 &&
         ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
-          0,
+          0
         )) ||
       '0';
 
-    totalAmount = `${totalAmount}`.replace('e-12', '');
+    totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
 
@@ -149,16 +146,25 @@ export default function MarketPlaceSection({
       (ProductA?.length !== 0 &&
         ProductA?.map((item) => handleFormateAmount(item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
-          0,
+          0
         )) ||
       '0';
-    totalAmount = `${totalAmount}`.replace('e-12', '');
+    totalAmount = `${totalAmount}`.replace('e-18', '');
     // totalAmount = totalAmoun;
     setSumOfAmountA(totalAmount);
   }, [ProductA, ProductA?.length]);
 
   return (
-    <Box>
+    <Box
+      component={isMarketPlace && !isCopy.current ? Link : 'div'}
+      // component={Link}
+      href={{
+        pathname: '/marketPlace/swap',
+        query: {
+          id: `${swap_id}`, // should be `title` not `id`
+        },
+      }}
+    >
       <Box
         // onClick={() => isMarketPlace(zeSwapList)}
 
@@ -180,6 +186,7 @@ export default function MarketPlaceSection({
           },
 
           position: 'relative',
+          cursor: 'pointer',
         }}
       >
         {isSwap && (
@@ -203,7 +210,10 @@ export default function MarketPlaceSection({
               }}
             ></Typography>
 
-            <Typography sx={{}}> {appStatus}</Typography>
+            <Typography
+              sx={{
+}}
+            >{appStatus}</Typography>
           </Box>
         )}
 
@@ -255,21 +265,12 @@ export default function MarketPlaceSection({
                 lg: 0,
               },
             }}
-            component={isMarketPlace && !isCopy.current ? Link : 'div'}
-            // component={Link}
-            href={{
-              pathname: '/marketPlace/swap',
-              query: {
-                id: `${swap_id}`, // should be `title` not `id`
-              },
-            }}
           >
             <Typography
               sx={{
                 px: 2,
               }}
             >
-              {/*offr[0]*/}
               You will provide
             </Typography>
 
@@ -322,8 +323,62 @@ export default function MarketPlaceSection({
 
           <Box
             sx={{
+              alignSelf: 'center',
+              justifySelf: 'center',
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'column',
+              mt: isMarketPlace ? -5 : -2,
+            }}
+          >
+            {isMarketPlace && (
+              <IconButton
+                onClick={setCopied}
+                sx={{
+                  py: 0,
+                }}
+              >
+                <Tooltip title={isCopied ? 'Copied' : 'Copy'}>
+                  <CopyAllOutlined
+                    onClick={() => {
+                      isCopy.current = true;
+                    }}
+                    sx={{
+                      width: 20,
+                    }}
+                  />
+                </Tooltip>
+              </IconButton>
+            )}
+
+            <br />
+
+            <Button
+              variant='contained'
+              sx={{
+                py: 2,
+                width: 58,
+                height: 58,
+                borderRadius: 2,
+                transform: 'matrix(1, 0, 0, -1, 0, 0)',
+                background:
+                  'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
+              }}
+            >
+              <Box
+                component='img'
+                src='/assets/svg/MyOtc.svg'
+                sx={{
+                  width: 20,
+                }}
+              />
+            </Button>
+          </Box>
+
+          <Box
+            sx={{
               gridColumn: {
-                md: '3/5',
+                md: '4/6',
               },
               pl: {
                 xs: 0,
@@ -383,105 +438,6 @@ export default function MarketPlaceSection({
                 {SumOfAmountB} USDC
               </Typography>
             </Box>
-          </Box>
-
-          <Box
-            sx={{
-              gridColumn: {
-                md: '5/6',
-              },
-              pl: {
-                xs: 0,
-                sm: 2,
-                md: 0,
-                lg: 0,
-              },
-              // px:2,
-              pr: {
-                xs: 0,
-                sm: 2,
-                md: 3,
-                lg: 0,
-              },
-              pt: 5,
-              pb: isOffer ? 0 : 5,
-            }}
-          >
-            {!isSupplier && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  verticalAlign: 'middle',
-                  mt: 2,
-                }}
-              >
-                <Button
-                  disabled={!account}
-                  onClick={handleSwapAccept}
-                  sx={{
-                    width: 150,
-                    color: 'white',
-                    // width:'100%',
-                    background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
-                  }}
-                >
-                  Accept Offer
-                </Button>
-              </Box>
-            )}
-            {counterOfferStatus && !isSupplier && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  verticalAlign: 'middle',
-                  mt: 2,
-                }}
-              >
-                <Button
-                  disabled={!account}
-                  onClick={handleSwapAccept}
-                  sx={{
-                    width: 150,
-                    color: 'white',
-                    // width:'100%',
-                    background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
-                  }}
-                >
-                  Counter Offer
-                </Button>
-              </Box>
-            )}
-            {isSupplier && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  verticalAlign: 'middle',
-                  mt: 2,
-                }}
-              >
-                <Button
-                  disabled={!account}
-                  onClick={handleSwapAccept}
-                  sx={{
-                    width: 150,
-                    color: 'white',
-                    // width:'100%',
-                    background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
-                  }}
-                >
-                  Cancel Offer
-                </Button>
-              </Box>
-            )}
           </Box>
 
           <Box
@@ -609,6 +565,7 @@ export default function MarketPlaceSection({
                 }}
               >
                 {/* 6 Days */}
+
                 {expire} Days
               </Typography>
             </Box>
@@ -632,6 +589,7 @@ export default function MarketPlaceSection({
 
           {/* offer Buttons */}
         </Box>
+
         <Box
           sx={{
             display: isOffer
@@ -727,7 +685,11 @@ export default function MarketPlaceSection({
             Accept Offer
           </Button>
         </Box>
-        <CounterOffer handleClose={handleCloseModal} open={open} />
+
+        <CounterOffer
+          handleClose={handleCloseModal}
+          open={open}
+        />
       </Box>
     </Box>
   );

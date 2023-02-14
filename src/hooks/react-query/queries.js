@@ -41,7 +41,7 @@ export const handleMetaData = (data) => {
 };
 // =====================================================
 export const useQueryZeSwapIdList = () => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
   const queryKey = [queryKeys.getZeSwapIdList];
   // const queryFn = () => zeoTC_Contract.get_zeSwap_id_list();
   const queryFn = () => zeoTC_Contract.get_zeSwap_id_list();
@@ -61,9 +61,9 @@ export const useQueryZeSwapIdList = () => {
 
 export const useQueriesFilterMarketPlaceData = (
   zeSwapIdList = [],
-  isTrade = false,
+  isTrade = false
 ) => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
 
   const queryFn = async (swap_id) => {
     const data = [];
@@ -142,7 +142,7 @@ export const useQueryApprove = () => {
 
 export const useQueryGetUserNFTs = () => {
   // // const notify = useNotify();
-  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer, } = useSelectWeb3();
 
   const queryKey = [queryKeys.getUserNFTS, account];
   const nftApi = `https://deep-index.moralis.io/api/v2/${account}/nft`;
@@ -170,7 +170,7 @@ export const useQueryGetUserNFTs = () => {
           const contract = new ethers.Contract(
             item?.token_address,
             abi,
-            signer,
+            signer
           );
           // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
 
@@ -187,7 +187,7 @@ export const useQueryGetUserNFTs = () => {
           const contract = new ethers.Contract(
             item?.token_address,
             abi,
-            signer,
+            signer
           );
 
           balance = await contract.balanceOf(account, item?.token_id);
@@ -276,7 +276,7 @@ export const useQueriesGetUserData = () => {
 
 // ==========================================================
 
-export const useQuerySearchTokens = ({ account }) => {
+export const useQuerySearchTokens = ({ account, }) => {
   const queryKey = [queryKeys.getSearchTokens, account];
   const queryFn = async () => {
     //  const nftApi = `https://deep-index.moralis.io/api/v2/${account}/nft`;
@@ -296,7 +296,7 @@ export const useQuerySearchTokens = ({ account }) => {
 
 // ================================================================
 
-export const useQuerySearchNFTs = ({ account }) => {
+export const useQuerySearchNFTs = ({ account, }) => {
   const queryKey = [queryKeys.getSearchNFTs, account];
 
   const queryFn = async () => {
@@ -329,7 +329,7 @@ export const useQuerySearchNFTs = ({ account }) => {
 // ==========================================================================
 
 export const useQueryMyZeSwapId = () => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
 
   const queryKey = [queryKeys.myZeSwapId, account];
 
@@ -350,7 +350,7 @@ export const useQueryMyZeSwapId = () => {
 };
 
 export const useQueryOfferId = () => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
 
   const queryKey = [queryKeys.offerIdList, account];
 
@@ -370,7 +370,7 @@ export const useQueryOfferId = () => {
 // function get_counter_offers_id_list(address addr)
 
 export const useQueryCounterOfferIdList = () => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
 
   const queryKey = [queryKeys.createCounterOffer, account];
 
@@ -395,7 +395,7 @@ export const useQueryCounterOfferIdList = () => {
 // );
 
 export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
 
   const queryFn = async (swap_id) => {
     const data = [];
@@ -478,7 +478,7 @@ export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
 // =====================================================
 
 export const useQueriesGetSwap = (zeSwapIdList = []) => {
-  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, } = useSelectWeb3();
 
   const queryFn = async (swap_id) => {
     const data = [];
