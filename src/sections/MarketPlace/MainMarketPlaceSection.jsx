@@ -6,19 +6,18 @@ import { useRouter } from 'next/router';
 import MarketPlaceHeader from 'components/MarketPlaceHeader';
 import {
   useQueriesFilterMarketPlaceData,
-  useQueryZeSwapIdList
+  useQueryZeSwapIdList,
 } from 'hooks/react-query/queries';
 
 import MarketPlaceSection from './MarketPlaceSection';
 
 export default function MainMarketPlaceSection() {
   const router = useRouter();
-  const { data: zeSwapIdList, error, } = useQueryZeSwapIdList();
+  const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
 
   let newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
   newZeSwapList = newZeSwapList?.reverse();
-  const [filteredZeSwapIdList, setFilteredZeSwapIdList] =
-    useState();
+  const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
 
   const allFinished = newZeSwapList?.some((data) => data);
 
@@ -27,7 +26,7 @@ export default function MainMarketPlaceSection() {
       // all the queries have executed successfully
       setFilteredZeSwapIdList(newZeSwapList);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);
 
   // const handleClicked = (data) => {
@@ -40,8 +39,11 @@ export default function MainMarketPlaceSection() {
       const newList = newZeSwapList.filter(
         (item) =>
           item?.swap?.offers?.[0]?.toLowerCase().indexOf(data.toLowerCase()) !==
-          -1
+          -1,
       );
+      setFilteredZeSwapIdList(newList);
+    } else {
+      const newList = newZeSwapList;
       setFilteredZeSwapIdList(newList);
     }
   };

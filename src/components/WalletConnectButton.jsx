@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Box, Typography, Button } from '@mui/material';
 import { useWeb3Modal } from '@web3modal/react';
 import { useAccount } from 'wagmi';
@@ -7,11 +7,11 @@ import { useAccount } from 'wagmi';
 import { conciseAddress } from 'helpers/utilities';
 import useWalletConnector from 'hooks/useWalletConnector';
 
-function WalletConnectButton({ title, }) {
+function WalletConnectButton({ title }) {
   const [isDefinitelyConnected, setIsDefinitelyConnected] = useState(false);
-  const { open, } = useWeb3Modal();
+  const { open } = useWeb3Modal();
   const account = useAccount();
-  const { onConnect, onDisconnect, } = useWalletConnector(); // new wallet
+  const { onConnect, onDisconnect } = useWalletConnector(); // new wallet
 
   useEffect(() => {
     if (account?.isConnected) {
@@ -23,7 +23,8 @@ function WalletConnectButton({ title, }) {
   }, [account?.isConnected, onConnect]);
 
   return (
-    <Box>
+    <ConnectButton></ConnectButton>
+    /* <Box>
       <Box
         onClick={async () =>
           isDefinitelyConnected ? await onDisconnect() : await open()
@@ -74,8 +75,8 @@ function WalletConnectButton({ title, }) {
         )}
       </Box>
 
-      {/* <Button>connect</Button> */}
-    </Box>
+      {/* <Button>connect</Button> */ //}
+    //</Box>
   );
 }
 
