@@ -1,0 +1,1233 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "zevoid_token_addr",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "offer_id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "tokens",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "Offer_Status_Token_Approvement",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "offer_id",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ZeOTC.Product",
+          "name": "product",
+          "type": "tuple"
+        }
+      ],
+      "name": "Remove_Product",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "msg_id",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ZeOTC.Msg",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "name": "ZeOTC_MSG",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "my_counter_offers_id_list",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Msg",
+          "name": "otc_msg",
+          "type": "tuple"
+        }
+      ],
+      "name": "send_otc_msg",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "productAs",
+          "type": "tuple[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "productBs",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiration_in_UTC",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "demander",
+          "type": "address"
+        }
+      ],
+      "name": "create_zeSwap",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "productAs",
+          "type": "tuple[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "productBs",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "add_counter_offer_userB",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "productAs",
+          "type": "tuple[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "productBs",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "add_offer_userA",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "accept",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "offer_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "product_id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "remove_product",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "offer_id",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product[]",
+          "name": "new_products",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "set_product",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "new_zeFee_in_stable",
+          "type": "uint256"
+        }
+      ],
+      "name": "set_zeFee_in_stable",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "new_zeOwner",
+          "type": "address"
+        }
+      ],
+      "name": "set_owner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "new_max_msg_length",
+          "type": "uint256"
+        }
+      ],
+      "name": "set_max_msg_length",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "new_demander",
+          "type": "address"
+        }
+      ],
+      "name": "edit_demander_address",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "cancel_zSwap",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "end_zSwap",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiration_in_UTC",
+          "type": "uint256"
+        }
+      ],
+      "name": "reset_zeSwap",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bool",
+          "name": "new_allow_counter_offer",
+          "type": "bool"
+        }
+      ],
+      "name": "set_allow_counter_offer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "allowed_ERC20",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "nft721_address",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "token_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "allowed_ERC721",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token_addr",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "allowed_ERC1155",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product",
+          "name": "product",
+          "type": "tuple"
+        }
+      ],
+      "name": "ze_balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "get_zeSwap",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "supplier",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "demander",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expiration",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "offers",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "visibility",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "allow_counter_offer",
+              "type": "bool"
+            },
+            {
+              "internalType": "enum ZeOTC.Status_zeSwap",
+              "name": "status",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.ZeSwap",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_my_offer_ids",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "get_offers",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "creator",
+              "type": "address"
+            },
+            {
+              "internalType": "enum ZeOTC.Status_Offer",
+              "name": "status",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "product_A_ids",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "product_B_ids",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Offer",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "get_product",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "IERC",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token_id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Product",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_my_zeSwaps_ids",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_zeSwap_id_list",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_counter_offers_id_list",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "zSwap_id",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "supplier",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "demander",
+          "type": "address"
+        }
+      ],
+      "name": "get_otc_msg_ids",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "msg_id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "get_otc_msg",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ZeOTC.Msg",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "is_ERC20",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "is_ERC721",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "is_ERC1155",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]

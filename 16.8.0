@@ -1,0 +1,46 @@
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Progress: resolved 38, reused 38, downloaded 0, added 0
+Progress: resolved 41, reused 40, downloaded 0, added 0
+Progress: resolved 264, reused 250, downloaded 0, added 0
+ WARN  deprecated @walletconnect/mobile-registry@1.4.0: Deprecated in favor of dynamic registry available from: https://github.com/walletconnect/walletconnect-registry
+ WARN  deprecated ethereumjs-block@1.7.1: New package name format for new versions: @ethereumjs/block. Please update.
+ WARN  deprecated eth-sig-util@1.4.2: Deprecated in favor of '@metamask/eth-sig-util'
+ WARN  deprecated ethereumjs-tx@1.3.7: New package name format for new versions: @ethereumjs/tx. Please update.
+ WARN  deprecated ethereumjs-vm@2.6.0: New package name format for new versions: @ethereumjs/vm. Please update.
+ WARN  deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+ WARN  deprecated safe-event-emitter@1.0.1: Renamed to @metamask/safe-event-emitter
+Progress: resolved 462, reused 450, downloaded 0, added 0
+ WARN  deprecated ethereumjs-block@2.2.2: New package name format for new versions: @ethereumjs/block. Please update.
+ WARN  deprecated ethereumjs-common@1.5.2: New package name format for new versions: @ethereumjs/common. Please update.
+ WARN  deprecated har-validator@5.1.5: this library is no longer supported
+ WARN  deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+ WARN  deprecated ethereumjs-tx@2.1.2: New package name format for new versions: @ethereumjs/tx. Please update.
+Progress: resolved 800, reused 788, downloaded 0, added 0
+Progress: resolved 801, reused 789, downloaded 0, added 0
+Packages: +7 -7
++++++++-------
+Progress: resolved 801, reused 789, downloaded 0, added 7, done
+.../node_modules/styled-components postinstall$ node ./postinstall.js
+.../node_modules/styled-components postinstall: Done
+
+peerDependencies:
++ @tanstack/query-core 4.15.1
++ react-is ^18.2.0
+
+devDependencies:
++ @tanstack/query-core 4.15.1
++ react-is 18.2.0
+
+ WARN  Issues with peer dependencies found
+.
+├─┬ @coinbase/wallet-sdk 3.5.4
+│ └─┬ @solana/web3.js 1.52.0
+│   └─┬ react-native-url-polyfill 1.3.0
+│     └── ✕ missing peer react-native@"*"
+├─┬ @tanstack/react-query 4.16.1
+│ └── ✕ missing peer react-native@"*"
+└─┬ react-redux 8.0.5
+  └── ✕ missing peer react-native@>=0.59
+Peer dependencies that should be installed:
+  react-native@>=0.59.0
+
