@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { Box } from '@mui/material';
+import Fuse from 'fuse.js';
+import debounce from 'lodash.debounce';
 import { useRouter } from 'next/router';
 
 import MarketPlaceHeader from 'components/MarketPlaceHeader';
 import {
   useQueriesFilterMarketPlaceData,
-  useQueryZeSwapIdList,
+  useQueryZeSwapIdList
 } from 'hooks/react-query/queries';
 
 import MarketPlaceSection from './MarketPlaceSection';
@@ -36,22 +38,25 @@ export default function MainMarketPlaceSection() {
 
   const handleSearch = (data) => {
     if (data) {
-      const newList = newZeSwapList.filter(
-        (item) =>
-          item?.swap?.offers?.[0]?.toLowerCase().indexOf(data.toLowerCase()) !==
-          -1,
-      );
-      setFilteredZeSwapIdList(newList);
+      const options = {
+        threshold: 0.1,
+        keys: ['offer', 'productA.metadata.name', 'productB.metadata.name']
+      };
+      const fuse = new Fuse(newZeSwapList, options);
+      const result = fuse.search(data).map((swap) => swap.item);
+      setFilteredZeSwapIdList(result);
     } else {
       const newList = newZeSwapList;
       setFilteredZeSwapIdList(newList);
     }
   };
 
+  const debouncedSearchChange = useMemo(() => debounce(handleSearch, 700), []);
+
   return (
     <Box>
       <Box>
-        <MarketPlaceHeader handleSearch={handleSearch} />
+        <MarketPlaceHeader handleSearch={debouncedSearchChange} />
 
         {filteredZeSwapIdList?.map((swapList, idx) => (
           <MarketPlaceSection
