@@ -6,6 +6,7 @@ import { Box, Button, Checkbox, Divider, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 
 import OfferCard from 'components/card/OfferCard';
+import ReactDatePicker from 'components/DateTimePicker';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
 import Slider from 'components/Slider';
@@ -14,7 +15,11 @@ import {
   useERC20_ERC721_ERC1155Approve,
   useMutationCreateZeSwap
 } from 'hooks/react-query/mutation';
-import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
+import {
+  addNewTokenNfts,
+  addNewTokenNftsReceive,
+  getCreateDateTime
+} from 'redux/slice/otcTrades';
 
 export default function DashboardSection() {
   const dispatch = useDispatch();
@@ -40,13 +45,13 @@ export default function DashboardSection() {
   const {
     data: mutateData,
     isLoading: createIsLoading,
-    mutate: createMutate,
+    mutate: createMutate
   } = useMutationCreateZeSwap();
 
   const {
     isLoading: isApproveLoading,
     mutate,
-    data: approvedData,
+    data: approvedData
   } = useERC20_ERC721_ERC1155Approve();
 
   const handleApproveClick = (token) => {
@@ -64,7 +69,7 @@ export default function DashboardSection() {
         tokenType,
         tokenId,
         decimal,
-        amount,
+        amount
       });
     }
   };
@@ -85,6 +90,10 @@ export default function DashboardSection() {
 
       dispatch(addNewTokenNfts(newValue));
     }
+  };
+
+  const handleDate = (value) => {
+    dispatch(getCreateDateTime(value));
   };
 
   useEffect(() => {
@@ -116,6 +125,8 @@ export default function DashboardSection() {
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
 
+  console.log(date, '<<<<<<< date bro');
+
   return (
     <Box
       sx={{
@@ -124,7 +135,7 @@ export default function DashboardSection() {
         mt: 8,
         borderRadius: '17px',
         ...Border,
-        mb: 10,
+        mb: 10
       }}
     >
       <Box
@@ -132,27 +143,27 @@ export default function DashboardSection() {
           display: 'grid',
           gridTemplateColumns: {
             xs: 'repeat(1 , 1fr)',
-            md: 'repeat(5, 1fr)',
+            md: 'repeat(5, 1fr)'
           },
           gap: 2,
           justifyContent: 'space-between',
           px: {
             xs: 2,
-            md: 5.5,
+            md: 5.5
           },
-          py: 5,
+          py: 5
         }}
       >
         <Box
           sx={{
             gridColumn: {
-              md: '1/3',
-            },
+              md: '1/3'
+            }
           }}
         >
           <Typography
             sx={{
-              px: 2,
+              px: 2
             }}
           >
             I will offer
@@ -169,7 +180,7 @@ export default function DashboardSection() {
               px: 2,
               borderRadius: '6px',
               border: ' 0.3px solid #4E4E4E',
-              my: 1.5,
+              my: 1.5
             }}
           >
             <Typography color='gray'>Total Amount</Typography>
@@ -199,38 +210,35 @@ export default function DashboardSection() {
               background: (theme) => theme.palette.primary.main,
               py: 2,
               textAlign: 'center',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             <Typography variant='subtitle1'>+ Add new Token or NFT</Typography>
           </Box>
 
-          <CreateToken
-            handleClose={handleCloseOffer}
-            open={openOffer}
-          />
+          <CreateToken handleClose={handleCloseOffer} open={openOffer} />
         </Box>
 
         <Box
           sx={{
             justifySelf: 'center',
             mt: {
-              md: 16,
-            },
+              md: 16
+            }
           }}
         >
           <Button
             variant='contained'
             sx={{
               py: 2,
-              transform: 'matrix(1, 0, 0, -1, 0, 0)',
+              transform: 'matrix(1, 0, 0, -1, 0, 0)'
             }}
           >
             <Box
               component='img'
               src='/assets/svg/MyOtc.svg'
               sx={{
-                width: 20,
+                width: 20
               }}
             />
           </Button>
@@ -239,8 +247,8 @@ export default function DashboardSection() {
         <Box
           sx={{
             gridColumn: {
-              md: '4/6',
-            },
+              md: '4/6'
+            }
           }}
         >
           <Typography>I will receive</Typography>
@@ -256,7 +264,7 @@ export default function DashboardSection() {
               px: 2,
               borderRadius: '6px',
               ...Border,
-              my: 1.5,
+              my: 1.5
             }}
           >
             <Typography color='gray'>Total Amount</Typography>
@@ -284,7 +292,7 @@ export default function DashboardSection() {
               background: (theme) => theme.palette.primary.main,
               py: 2,
               textAlign: 'center',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             <Typography variant='subtitle1'>+ Add new Token or NFT</Typography>
@@ -305,10 +313,10 @@ export default function DashboardSection() {
           width: '100%',
           px: {
             xs: 2,
-            md: 5.5,
+            md: 5.5
           },
           pt: 2,
-          position: 'relative',
+          position: 'relative'
         }}
       >
         <Box
@@ -318,7 +326,7 @@ export default function DashboardSection() {
             alignItems: 'center',
             gap: 1,
             width: 'fit-content',
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}
         >
           {/* <Box component='img' src='/assets/svg/checkBox.svg' /> */}
@@ -332,6 +340,17 @@ export default function DashboardSection() {
           <Typography onClick={() => setIsChecked(!isChecked)}>
             Allow counter offers
           </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'start',
+            alignItems: 'center'
+          }}
+        >
+          <Typography>Expired date : </Typography>
+          <ReactDatePicker handleDate={handleDate} dateValue={date} />
         </Box>
 
         {/* {isChecked && (
@@ -355,7 +374,7 @@ export default function DashboardSection() {
             // width: 'fit-content',
             width: 104,
             // display:'flex',
-            mx: 'auto',
+            mx: 'auto'
             // gridTemplateColumns:'repeat(1, 1fr)',
             // justifyContent:'center'
           }}
@@ -369,7 +388,7 @@ export default function DashboardSection() {
                 productB: receivedData,
                 productA: dataFetch,
                 isChecked,
-                newDate:date
+                newDate: date
               });
             }}
             sx={{
@@ -396,8 +415,8 @@ export default function DashboardSection() {
                   'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                 content: '""',
                 zIndex: -1,
-                borderRadius: '50%',
-              },
+                borderRadius: '50%'
+              }
             }}
           />
         </Box>
