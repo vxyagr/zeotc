@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { DEFAULT_CREATED_SWAP_EXPIRED_TIME } from '../../constant';
 
 const otcTrades = createSlice({
   name: 'otcTrades',
@@ -8,7 +9,7 @@ const otcTrades = createSlice({
     selectNfts: [],
     selectTokenNftsReceive: [],
     productDetails: {},
-    getCreateDate: null,
+    getCreateDate: DEFAULT_CREATED_SWAP_EXPIRED_TIME
   },
   reducers: {
     tradesTabs(state, action) {
@@ -28,8 +29,8 @@ const otcTrades = createSlice({
     },
     getCreateDateTime(state, action) {
       state.getCreateDate = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
@@ -38,6 +39,6 @@ export const {
   tradesSwapTabs,
   addNewTokenNfts,
   addNewTokenNftsReceive,
-  getCreateDateTime,
+  getCreateDateTime
 } = otcTrades.actions;
 export default otcTrades.reducer;
