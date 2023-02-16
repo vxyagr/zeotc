@@ -23,7 +23,7 @@ function WalletConnectButton({ title }) {
   }, [account?.isConnected, onConnect]);
 
   return (
-    <ConnectButton></ConnectButton>
+    <ConnectButton labe='Connect Wallet' showBalance={false} />
     /* <Box>
       <Box
         onClick={async () =>

@@ -3,10 +3,7 @@ import React, { useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 
-import { getCreateDateTime } from 'redux/slice/otcTrades';
 import { privateInput } from 'redux/slice/web3';
-
-import ReactDatePicker from './DateTimePicker';
 
 export default function DashboardHeader() {
   const dispatch = useDispatch();
@@ -18,28 +15,24 @@ export default function DashboardHeader() {
     dispatch(privateInput(event));
   };
 
-  const handleDate = (value) => {
-    dispatch(getCreateDateTime(value));
-  };
-
   return (
     <Box
       sx={{
         display: {
           xs: 'block',
-          lg: 'flex',
+          lg: 'flex'
         },
         width: '100%',
-        mt: 2,
+        mt: 2
       }}
     >
       <Box
         sx={{
           display: {
             xs: 'block',
-            sm: 'flex',
+            sm: 'flex'
           },
-          width: '100%',
+          width: '100%'
         }}
       >
         <Box
@@ -48,15 +41,15 @@ export default function DashboardHeader() {
             borderRadius: '12px',
             maxWidth: {
               xs: '100%',
-              sm: 317,
+              sm: 317
             },
             width: '100%',
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
             my: {
               xs: 2,
-              sm: 0,
-            },
+              sm: 0
+            }
           }}
         >
           <Box
@@ -65,7 +58,7 @@ export default function DashboardHeader() {
               zIndex: 1,
               width: '100%',
               // display:'flex',
-              mx: 'auto',
+              mx: 'auto'
               // gridTemplateColumns:'repeat(1, 1fr)',
               // justifyContent:'center'
             }}
@@ -102,14 +95,11 @@ export default function DashboardHeader() {
                     'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                   content: '""',
                   zIndex: -1,
-                  borderRadius: '12px',
-                },
+                  borderRadius: '12px'
+                }
               }}
             >
-              <Box
-                component='img'
-                src='/assets/svg/global.svg'
-              />
+              <Box component='img' src='/assets/svg/global.svg' />
               Public
             </Button>
           </Box>
@@ -120,7 +110,7 @@ export default function DashboardHeader() {
               zIndex: 1,
               width: '100%',
               // display:'flex',
-              mx: 'auto',
+              mx: 'auto'
               // gridTemplateColumns:'repeat(1, 1fr)',
               // justifyContent:'center'
             }}
@@ -157,14 +147,11 @@ export default function DashboardHeader() {
                     'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                   content: '""',
                   zIndex: -1,
-                  borderRadius: '12px',
-                },
+                  borderRadius: '12px'
+                }
               }}
             >
-              <Box
-                component='img'
-                src='/assets/svg/lock.svg'
-              />
+              <Box component='img' src='/assets/svg/lock.svg' />
               Private
             </Button>
           </Box>
@@ -181,75 +168,21 @@ export default function DashboardHeader() {
               px: 3,
               maxWidth: {
                 xs: '100%',
-                sm: 260,
+                sm: 260
               },
               width: '100%',
               outline: 'none',
               border: 'none',
               borderRadius: '12px',
               ml: {
-                sm: 3,
+                sm: 3
               },
               height: 46,
-              fontFamily: 'Poppins',
+              fontFamily: 'Poppins'
             }}
           />
         )}
       </Box>
-
-      <Box
-        sx={{
-          flexGrow: 1,
-        }}
-      />{' '}
-
-      <Box
-        sx={{
-          maxWidth: 250,
-          background: (theme) => theme.palette.primary.main,
-          borderRadius: '12px',
-          // px: 2,
-          display: {
-            xs: 'none',
-            lg: 'flex',
-          },
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: 46,
-        }}
-      >
-        {/* <Typography variant='subtitle1'>Expiration</Typography>
-
-        <Box
-          component='img'
-          src='/assets/svg/arrowDown.svg'
-          sx={{
- width: 10, 
-}}
-        /> */}
-
-        {/* <TextField
-          id='datetime-local'
-          // label='Next appointment'
-          type='datetime-local'
-          defaultValue={new Date().toISOString().slice(0, 16)}
-          onChange={(e) => handleDate(e.target.value, e)}
-          inputProps={{
-            // only needs the first 16 characters in the date string
-            min: new Date().toISOString().slice(0, 16),
-          }}
-          sx={{
-            width: 250,
-          }}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        /> */}
-
-        <ReactDatePicker handleDate={handleDate} />
-      </Box>
-
-      {/* <MSelect /> */}
     </Box>
   );
 }
