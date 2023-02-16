@@ -21,9 +21,26 @@ export default function MainMarketPlaceSection() {
   newZeSwapList = newZeSwapList?.reverse();
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
 
-  const allFinished = newZeSwapList?.some((data) => data);
+  // const allFinished = newZeSwapList?.some((data) => data);
+
+  const allFinished = useMemo(() => {
+    if (newZeSwapList.length !== 0) {
+      let flag = true;
+
+      newZeSwapList.forEach((e) => {
+        if (e === undefined) {
+          flag = false;
+        }
+      });
+
+      return flag;
+    }
+
+    return false;
+  }, [newZeSwapList]);
 
   useEffect(() => {
+    console.log(allFinished, '<<<<<< allFinished');
     if (allFinished) {
       // all the queries have executed successfully
       setFilteredZeSwapIdList(newZeSwapList);
@@ -58,13 +75,37 @@ export default function MainMarketPlaceSection() {
       <Box>
         <MarketPlaceHeader handleSearch={debouncedSearchChange} />
 
-        {filteredZeSwapIdList?.map((swapList, idx) => (
-          <MarketPlaceSection
-            key={swapList?.swap_id}
-            zeSwapList={swapList}
-            isMarketPlace
-          />
-        ))}
+        {filteredZeSwapIdList ? (
+          filteredZeSwapIdList?.map((swapList, idx) => (
+            <MarketPlaceSection
+              key={swapList?.swap_id}
+              zeSwapList={swapList}
+              isMarketPlace
+            />
+          ))
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '450px',
+              mt: {
+                xs: 3,
+                sm: 1
+              }
+            }}
+          >
+            <Box
+              component='img'
+              src='/assets/svg/loading-spinner.svg'
+              sx={{
+                width: 75,
+                height: 75
+              }}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );
