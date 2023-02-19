@@ -285,10 +285,10 @@ export const getExpieredTime = (
   }
 
   const sortHandMapping = {
-    d: ' days',
-    h: ' hours',
-    m: ' minutes',
-    s: ' seconds'
+    d: ' Days',
+    h: ' Hours',
+    m: ' Minutes',
+    s: ' Seconds'
   };
 
   const expireDateString = dayjs.unix(expire.toString());
@@ -299,7 +299,7 @@ export const getExpieredTime = (
   return formatSplited
     .map((time) => {
       return `${timeDurationObject.get(time)}${
-        shortHand ? time : sortHandMapping(time)
+        shortHand ? time : sortHandMapping[time]
       }`;
     })
     .join(' : ');
