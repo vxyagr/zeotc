@@ -11,12 +11,12 @@ import useClipboard from 'react-use-clipboard';
 import MarketPlaceCard from 'components/card/MarketPlaceCard';
 import CounterOffer from 'components/modal/CounterOffer';
 import { Border } from 'components/Style';
-import { mileSecondToDays } from 'helpers/utilities';
+import { getExpieredTime } from 'helpers/utilities';
 import {
   useMutationAccept,
   useMutationReject,
   useMutationSwapAccept,
-  useMutationSwapCounterOffer,
+  useMutationSwapCounterOffer
 } from 'hooks/react-query/mutation';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 
@@ -26,7 +26,7 @@ export default function MarketPlaceSection({
   isSwapDetails,
   isMarketPlace,
   zeSwapList,
-  isSwapHistory,
+  isSwapHistory
 }) {
   const { account } = useSelectWeb3();
   const { mutate: CounterOfferMutate, isLoading: isCounterOfferLoading } =
@@ -49,13 +49,12 @@ export default function MarketPlaceSection({
   const Trade = zeSwapList?.swap?.visibility;
   const swap_id = zeSwapList?.swap_id;
   let expire = zeSwapList?.swap?.expiration;
-  expire = expire?.toString();
-  expire = mileSecondToDays(expire);
+  expire = getExpieredTime(expire, 'd', false);
 
   const handleRejectOffer = () => {
     rejectOffer({
       swap_id,
-      expire: zeSwapList?.swap?.expiration?.toString(),
+      expire: zeSwapList?.swap?.expiration?.toString()
     });
   };
 
@@ -111,7 +110,7 @@ export default function MarketPlaceSection({
 
     const formattedData = {
       ...zeSwapList,
-      ProductA,
+      ProductA
     };
 
     CounterOfferMutate(formattedData);
@@ -136,7 +135,7 @@ export default function MarketPlaceSection({
       (ProductB?.length !== 0 &&
         ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
-          0,
+          0
         )) ||
       '0';
 
@@ -149,7 +148,7 @@ export default function MarketPlaceSection({
       (ProductA?.length !== 0 &&
         ProductA?.map((item) => handleFormateAmount(item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
-          0,
+          0
         )) ||
       '0';
     totalAmount = `${totalAmount}`.replace('e-12', '');
@@ -166,7 +165,7 @@ export default function MarketPlaceSection({
           // width: { xs: '100%', lg: (isOffer) ? isSwapDetails ? '90%' : 'fit-content' : '90%' },
           width: {
             xs: '100%',
-            lg: isSwap ? '96%' : '90%',
+            lg: isSwap ? '96%' : '90%'
           },
           background: isSwap
             ? 'rgba(54, 54, 54, 0.19)'
@@ -176,10 +175,10 @@ export default function MarketPlaceSection({
           ...Border,
           borderRadius: '17px',
           mx: isMarketPlace && {
-            md: 'auto',
+            md: 'auto'
           },
 
-          position: 'relative',
+          position: 'relative'
         }}
       >
         {isSwap && (
@@ -191,7 +190,7 @@ export default function MarketPlaceSection({
               gap: 2,
               position: 'absolute',
               right: 20,
-              top: 12,
+              top: 12
             }}
           >
             <Typography
@@ -199,7 +198,7 @@ export default function MarketPlaceSection({
                 width: 10,
                 height: 10,
                 background: '#0D50FB',
-                borderRadius: 5,
+                borderRadius: 5
               }}
             ></Typography>
 
@@ -214,31 +213,31 @@ export default function MarketPlaceSection({
               xs: 'repeat(1 , 1fr)',
               md: 'repeat(5, 1fr)',
               // lg: (isOffer || isSwap) ? 'repeat(5, 1fr)' : 'repeat(6, 1fr)',
-              lg: isSwap ? 'repeat(5, 1fr)' : 'repeat(6, 1fr)',
+              lg: isSwap ? 'repeat(5, 1fr)' : 'repeat(6, 1fr)'
             },
             gap: {
               xs: 1,
-              lg: 2,
+              lg: 2
             },
             justifyContent: 'space-between',
 
             pl: {
               xs: 2,
               sm: 0,
-              lg: 5.5,
+              lg: 5.5
             },
             // pr: { xs: 2, sm: 0, lg: (isOffer || isSwap) ? 5.5 : 0 },
             pr: {
               xs: 2,
               sm: 0,
-              lg: isSwap ? 5.5 : 0,
-            },
+              lg: isSwap ? 5.5 : 0
+            }
           }}
         >
           <Box
             sx={{
               gridColumn: {
-                md: '1/3',
+                md: '1/3'
               },
               pt: 5,
               pb: isOffer ? 3 : 5,
@@ -246,27 +245,27 @@ export default function MarketPlaceSection({
                 xs: 0,
                 sm: 2,
                 md: 3,
-                lg: 0,
+                lg: 0
               },
               pr: {
                 xs: 0,
                 sm: 2,
                 md: 0,
-                lg: 0,
-              },
+                lg: 0
+              }
             }}
             component={isMarketPlace && !isCopy.current ? Link : 'div'}
             // component={Link}
             href={{
               pathname: '/marketPlace/swap',
               query: {
-                id: `${swap_id}`, // should be `title` not `id`
-              },
+                id: `${swap_id}` // should be `title` not `id`
+              }
             }}
           >
             <Typography
               sx={{
-                px: 2,
+                px: 2
               }}
             >
               {/*offr[0]*/}
@@ -297,13 +296,13 @@ export default function MarketPlaceSection({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                mt: 2,
+                mt: 2
               }}
             >
               <Typography
                 sx={{
                   px: 2,
-                  fontSize: 14,
+                  fontSize: 14
                 }}
               >
                 Total Amount
@@ -312,7 +311,7 @@ export default function MarketPlaceSection({
               <Typography
                 sx={{
                   px: 2,
-                  fontSize: 14,
+                  fontSize: 14
                 }}
               >
                 {SumOfAmountA} USDC
@@ -323,28 +322,28 @@ export default function MarketPlaceSection({
           <Box
             sx={{
               gridColumn: {
-                md: '3/5',
+                md: '3/5'
               },
               pl: {
                 xs: 0,
                 sm: 2,
                 md: 0,
-                lg: 0,
+                lg: 0
               },
               // px:2,
               pr: {
                 xs: 0,
                 sm: 2,
                 md: 3,
-                lg: 0,
+                lg: 0
               },
               pt: 5,
-              pb: isOffer ? 0 : 5,
+              pb: isOffer ? 0 : 5
             }}
           >
             <Typography
               sx={{
-                px: 2,
+                px: 2
               }}
             >
               You will receive
@@ -362,13 +361,13 @@ export default function MarketPlaceSection({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                mt: 2,
+                mt: 2
               }}
             >
               <Typography
                 sx={{
                   px: 2,
-                  fontSize: 14,
+                  fontSize: 14
                 }}
               >
                 Total Amount
@@ -377,7 +376,7 @@ export default function MarketPlaceSection({
               <Typography
                 sx={{
                   px: 2,
-                  fontSize: 14,
+                  fontSize: 14
                 }}
               >
                 {SumOfAmountB} USDC
@@ -388,23 +387,23 @@ export default function MarketPlaceSection({
           <Box
             sx={{
               gridColumn: {
-                md: '5/6',
+                md: '5/6'
               },
               pl: {
                 xs: 0,
                 sm: 2,
                 md: 0,
-                lg: 0,
+                lg: 0
               },
               // px:2,
               pr: {
                 xs: 0,
                 sm: 2,
                 md: 3,
-                lg: 0,
+                lg: 0
               },
               pt: 5,
-              pb: isOffer ? 0 : 5,
+              pb: isOffer ? 0 : 5
             }}
           >
             {!isSupplier && (
@@ -414,7 +413,7 @@ export default function MarketPlaceSection({
                   justifyContent: 'center',
                   alignItems: 'center',
                   verticalAlign: 'middle',
-                  mt: 2,
+                  mt: 2
                 }}
               >
                 <Button
@@ -425,7 +424,7 @@ export default function MarketPlaceSection({
                     color: 'white',
                     // width:'100%',
                     background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
+                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
                   Accept Offer
@@ -439,7 +438,7 @@ export default function MarketPlaceSection({
                   justifyContent: 'center',
                   alignItems: 'center',
                   verticalAlign: 'middle',
-                  mt: 2,
+                  mt: 2
                 }}
               >
                 <Button
@@ -450,7 +449,7 @@ export default function MarketPlaceSection({
                     color: 'white',
                     // width:'100%',
                     background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
+                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
                   Counter Offer
@@ -464,7 +463,7 @@ export default function MarketPlaceSection({
                   justifyContent: 'center',
                   alignItems: 'center',
                   verticalAlign: 'middle',
-                  mt: 2,
+                  mt: 2
                 }}
               >
                 <Button
@@ -475,7 +474,7 @@ export default function MarketPlaceSection({
                     color: 'white',
                     // width:'100%',
                     background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
+                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
                   Cancel Offer
@@ -489,13 +488,13 @@ export default function MarketPlaceSection({
               background: (theme) => theme.palette.primary.main,
               width: {
                 xs: '100%',
-                lg: '80%',
+                lg: '80%'
               },
               justifySelf: 'end',
               textAlign: 'center',
               gridColumn: {
                 md: '1/6',
-                lg: 'auto',
+                lg: 'auto'
               },
               p: 1,
               borderRadius: 2,
@@ -508,23 +507,23 @@ export default function MarketPlaceSection({
                 : {
                     xs: 'Block',
                     md: 'flex',
-                    lg: 'block',
+                    lg: 'block'
                   },
               justifyContent: 'start',
               gap: 10,
               px: {
                 xs: 4,
-                lg: 0,
+                lg: 0
               },
               py: {
                 xs: 2,
-                lg: 0,
+                lg: 0
               },
               alignItems: 'center',
               mb: {
                 xs: 3,
-                sm: 0,
-              },
+                sm: 0
+              }
             }}
           >
             <Box
@@ -536,8 +535,8 @@ export default function MarketPlaceSection({
                 mt: {
                   xs: 3,
                   md: 0,
-                  lg: 2,
-                },
+                  lg: 2
+                }
               }}
             >
               <Box
@@ -545,13 +544,13 @@ export default function MarketPlaceSection({
                   background: '#0DFBBF',
                   width: 13,
                   height: 13,
-                  borderRadius: '50%',
+                  borderRadius: '50%'
                 }}
               ></Box>
 
               <Typography
                 sx={{
-                  fontSize: 13,
+                  fontSize: 13
                 }}
               >
                 {appStatus}
@@ -563,14 +562,14 @@ export default function MarketPlaceSection({
                 mt: {
                   xs: 3,
                   md: 0,
-                  lg: 3,
-                },
+                  lg: 3
+                }
               }}
             >
               <Typography
                 sx={{
                   fontSize: 11,
-                  color: '#4A4A4A',
+                  color: '#4A4A4A'
                 }}
               >
                 Trade
@@ -578,7 +577,7 @@ export default function MarketPlaceSection({
 
               <Typography
                 sx={{
-                  fontSize: 12,
+                  fontSize: 12
                 }}
               >
                 {Trade ? 'Public' : 'Private'}
@@ -590,14 +589,14 @@ export default function MarketPlaceSection({
                 mt: {
                   xs: 3,
                   md: 0,
-                  lg: 3,
-                },
+                  lg: 3
+                }
               }}
             >
               <Typography
                 sx={{
                   fontSize: 11,
-                  color: '#4A4A4A',
+                  color: '#4A4A4A'
                 }}
               >
                 Expires
@@ -605,11 +604,11 @@ export default function MarketPlaceSection({
 
               <Typography
                 sx={{
-                  fontSize: 13,
+                  fontSize: 13
                 }}
               >
                 {/* 6 Days */}
-                {expire} Days
+                {expire}
               </Typography>
             </Box>
 
@@ -618,9 +617,9 @@ export default function MarketPlaceSection({
                 sx={{
                   fontSize: 13,
                   mt: {
-                    md: 2,
+                    md: 2
                   },
-                  color: '#fff',
+                  color: '#fff'
                 }}
               >
                 Me
@@ -637,14 +636,14 @@ export default function MarketPlaceSection({
             display: isOffer
               ? {
                   xs: 'block',
-                  sm: 'flex',
+                  sm: 'flex'
                 }
               : 'none',
             alignItems: 'center',
             justifyContent: 'end',
             py: 2,
             gridColumn: {
-              md: '1/6',
+              md: '1/6'
             },
             borderTop: '1px solid #4e4e4eb0',
             gap: 2,
@@ -654,14 +653,14 @@ export default function MarketPlaceSection({
               height: 44,
               mr: {
                 xs: 2,
-                sm: 0,
+                sm: 0
               },
               borderRadius: '10.19px',
               mt: {
                 xs: 2,
-                sm: 0,
-              },
-            },
+                sm: 0
+              }
+            }
           }}
         >
           <Box
@@ -672,8 +671,8 @@ export default function MarketPlaceSection({
               height: 44,
               my: {
                 xs: 2,
-                sm: 0,
-              },
+                sm: 0
+              }
             }}
           >
             <Button
@@ -697,8 +696,8 @@ export default function MarketPlaceSection({
                     'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                   content: '""',
                   zIndex: -1,
-                  borderRadius: '10.19px',
-                },
+                  borderRadius: '10.19px'
+                }
               }}
             >
               Counter Offer
@@ -709,7 +708,7 @@ export default function MarketPlaceSection({
             onClick={handleRejectOffer}
             sx={{
               background: '#FF1E4C !important',
-              width: 122,
+              width: 122
             }}
           >
             Reject
@@ -721,7 +720,7 @@ export default function MarketPlaceSection({
             sx={{
               width: 150,
               background:
-                ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
+                ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
             }}
           >
             Accept Offer
