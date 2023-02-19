@@ -10,8 +10,7 @@ import Typography from '@mui/material/Typography';
 import DarkModeSwitch from 'components/ThemeSwitch';
 import WalletConnectButton from 'components/WalletConnectButton';
 
-export default function Navbar({ handleDrawerOpen, }) {
-
+export default function Navbar({ handleDrawerOpen }) {
   return (
     <Box
       sx={{
@@ -19,8 +18,8 @@ export default function Navbar({ handleDrawerOpen, }) {
         px: {
           xs: 0,
           md: 4,
-          lg: 6,
-        },
+          lg: 6
+        }
       }}
     >
       <AppBar
@@ -31,19 +30,19 @@ export default function Navbar({ handleDrawerOpen, }) {
           border: 'none',
           boxShadow: 0,
           pt: 2,
-          pb: 1,
+          pb: 1
         }}
       >
         <Toolbar
           sx={{
             boxShadow: 0,
-            border: 'none',
+            border: 'none'
           }}
         >
           <Box
             sx={{
               flexGrow: 1,
-              alignItems: 'center',
+              alignItems: 'center'
             }}
           >
             <Box
@@ -52,12 +51,12 @@ export default function Navbar({ handleDrawerOpen, }) {
               sx={{
                 width: {
                   xs: 110,
-                  md: 200,
+                  md: 200
                 },
                 height: {
                   xs: 30,
-                  md: 'auto',
-                },
+                  md: 'auto'
+                }
               }}
             />
           </Box>
@@ -66,9 +65,9 @@ export default function Navbar({ handleDrawerOpen, }) {
             sx={{
               display: {
                 xs: 'none',
-                md: 'flex',
+                md: 'flex'
               },
-              alignItems: 'center',
+              alignItems: 'center'
             }}
           >
             <DarkModeSwitch />
@@ -78,7 +77,7 @@ export default function Navbar({ handleDrawerOpen, }) {
                 component='img'
                 src='/assets/svg/notification.svg'
                 sx={{
-                  width: 25,
+                  width: 25
                 }}
               />
             </IconButton>
@@ -97,26 +96,18 @@ export default function Navbar({ handleDrawerOpen, }) {
                 py: 1.5,
                 mx: 1,
                 ml: 2,
-                borderRadius: '12px',
+                borderRadius: '12px'
               }}
             >
               <Box
                 component='img'
                 src='/assets/images/ethereum.png'
                 sx={{
-                  width: 30,
+                  width: 30
                 }}
               />
 
               <Typography>Ethereum</Typography>
-
-              <Box
-                component='img'
-                src='/assets/svg/arrowDown.svg'
-                sx={{
-                  width: 10,
-                }}
-              />
             </Box>
 
             {/* </Box> */}
@@ -132,8 +123,8 @@ export default function Navbar({ handleDrawerOpen, }) {
             sx={{
               display: {
                 xs: 'block',
-                md: 'none',
-              },
+                md: 'none'
+              }
             }}
           >
             <MenuIcon />

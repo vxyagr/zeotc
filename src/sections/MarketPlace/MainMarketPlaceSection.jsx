@@ -1,9 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 
-import { Box } from '@mui/material';
+import { useAccount } from 'wagmi';
+
+import { Box, Typography } from '@mui/material';
 import Fuse from 'fuse.js';
 import debounce from 'lodash.debounce';
-import { useRouter } from 'next/router';
+
+import { Border } from 'components/Style';
 
 import MarketPlaceHeader from 'components/MarketPlaceHeader';
 import {
@@ -14,12 +17,16 @@ import {
 import MarketPlaceSection from './MarketPlaceSection';
 
 export default function MainMarketPlaceSection() {
-  const router = useRouter();
+  const { isConnected } = useAccount();
   const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
 
   let newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
   newZeSwapList = newZeSwapList?.reverse();
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
+
+  useEffect(() => {
+    console.log(isConnected, '<<<<<<<< ');
+  }, [isConnected]);
 
   // const allFinished = newZeSwapList?.some((data) => data);
 
@@ -41,6 +48,7 @@ export default function MainMarketPlaceSection() {
 
   useEffect(() => {
     console.log(allFinished, '<<<<<< allFinished');
+
     if (allFinished) {
       // all the queries have executed successfully
       setFilteredZeSwapIdList(newZeSwapList);
@@ -75,7 +83,52 @@ export default function MainMarketPlaceSection() {
       <Box>
         <MarketPlaceHeader handleSearch={debouncedSearchChange} />
 
-        {filteredZeSwapIdList ? (
+        {!isConnected ? (
+          <Box
+            sx={{
+              width: '100%',
+              minHeight: '400px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignContent: 'center'
+            }}
+          >
+            <Box
+              sx={{
+                ...Border,
+                p: 3,
+                maxWidth: 'md',
+                borderRadius: 3,
+                mt: 7,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '40%'
+              }}
+            >
+              <Box
+                component='img'
+                src='/assets/svg/no-wallet-connection.png'
+                sx={{
+                  width: 300,
+                  height: 300
+                }}
+              />
+
+              <Typography>No Wallet Connection</Typography>
+
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  color: '#A3A3A3'
+                }}
+              >
+                Please connect wallet before continue.
+              </Typography>
+            </Box>
+          </Box>
+        ) : filteredZeSwapIdList ? (
           filteredZeSwapIdList?.map((swapList, idx) => (
             <MarketPlaceSection
               key={swapList?.swap_id}
