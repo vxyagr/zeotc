@@ -1,11 +1,17 @@
 /* eslint-disable sonarjs/no-identical-functions */
 /* eslint-disable no-self-assign */
 import axios from 'axios';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { ethers } from 'ethers';
 
 import { NETWORK } from 'config';
 
 import { supportedChains } from './chains';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 export function getChainData(chainId) {
   const chainData = supportedChains.find((chain) => chain.chain_id === chainId);
@@ -25,7 +31,7 @@ export function getChainData(chainId) {
 
     return {
       ...chainData,
-      rpc_url: rpcUrl,
+      rpc_url: rpcUrl
     };
   }
 
@@ -33,16 +39,16 @@ export function getChainData(chainId) {
 }
 
 export function switchNetwork(provider) {
-  const { chain_id: chainId, rpc_url: rpcUrl, } = getChainData(NETWORK.ID);
+  const { chain_id: chainId, rpc_url: rpcUrl } = getChainData(NETWORK.ID);
 
   provider.request({
     method: 'wallet_addEthereumChain',
     params: [
       {
         chainId: `0x${chainId.toString(16)}`,
-        rpcUrls: [rpcUrl],
+        rpcUrls: [rpcUrl]
       }
-    ],
+    ]
   });
 }
 
@@ -151,7 +157,7 @@ export const handleFormateData = (receivedData, useId = false) => {
       IERC: Number(tokenType), //ERC1155
       token: tokenAddress, //token address
       amount: amountValue, //NFT amount // User input amounts
-      created: ethers.utils.hexlify(now), //date
+      created: ethers.utils.hexlify(now) //date
     };
   });
 };
@@ -193,7 +199,7 @@ export const handleSetFormateData = (receivedData, useId = false) => {
       IERC: Number(tokenType), //ERC1155
       token: tokenAddress, //token address
       amount: amountValue, //NFT amount // User input amounts
-      created: ethers.utils.hexlify(now), //date
+      created: ethers.utils.hexlify(now) //date
     };
   });
 };
@@ -209,12 +215,12 @@ export const getUserNFts = async (url, address) => {
       url: url,
       params: {
         chain: `${process.env.NEXT_PUBLIC_CHAIN}`,
-        addresses: `${address}`,
+        addresses: `${address}`
       },
       headers: {
         accept: 'application/json',
-        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`,
-      },
+        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
+      }
     };
   }
 
@@ -225,12 +231,12 @@ export const getUserNFts = async (url, address) => {
       params: {
         chain: `${process.env.NEXT_PUBLIC_CHAIN}`,
         format: 'decimal',
-        normalizeMetadata: 'false',
+        normalizeMetadata: 'false'
       },
       headers: {
         accept: 'application/json',
-        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`,
-      },
+        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
+      }
     };
   }
 
@@ -259,4 +265,42 @@ export const isJsonString = (str) => {
   }
 
   return true;
+};
+
+/**
+ * Generate swap expire time in string format
+ * @param {expire} hex date value in hex //1680120958
+ * @param {format} str string format return // d:h:m:s
+ * @param {shortHand} bol string format return type  // true
+ * @returns {string} return expire date time in string // 8d : 16h : 28m : 0s
+ */
+
+export const getExpieredTime = (
+  expire,
+  format = 'd:h:m:s',
+  shortHand = true
+) => {
+  if (!expire) {
+    return '';
+  }
+
+  const sortHandMapping = {
+    d: ' days',
+    h: ' hours',
+    m: ' minutes',
+    s: ' seconds'
+  };
+
+  const expireDateString = dayjs.unix(expire.toString());
+  const now = dayjs();
+  const timeDurationObject = dayjs.duration(expireDateString.diff(now));
+  const formatSplited = format.split(':');
+
+  return formatSplited
+    .map((time) => {
+      return `${timeDurationObject.get(time)}${
+        shortHand ? time : sortHandMapping(time)
+      }`;
+    })
+    .join(' : ');
 };
