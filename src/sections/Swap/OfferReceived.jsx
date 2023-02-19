@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
 import CreateTokenSwap from 'components/modal/CreateTokenSwap';
-import { mileSecondToDays } from 'helpers/utilities';
+import { getExpieredTime } from 'helpers/utilities';
 import {
   useERC20_ERC721_ERC1155Approve,
   useMutationSetProduct,
@@ -24,7 +24,7 @@ import { getProductDetails } from 'redux/slice/otcTrades';
 import OfferCard from '../../components/card/OfferCard';
 import { Border } from '../../components/Style';
 
-export default function OfferReceived({ selectedCard, }) {
+export default function OfferReceived({ selectedCard }) {
   const [openReceive, setOpenReceive] = useState(false);
   const handleOpenReceive = () => setOpenReceive(true);
   const handleCloseReceive = () => setOpenReceive(false);
@@ -35,7 +35,7 @@ export default function OfferReceived({ selectedCard, }) {
 
   const [counterArr, setCounterArr] = useState([]);
 
-  const { account, } = useSelectWeb3();
+  const { account } = useSelectWeb3();
   const dispatch = useDispatch();
   const router = useRouter();
   const [productDetails, setProductDetails] = useState([]);
@@ -74,9 +74,9 @@ export default function OfferReceived({ selectedCard, }) {
     }
   };
 
-  const { mutate: CounterOfferMutate, isLoading: isCounterOfferLoading, } =
+  const { mutate: CounterOfferMutate, isLoading: isCounterOfferLoading } =
     useMutationSwapCounterOffer();
-  const { mutate: acceptMutate, } = useMutationSwapAccept();
+  const { mutate: acceptMutate } = useMutationSwapAccept();
   const [isApprove, setIsApprove] = useState('');
   const [isSetState, setIsSetState] = useState(true);
   const [selectedObjForSet, setSelectedObjForSet] = useState(null);
@@ -97,12 +97,11 @@ export default function OfferReceived({ selectedCard, }) {
   const offer_id = selectedCard?.swap?.offers?.[0];
   let expire = selectedCard?.swap?.expiration;
   expire = expire?.toString();
-  // expire = mileSecondToDays(expire);
 
   const {
     isLoading: isApproveLoading,
     mutate,
-    data: approvedData,
+    data: approvedData
   } = useERC20_ERC721_ERC1155Approve();
 
   // Moralis end
@@ -125,17 +124,17 @@ export default function OfferReceived({ selectedCard, }) {
     1: 'Active',
     2: 'Fullfilled',
     3: 'Ended',
-    4: 'Canceled',
+    4: 'Canceled'
   };
 
-  const { mutate: mutateSetProduct, isLoading: isSetLoading, } =
+  const { mutate: mutateSetProduct, isLoading: isSetLoading } =
     useMutationSetProduct();
 
   const handleSetFun = (data) => {
     mutateSetProduct({
       swap_id,
       offer_id,
-      ProductB: [data],
+      ProductB: [data]
     });
   };
 
@@ -160,7 +159,7 @@ export default function OfferReceived({ selectedCard, }) {
         tokenType,
         tokenId,
         decimal,
-        amount,
+        amount
       });
     }
 
@@ -185,12 +184,12 @@ export default function OfferReceived({ selectedCard, }) {
     const formattedData = {
       ...selectedCard,
       productB: ProductB,
-      productA: ProductA,
+      productA: ProductA
     };
 
     CounterOfferMutate({
       id: formattedData,
-      product,
+      product
     });
     // CounterOfferMutate(ProductB);
   };
@@ -208,24 +207,7 @@ export default function OfferReceived({ selectedCard, }) {
 
   const [SumOfAmountB, setSumOfAmountB] = useState(0);
 
-  // ======================================================================
-  // formate to date and time
-  // const handleDateFormate = () => {
-    const now = new Date().getTime();
-
-    const distance = expire - now;
-
-    let expire_h = `${Math.floor(distance / (1000 * 60 * 60))}`;
-    let expire_m = `${Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))}`;
-    let expire_s = `${Math.floor((distance % (1000 * 60)) / 1000)}`;
-    
-    expire_h = expire_h.substring(1);
-    expire_m = expire_m.substring(1);
-    expire_s = expire_s.substring(1);
-
-
-    const newExpireDate = `${expire_h}h : ${expire_m}m : ${expire_s}s`;
-  // };
+  const expireDateString = getExpieredTime(expire, 'd:h:m:s', true);
 
   useEffect(() => {
     let totalAmount =
@@ -260,7 +242,7 @@ export default function OfferReceived({ selectedCard, }) {
         background: (theme) => theme.palette.info.main,
         borderRadius: '17px',
         ...Border,
-        mt: 3,
+        mt: 3
       }}
     >
       <Box
@@ -268,28 +250,28 @@ export default function OfferReceived({ selectedCard, }) {
           display: 'grid',
           gridTemplateColumns: {
             xs: 'repeat(1 , 1fr)',
-            md: 'repeat(5, 1fr)',
+            md: 'repeat(5, 1fr)'
           },
           gap: 2,
           justifyContent: 'space-between',
           width: '100%',
           px: {
             xs: 2,
-            lg: 5.5,
+            lg: 5.5
           },
-          py: 5,
+          py: 5
         }}
       >
         <Box
           sx={{
             gridColumn: {
-              md: '1/3',
-            },
+              md: '1/3'
+            }
           }}
         >
           <Typography
             sx={{
-              px: 2,
+              px: 2
             }}
           >
             {/* I will receive */}
@@ -308,7 +290,7 @@ export default function OfferReceived({ selectedCard, }) {
               px: 2,
               borderRadius: '6px',
               border: ' 0.3px solid #4E4E4E',
-              my: 1.5,
+              my: 1.5
             }}
           >
             <Typography color='gray'>Total Amount</Typography>
@@ -350,7 +332,7 @@ export default function OfferReceived({ selectedCard, }) {
                 gridTemplateColumns: 'min-content 1fr',
                 justifyContent: 'center',
                 gap: 1,
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
               <Box
@@ -361,8 +343,8 @@ export default function OfferReceived({ selectedCard, }) {
                   height: '100%',
                   my: {
                     xs: 2,
-                    sm: 0,
-                  },
+                    sm: 0
+                  }
                 }}
               >
                 <MButton
@@ -393,8 +375,8 @@ export default function OfferReceived({ selectedCard, }) {
                       content: '""',
                       zIndex: -1,
                       overflow: 'hidden',
-                      borderRadius: '10.19px',
-                    },
+                      borderRadius: '10.19px'
+                    }
                   }}
                 />
               </Box>
@@ -417,7 +399,7 @@ export default function OfferReceived({ selectedCard, }) {
                   justifyContent: 'center',
                   gap: 2,
                   alignItems: 'center',
-                  px: 2,
+                  px: 2
                 }}
               >
                 <Typography variant='subtitle1'>
@@ -431,21 +413,21 @@ export default function OfferReceived({ selectedCard, }) {
         <Box
           sx={{
             alignSelf: 'center',
-            justifySelf: 'center',
+            justifySelf: 'center'
           }}
         >
           <Button
             variant='contained'
             sx={{
               py: 2,
-              transform: 'matrix(1, 0, 0, -1, 0, 0)',
+              transform: 'matrix(1, 0, 0, -1, 0, 0)'
             }}
           >
             <Box
               component='img'
               src='/assets/svg/MyOtc.svg'
               sx={{
-                width: 20,
+                width: 20
               }}
             />
           </Button>
@@ -454,8 +436,8 @@ export default function OfferReceived({ selectedCard, }) {
         <Box
           sx={{
             gridColumn: {
-              md: '4/6',
-            },
+              md: '4/6'
+            }
           }}
         >
           <Typography>
@@ -475,7 +457,7 @@ export default function OfferReceived({ selectedCard, }) {
               px: 2,
               borderRadius: '6px',
               ...Border,
-              my: 1.5,
+              my: 1.5
             }}
           >
             <Typography color='gray'>Total Amount</Typography>
@@ -515,7 +497,7 @@ export default function OfferReceived({ selectedCard, }) {
                 justifyContent: 'center',
                 gridTemplateColumns: 'min-content 1fr',
                 gap: 1,
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
               <Box
@@ -526,8 +508,8 @@ export default function OfferReceived({ selectedCard, }) {
                   height: '100%',
                   my: {
                     xs: 2,
-                    sm: 0,
-                  },
+                    sm: 0
+                  }
                 }}
               >
                 <MButton
@@ -559,8 +541,8 @@ export default function OfferReceived({ selectedCard, }) {
                       // overflow: 'hidden',
 
                       zIndex: -1,
-                      borderRadius: '10.19px',
-                    },
+                      borderRadius: '10.19px'
+                    }
                   }}
                 />
               </Box>
@@ -579,7 +561,7 @@ export default function OfferReceived({ selectedCard, }) {
                   py: 2,
                   textAlign: 'center',
                   cursor: 'pointer',
-                  px: 2,
+                  px: 2
                 }}
               >
                 <Typography variant='subtitle1'>
@@ -598,22 +580,22 @@ export default function OfferReceived({ selectedCard, }) {
           pt: 4,
           pb: {
             xs: 0,
-            sm: 4,
+            sm: 4
           },
           pl: {
             xs: 2,
-            lg: 5,
+            lg: 5
           },
           pr: {
             xs: 2,
-            lg: 0,
+            lg: 0
           },
           display: 'grid',
           justifyContent: 'space-between',
           gridTemplateColumns: {
             md: 'repeat(1, 1fr)',
-            lg: 'repeat(3, 1fr)',
-          },
+            lg: 'repeat(3, 1fr)'
+          }
         }}
       >
         {!counterOfferStatus && <Box />}
@@ -625,13 +607,13 @@ export default function OfferReceived({ selectedCard, }) {
             sx={{
               display: {
                 xs: 'block',
-                sm: 'flex',
+                sm: 'flex'
               },
               justifyContent: 'start',
               gap: 4,
               gridColumn: {
-                lg: '1/3',
-              },
+                lg: '1/3'
+              }
             }}
           >
             <Box>
@@ -641,7 +623,7 @@ export default function OfferReceived({ selectedCard, }) {
                 sx={{
                   fontSize: 20,
                   color: '#fff',
-                  mt: 0.5,
+                  mt: 0.5
                 }}
               >
                 {/* Public */}
@@ -659,11 +641,11 @@ export default function OfferReceived({ selectedCard, }) {
                 sx={{
                   fontSize: 20,
                   color: '#fff',
-                  mt: 0.5,
+                  mt: 0.5
                 }}
               >
                 {/* {expire} Days */}
-                {newExpireDate}
+                {expireDateString}
               </Typography>
             </Box>
 
@@ -674,7 +656,7 @@ export default function OfferReceived({ selectedCard, }) {
                 sx={{
                   fontSize: 20,
                   color: '#fff',
-                  mt: 0.5,
+                  mt: 0.5
                 }}
               >
                 {counterOfferStatus ? 'Allowed' : 'Not Allowed'}
@@ -688,24 +670,24 @@ export default function OfferReceived({ selectedCard, }) {
             py: 4,
             pr: {
               xs: 2,
-              lg: 5,
+              lg: 5
             },
             pl: {
               xs: 2,
-              lg: 0,
-            },
+              lg: 0
+            }
           }}
         >
           <Box
             sx={{
               display: {
                 xs: 'block',
-                sm: 'flex',
+                sm: 'flex'
               },
               alignItems: 'end',
               justifyContent: 'end',
               gridColumn: {
-                md: '1/6',
+                md: '1/6'
               },
               gap: 2,
               '& button': {
@@ -713,14 +695,14 @@ export default function OfferReceived({ selectedCard, }) {
                 height: 44,
                 mr: {
                   xs: 2,
-                  sm: 0,
+                  sm: 0
                 },
                 borderRadius: '10.19px',
                 mt: {
                   xs: 2,
-                  sm: 0,
-                },
-              },
+                  sm: 0
+                }
+              }
             }}
           >
             <Button
@@ -730,7 +712,7 @@ export default function OfferReceived({ selectedCard, }) {
                 width: 150,
                 // width:'100%',
                 background:
-                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
+                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
               }}
             >
               Accept Offer
