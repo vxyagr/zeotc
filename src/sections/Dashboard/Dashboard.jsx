@@ -125,7 +125,7 @@ export default function DashboardSection() {
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
 
-  console.log(date, '<<<<<<< date bro');
+  //console.log(date, '<<<<<<< date bro');
 
   return (
     <Box
@@ -226,23 +226,7 @@ export default function DashboardSection() {
               md: 16
             }
           }}
-        >
-          <Button
-            variant='contained'
-            sx={{
-              py: 2,
-              transform: 'matrix(1, 0, 0, -1, 0, 0)'
-            }}
-          >
-            <Box
-              component='img'
-              src='/assets/svg/MyOtc.svg'
-              sx={{
-                width: 20
-              }}
-            />
-          </Button>
-        </Box>
+        ></Box>
 
         <Box
           sx={{

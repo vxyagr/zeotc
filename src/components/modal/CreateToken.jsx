@@ -12,7 +12,8 @@ import CustomNft from 'components/CustomNft';
 import {
   useQueryGetUserNFTs,
   useQuerySearchNFTs,
-  useQuerySearchTokens
+  useQuerySearchTokens,
+  useQueryGetUserNFTBalance
 } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
@@ -33,13 +34,13 @@ const style = {
   outline: 'none',
   height: {
     xs: '90vh',
-    sm: '70vh',
+    sm: '70vh'
   },
   overflow: 'auto',
   py: {
     xs: 2,
-    md: 0,
-  },
+    md: 0
+  }
 };
 
 export default function CreateToken({
@@ -48,7 +49,7 @@ export default function CreateToken({
   isReceived,
   handleProducts,
   counterArr,
-  productDetailsA,
+  productDetailsA
 }) {
   const dispatch = useDispatch();
   const [activeButton, setActiveButton] = useState('Token');
@@ -59,15 +60,15 @@ export default function CreateToken({
   const TAB_OPTIONS = [
     {
       label: 'Token',
-      component: tokensData,
+      component: tokensData
     },
     {
       label: 'NFTs',
-      component: nftsData,
+      component: nftsData
     },
     {
       label: 'Custom',
-      component: <CustomNft />,
+      component: <CustomNft />
     }
   ];
 
@@ -80,13 +81,13 @@ export default function CreateToken({
 
   const newSearchInput = searchInput || privateInput;
 
-  const { data: getUserNfts, } = useQueryGetUserNFTs();
-  const { data: searchTokens, refetch: tokensRefetch, } = useQuerySearchTokens({
-    account: newSearchInput,
+  const { data: getUserNfts } = useQueryGetUserNFTs();
+  const { data: searchTokens, refetch: tokensRefetch } = useQuerySearchTokens({
+    account: newSearchInput
   });
 
-  const { data: searchNFTs, refetch: nftRefetch, } = useQuerySearchNFTs({
-    account: newSearchInput,
+  const { data: searchNFTs, refetch: nftRefetch } = useQuerySearchNFTs({
+    account: newSearchInput
   });
 
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
@@ -135,8 +136,7 @@ export default function CreateToken({
     } else if (newSearchInput?.length !== 42 && !isReceived) {
       console.log('ON searchInput');
 
-      const { nftsData, tokensData, } = getUserNfts || {
-};
+      const { nftsData, tokensData } = getUserNfts || {};
       setTokensData(tokensData);
       setNftsData(nftsData);
     }
@@ -167,8 +167,8 @@ export default function CreateToken({
                 gridTemplateColumns: {
                   xs: 'repeat(1,1fr)',
                   sm: 'repeat(2, 1fr)',
-                  md: 'repeat(3, 1fr)',
-                },
+                  md: 'repeat(3, 1fr)'
+                }
               }}
             >
               {/* Modal part 1 */}
@@ -180,8 +180,8 @@ export default function CreateToken({
                   pt: 2,
                   gridColumn: {
                     xs: '1/2',
-                    sm: '1/3',
-                  },
+                    sm: '1/3'
+                  }
                 }}
               >
                 {/* modal header */}
@@ -189,7 +189,7 @@ export default function CreateToken({
                 <Box
                   sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
                   <Typography
@@ -198,17 +198,14 @@ export default function CreateToken({
                     component='h2'
                     sx={{
                       flexGrow: 1,
-                      textAlign: 'center',
+                      textAlign: 'center'
                     }}
                   >
                     Choose what you want to {isReceived ? 'receive' : 'offer'}
                   </Typography>
 
                   <IconButton onClick={handleClose}>
-                    <Box
-                      component='img'
-                      src='/assets/svg/close.svg'
-                    />
+                    <Box component='img' src='/assets/svg/close.svg' />
                   </IconButton>
                 </Box>
 
@@ -218,10 +215,10 @@ export default function CreateToken({
                   sx={{
                     display: {
                       xs: 'block',
-                      sm: 'flex',
+                      sm: 'flex'
                     },
                     alignItems: 'center',
-                    mt: 2,
+                    mt: 2
                   }}
                 >
                   <Box
@@ -230,15 +227,15 @@ export default function CreateToken({
                       borderRadius: '12px',
                       maxWidth: {
                         xs: '100%',
-                        sm: 321,
+                        sm: 321
                       },
                       width: '100%',
                       display: 'grid',
                       gridTemplateColumns: 'repeat(3, 1fr)',
                       my: {
                         xs: 2,
-                        sm: 0,
-                      },
+                        sm: 0
+                      }
                     }}
                   >
                     {TAB_OPTIONS.map((btn, idx) => (
@@ -255,7 +252,7 @@ export default function CreateToken({
                           color: '#fff',
                           px: 2,
                           py: 1,
-                          gap: 1,
+                          gap: 1
                         }}
                       >
                         {btn.label}
@@ -277,17 +274,17 @@ export default function CreateToken({
                         px: 3,
                         maxWidth: {
                           xs: '100%',
-                          sm: 260,
+                          sm: 260
                         },
                         width: '100%',
                         outline: 'none',
                         border: 'none',
                         borderRadius: '12px',
                         ml: {
-                          sm: 3,
+                          sm: 3
                         },
                         height: 46,
-                        fontFamily: 'Poppins',
+                        fontFamily: 'Poppins'
                       }}
                     />
                   )}
@@ -300,10 +297,10 @@ export default function CreateToken({
                     display: 'grid',
                     gridTemplateColumns: {
                       xs: 'repeat(1, 1fr)',
-                      sm: 'repeat(2, 1fr)',
+                      sm: 'repeat(2, 1fr)'
                     },
                     columnGap: 2,
-                    mt: 2,
+                    mt: 2
                   }}
                 >
                   {TAB_OPTIONS.map((item, idx) => {
@@ -330,9 +327,9 @@ export default function CreateToken({
                         // custom component
                         return (
                           <Box
-                          key={item?.label + idx}
+                            key={item?.label + idx}
                             sx={{
-                              gridColumn: '1/-1',
+                              gridColumn: '1/-1'
                             }}
                           >
                             {item.component}
@@ -362,7 +359,7 @@ export default function CreateToken({
                       mx: 'auto',
                       cursor: 'pointer',
                       textAlign: 'center',
-                      width: 'fit-content',
+                      width: 'fit-content'
                     }}
                   >
                     Load More
@@ -378,7 +375,7 @@ export default function CreateToken({
                   borderLeft: '0.4px solid #4D4D4D',
                   display: 'flex',
                   flexDirection: 'column',
-                  minHeight: '70vh',
+                  minHeight: '70vh'
                 }}
               >
                 <Typography variant='h5'>Selected Assets</Typography>
@@ -386,7 +383,7 @@ export default function CreateToken({
                 <Box
                   sx={{
                     mt: 2,
-                    flexGrow: 1,
+                    flexGrow: 1
                   }}
                 >
                   {!isReceived &&
@@ -454,7 +451,7 @@ export default function CreateToken({
                     background:
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
                     py: 1.3,
-                    borderRadius: '10.1927px',
+                    borderRadius: '10.1927px'
                   }}
                 >
                   CONFIRM selection

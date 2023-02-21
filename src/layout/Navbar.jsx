@@ -70,18 +70,6 @@ export default function Navbar({ handleDrawerOpen }) {
               alignItems: 'center'
             }}
           >
-            <DarkModeSwitch />
-
-            <IconButton>
-              <Box
-                component='img'
-                src='/assets/svg/notification.svg'
-                sx={{
-                  width: 25
-                }}
-              />
-            </IconButton>
-
             {/* <OutlineSelect /> */}
 
             <Box
