@@ -298,9 +298,10 @@ export const getExpieredTime = (
 
   return formatSplited
     .map((time) => {
-      return `${timeDurationObject.get(time)}${
-        shortHand ? time : sortHandMapping[time]
-      }`;
+      const timeValue =
+        timeDurationObject.get(time) < 0 ? 0 : timeDurationObject.get(time);
+
+      return `${timeValue}${shortHand ? time : sortHandMapping[time]}`;
     })
     .join(' : ');
 };
