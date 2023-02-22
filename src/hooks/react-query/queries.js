@@ -84,13 +84,14 @@ export const useQueriesFilterMarketPlaceData = (
   isTrade = false
 ) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
-  console.log('total swap ' + zeSwapIdList.length);
+  //console.log('total swap ' + zeSwapIdList.length);
   //console.log(JSON.stringify(zeSwapIdList));
   const queryFn = async (swap_id) => {
     const data = [];
 
     const swap = await zeoTC_Contract.get_zeSwap(swap_id);
-    console.log(JSON.stringify(swap));
+    //console.log('getting swap id ' + swap_id.toString());
+    //console.log(JSON.stringify(swap));
     data[swap_id] = {
       swap: swap,
       swap_id
@@ -128,6 +129,83 @@ export const useQueriesFilterMarketPlaceData = (
           metadata
         });
       }
+    }
+
+    return Object.values(data);
+  };
+
+  const queries = zeSwapIdList?.map((swap_id, idx) => ({
+    queryKey: [queryKeys.getQueriesSwapDetails, swap_id],
+    queryFn: () => queryFn(swap_id),
+    enabled: !!zeoTC_Contract && !!zeSwapIdList
+  }));
+  const results = useQueries({
+    queries
+  });
+
+  return results?.map((result) => result.data?.[0]);
+};
+
+export const useQueriesFilterCounterOfferData = (
+  zeSwapIdList = [],
+  offerIdList = [],
+  isTrade = false
+) => {
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  //console.log('total swap ' + zeSwapIdList.length);
+  //console.log(JSON.stringify(zeSwapIdList));
+
+  const queryFn = async (offer_id) => {
+    const data = [];
+
+    let swap_id_ = '0x1';
+    const { swaplist } = useQueryZeSwapIdList();
+    for (const swap_id of swaplist) {
+      const swap = await zeoTC_Contract.get_zeSwap(swap_id);
+      for (const offer_id_ of swap.offers) {
+        if (offer_id_ == order_id) {
+          swap_id_ = swap_id;
+          break;
+        }
+      }
+    }
+    //console.log('getting swap id ' + swap_id.toString());
+    //console.log(JSON.stringify(swap));
+    data[swap_id_] = {
+      swap: swap,
+      swap_id_
+    };
+
+    const offer = await zeoTC_Contract.get_offers(offer_id);
+
+    data[swap_id] = {
+      ...data[swap_id],
+      offer,
+      productA: [],
+      productB: []
+    };
+
+    for (const productA_id of offer.product_A_ids) {
+      const product = await zeoTC_Contract.get_product(productA_id);
+      let amount = product.amount.toString();
+      amount = Number(amount);
+
+      const metadata = await getMetaData(product?.token);
+
+      data[swap_id].productA.push({
+        ...product,
+        metadata
+      });
+    }
+
+    for (const productB_id of offer.product_B_ids) {
+      const product = await zeoTC_Contract.get_product(productB_id);
+      const metadata = await getMetaData(product.token);
+
+      data[swap_id].productB.push({
+        ...product,
+        metadata
+      });
     }
 
     return Object.values(data);
@@ -398,7 +476,14 @@ export const useQueryCounterOfferIdList = () => {
   const queryKey = [queryKeys.createCounterOffer, account];
 
   const queryFn = async () => {
-    return await zeoTC_Contract.get_counter_offers_id_list(account);
+    const offersList = await zeoTC_Contract.get_counter_offers_id_list(account);
+    console.log('offers : ' + JSON.stringify(offersList));
+    for (const offer of offersList) {
+      console.log('offer list ' + JSON.stringify(offer));
+      const theoffer = await zeoTC_Contract.get_offers(offer);
+      console.log('theoffer ' + JSON.stringify(theoffer));
+    }
+    return offersList;
   };
 
   return useQuery(queryKey, queryFn, {

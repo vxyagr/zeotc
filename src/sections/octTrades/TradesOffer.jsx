@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import {
   useQueriesFilterMarketPlaceData,
   useQueryCounterOfferIdList,
+  useQueriesFilterCounterOfferData,
   useQueryMyZeSwapId,
   useQueryOfferId
 } from 'hooks/react-query/queries';
@@ -12,7 +13,7 @@ import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 export default function TradesOffer() {
   const { data: counterOfferIdList } = useQueryCounterOfferIdList();
 
-  const newZeSwapList = useQueriesFilterMarketPlaceData(
+  const newZeSwapList = useQueriesFilterCounterOfferData(
     counterOfferIdList,
     true
   );
