@@ -84,12 +84,13 @@ export const useQueriesFilterMarketPlaceData = (
   isTrade = false
 ) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
-
+  console.log('total swap ' + zeSwapIdList.length);
+  //console.log(JSON.stringify(zeSwapIdList));
   const queryFn = async (swap_id) => {
     const data = [];
 
     const swap = await zeoTC_Contract.get_zeSwap(swap_id);
-
+    console.log(JSON.stringify(swap));
     data[swap_id] = {
       swap: swap,
       swap_id

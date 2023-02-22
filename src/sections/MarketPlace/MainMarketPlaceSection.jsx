@@ -109,7 +109,7 @@ export default function MainMarketPlaceSection() {
             >
               <Box
                 component='img'
-                src='/assets/svg/no-wallet-connection.png'
+                src='/assets/svg/disconnect-12.svg'
                 sx={{
                   width: 300,
                   height: 300

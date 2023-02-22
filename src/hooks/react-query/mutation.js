@@ -221,8 +221,12 @@ export const useMutationSwapCounterOffer = () => {
 
   const queryKey = [queryKeys.getZeSwapIdList];
   const mutationFn = async ({ id: data, product }) => {
+    //console.log(JSON.stringify(data));
     const supplier = data?.swap?.supplier;
     const demander = data?.swap[2];
+    console.log('swap creator ' + supplier);
+    console.log('counter : ' + demander);
+    //return;
     const offer_id = data?.swap?.offers?.[0];
     const productA = data?.productA;
     const productB = data?.productB;

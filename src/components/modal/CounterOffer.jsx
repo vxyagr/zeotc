@@ -22,11 +22,11 @@ const style = {
   borderRadius: '14.754px',
   outline: 'none',
   height: {
- xs: '90vh',
-sm: '70vh', 
-},
+    xs: '90vh',
+    sm: '70vh'
+  },
   overflow: 'auto',
-  p: 4,
+  p: 4
 };
 
 const TAB_OPTIONS = ['Token', 'NFTs', 'Custom'];
@@ -38,7 +38,7 @@ const OFFERS_DATA = [
     price: '$1,348.67',
     value: 'Amount',
     status: 'Available',
-    img: '/assets/images/ethereum.png',
+    img: '/assets/images/ethereum.png'
   },
   {
     id: 2,
@@ -46,7 +46,7 @@ const OFFERS_DATA = [
     price: '$19,384.47',
     value: 'Amount',
     status: 'Available',
-    img: '/assets/images/Bitcoin.png',
+    img: '/assets/images/Bitcoin.png'
   },
   {
     id: 3,
@@ -54,7 +54,7 @@ const OFFERS_DATA = [
     price: '$0.999149',
     value: 'Amount',
     status: 'Available',
-    img: '/assets/images/Dollar.png',
+    img: '/assets/images/Dollar.png'
   },
   {
     id: 4,
@@ -62,7 +62,7 @@ const OFFERS_DATA = [
     price: '$274.41',
     value: '152',
     status: 'Not available',
-    img: '/assets/images/Bnb.png',
+    img: '/assets/images/Bnb.png'
   },
   {
     id: 5,
@@ -70,7 +70,7 @@ const OFFERS_DATA = [
     price: '$0.999149',
     value: 'Amount',
     status: 'Available',
-    img: '/assets/images/Dollar.png',
+    img: '/assets/images/Dollar.png'
   },
   {
     id: 6,
@@ -78,11 +78,11 @@ const OFFERS_DATA = [
     price: '$274.41',
     value: '152',
     status: 'Not available',
-    img: '/assets/images/Bnb.png',
+    img: '/assets/images/Bnb.png'
   }
 ];
 
-export default function CounterOffer({ handleClose, open, isReceived, }) {
+export default function CounterOffer({ handleClose, open, isReceived }) {
   const [activeButton, setActiveButton] = useState('Token');
   const [selectedCard, setSelectedCard] = useState([]);
 
@@ -102,27 +102,24 @@ export default function CounterOffer({ handleClose, open, isReceived, }) {
 
             <Box
               sx={{
- display: 'flex',
-alignItems: 'center', 
-}}
+                display: 'flex',
+                alignItems: 'center'
+              }}
             >
               <Typography
                 id='modal-modal-title'
                 variant='h5'
                 component='h2'
                 sx={{
- flexGrow: 1,
-textAlign: 'center', 
-}}
+                  flexGrow: 1,
+                  textAlign: 'center'
+                }}
               >
                 Counter Offer
               </Typography>
 
               <IconButton onClick={handleClose}>
-                <Box
-                  component='img'
-                  src='/assets/svg/close.svg'
-                />
+                <Box component='img' src='/assets/svg/close.svg' />
               </IconButton>
             </Box>
 
@@ -137,12 +134,12 @@ textAlign: 'center',
                 borderRadius: '12px',
                 px: 2,
                 display: {
- xs: 'none',
-lg: 'flex', 
-},
+                  xs: 'none',
+                  lg: 'flex'
+                },
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                height: 46,
+                height: 46
               }}
             >
               <Typography variant='subtitle1'>Expiration</Typography>
@@ -151,8 +148,8 @@ lg: 'flex',
                 component='img'
                 src='/assets/svg/arrowDown.svg'
                 sx={{
- width: 10, 
-}}
+                  width: 10
+                }}
               />
             </Box>
 
@@ -161,10 +158,10 @@ lg: 'flex',
                 display: 'grid',
                 gridTemplateColumns: {
                   xs: 'repeat(1 , 1fr)',
-                  md: 'repeat(5, 1fr)',
+                  md: 'repeat(5, 1fr)'
                 },
                 gap: 2,
-                justifyContent: 'space-between',
+                justifyContent: 'space-between'
                 // px: { xs: 2, md: 5.5 },
                 // py: 5,
               }}
@@ -172,16 +169,18 @@ lg: 'flex',
               <Box
                 sx={{
                   gridColumn: {
- md: '1/3', 
-},
+                    md: '1/3'
+                  }
                 }}
               >
                 <Typography
                   sx={{
- px: 2,
-my: 2, 
-}}
-                >You will provide</Typography>
+                    px: 2,
+                    my: 2
+                  }}
+                >
+                  You will provide
+                </Typography>
 
                 <OfferCard
                   title='Ethereum'
@@ -213,7 +212,7 @@ my: 2,
                     background: (theme) => theme.palette.primary.main,
                     py: 2,
                     textAlign: 'center',
-                    cursor: 'pointer',
+                    cursor: 'pointer'
                   }}
                 >
                   <Typography variant='subtitle1'>
@@ -228,8 +227,8 @@ my: 2,
                 sx={{
                   justifySelf: 'center',
                   mt: {
- md: 16, 
-},
+                    md: 16
+                  }
                 }}
               >
                 <Button
@@ -237,15 +236,15 @@ my: 2,
                   sx={{
                     py: 2,
                     transform: 'matrix(1, 0, 0, -1, 0, 0)',
-                    borderRadius: 2,
+                    borderRadius: 2
                   }}
                 >
                   <Box
                     component='img'
                     src='/assets/svg/MyOtc.svg'
                     sx={{
- width: 20, 
-}}
+                      width: 20
+                    }}
                   />
                 </Button>
               </Box>
@@ -253,15 +252,17 @@ my: 2,
               <Box
                 sx={{
                   gridColumn: {
- md: '4/6', 
-},
+                    md: '4/6'
+                  }
                 }}
               >
                 <Typography
                   sx={{
- my: 2, 
-}}
-                >You will receive</Typography>
+                    my: 2
+                  }}
+                >
+                  You will receive
+                </Typography>
 
                 <OfferCard
                   title='Ethereum'
@@ -279,14 +280,10 @@ my: 2,
                     background: (theme) => theme.palette.primary.main,
                     py: 2,
                     textAlign: 'center',
-                    cursor: 'pointer',
+                    cursor: 'pointer'
                   }}
                 >
-                  <Typography
-                    variant='subtitle1'
-                    sx={{
-}}
-                  >
+                  <Typography variant='subtitle1' sx={{}}>
                     + Add new Token or NFT
                   </Typography>
                 </Box>

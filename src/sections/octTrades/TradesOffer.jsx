@@ -10,19 +10,21 @@ import {
 import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 
 export default function TradesOffer() {
-  const { data: counterOfferIdList, } = useQueryCounterOfferIdList();
-  
+  const { data: counterOfferIdList } = useQueryCounterOfferIdList();
 
   const newZeSwapList = useQueriesFilterMarketPlaceData(
     counterOfferIdList,
     true
   );
 
-
+  const basicList = counterOfferIdList;
+  //console.log(JSON.stringify(newZeSwapList));
+  //console.log('total counter' + basicList.length);
+  //console.log(JSON.stringify(basicList));
   return (
     <Box
       sx={{
-        mb: 4,
+        mb: 4
       }}
     >
       <Box>
