@@ -125,8 +125,6 @@ export default function DashboardSection() {
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
 
-  //console.log(date, '<<<<<<< date bro');
-
   return (
     <Box
       sx={{

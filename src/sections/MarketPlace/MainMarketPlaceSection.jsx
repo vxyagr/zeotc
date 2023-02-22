@@ -1,14 +1,14 @@
 import { useEffect, useState, useMemo } from 'react';
 
+import { Box, Typography } from '@mui/material';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import Fuse from 'fuse.js';
 import { useAccount } from 'wagmi';
 
-import { Box, Typography } from '@mui/material';
-import Fuse from 'fuse.js';
-import debounce from 'lodash.debounce';
-
-import { Border } from 'components/Style';
-
 import MarketPlaceHeader from 'components/MarketPlaceHeader';
+import { Border } from 'components/Style';
 import {
   useQueriesFilterMarketPlaceData,
   useQueryZeSwapIdList
@@ -16,19 +16,15 @@ import {
 
 import MarketPlaceSection from './MarketPlaceSection';
 
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
 export default function MainMarketPlaceSection() {
   const { isConnected } = useAccount();
   const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
-
-  let newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
-  newZeSwapList = newZeSwapList?.reverse();
+  const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
+  const [sort, setSort] = useState('ASC');
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
-
-  useEffect(() => {
-    console.log(isConnected, '<<<<<<<< ');
-  }, [isConnected]);
-
-  // const allFinished = newZeSwapList?.some((data) => data);
 
   const allFinished = useMemo(() => {
     if (newZeSwapList.length !== 0) {
@@ -46,20 +42,33 @@ export default function MainMarketPlaceSection() {
     return false;
   }, [newZeSwapList]);
 
-  useEffect(() => {
-    console.log(allFinished, '<<<<<< allFinished');
+  const sortSwap = (swapList) => {
+    console.log('<<<<< wadiaw ciaw');
 
-    if (allFinished) {
-      // all the queries have executed successfully
-      setFilteredZeSwapIdList(newZeSwapList);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allFinished]);
+    return swapList.sort((a, b) => {
+      const expireTimeA =
+        sort === 'ASC'
+          ? dayjs.unix(a.swap.expiration.toString())
+          : dayjs.unix(b.swap.expiration.toString());
+      const expireTimeB =
+        sort === 'ASC'
+          ? dayjs.unix(b.swap.expiration.toString())
+          : dayjs.unix(a.swap.expiration.toString());
 
-  // const handleClicked = (data) => {
-  //   console.log(data);
-  //   router.push('/marketPlace/swap');
-  // };
+      return expireTimeA - expireTimeB;
+    });
+  };
+
+  const normalizeSwapList = (swapList) => {
+    let filterResult = swapList;
+
+    // remove expired swap
+    filterResult = filterResult.filter((singleSwap) =>
+      dayjs().isBefore(dayjs.unix(singleSwap.swap.expiration.toString()))
+    );
+
+    return sortSwap(filterResult);
+  };
 
   const handleSearch = (data) => {
     if (data) {
@@ -69,19 +78,45 @@ export default function MainMarketPlaceSection() {
       };
       const fuse = new Fuse(newZeSwapList, options);
       const result = fuse.search(data).map((swap) => swap.item);
-      setFilteredZeSwapIdList(result);
+      setFilteredZeSwapIdList(normalizeSwapList(result));
     } else {
       const newList = newZeSwapList;
       setFilteredZeSwapIdList(newList);
     }
   };
 
-  const debouncedSearchChange = useMemo(() => debounce(handleSearch, 700), []);
+  useEffect(() => {
+    if (allFinished) {
+      // all the queries have executed successfully
+      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFinished]);
+
+  useEffect(() => {
+    if (filteredZeSwapIdList) {
+      setFilteredZeSwapIdList((curr) => {
+        return sortSwap(curr);
+      });
+    }
+  }, [sort]);
 
   return (
     <Box>
       <Box>
-        <MarketPlaceHeader handleSearch={debouncedSearchChange} />
+        <MarketPlaceHeader
+          sortType={sort}
+          setSortType={() => {
+            setSort((curr) => {
+              if (curr === 'ASC') {
+                return 'DESC';
+              }
+
+              return 'ASC';
+            });
+          }}
+          handleSearch={handleSearch}
+        />
 
         {!isConnected ? (
           <Box
