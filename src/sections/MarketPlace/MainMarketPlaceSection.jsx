@@ -42,16 +42,14 @@ export default function MainMarketPlaceSection() {
     return false;
   }, [newZeSwapList]);
 
-  const sortSwap = (swapList) => {
-    console.log('<<<<< wadiaw ciaw');
-
+  const sortSwap = (swapList, sortType) => {
     return swapList.sort((a, b) => {
       const expireTimeA =
-        sort === 'ASC'
+        sortType === 'ASC'
           ? dayjs.unix(a.swap.expiration.toString())
           : dayjs.unix(b.swap.expiration.toString());
       const expireTimeB =
-        sort === 'ASC'
+        sortType === 'ASC'
           ? dayjs.unix(b.swap.expiration.toString())
           : dayjs.unix(a.swap.expiration.toString());
 
@@ -67,7 +65,7 @@ export default function MainMarketPlaceSection() {
       dayjs().isBefore(dayjs.unix(singleSwap.swap.expiration.toString()))
     );
 
-    return sortSwap(filterResult);
+    return sortSwap(filterResult, sort);
   };
 
   const handleSearch = (data) => {
@@ -76,11 +74,12 @@ export default function MainMarketPlaceSection() {
         threshold: 0.1,
         keys: ['offer', 'productA.metadata.name', 'productB.metadata.name']
       };
+
       const fuse = new Fuse(newZeSwapList, options);
       const result = fuse.search(data).map((swap) => swap.item);
       setFilteredZeSwapIdList(normalizeSwapList(result));
     } else {
-      const newList = newZeSwapList;
+      const newList = normalizeSwapList(newZeSwapList);
       setFilteredZeSwapIdList(newList);
     }
   };
@@ -96,7 +95,9 @@ export default function MainMarketPlaceSection() {
   useEffect(() => {
     if (filteredZeSwapIdList) {
       setFilteredZeSwapIdList((curr) => {
-        return sortSwap(curr);
+        const currentSwapList = [...curr];
+
+        return sortSwap(currentSwapList, sort);
       });
     }
   }, [sort]);
