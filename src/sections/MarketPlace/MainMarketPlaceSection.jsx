@@ -15,6 +15,11 @@ import {
 } from 'hooks/react-query/queries';
 
 import MarketPlaceSection from './MarketPlaceSection';
+import {
+  swapLocalSearch,
+  normalizeSwapList,
+  sortSwapByExpireDate
+} from '../../helpers/utilities';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -42,52 +47,10 @@ export default function MainMarketPlaceSection() {
     return false;
   }, [newZeSwapList]);
 
-  const sortSwap = (swapList, sortType) => {
-    return swapList.sort((a, b) => {
-      const expireTimeA =
-        sortType === 'ASC'
-          ? dayjs.unix(a.swap.expiration.toString())
-          : dayjs.unix(b.swap.expiration.toString());
-      const expireTimeB =
-        sortType === 'ASC'
-          ? dayjs.unix(b.swap.expiration.toString())
-          : dayjs.unix(a.swap.expiration.toString());
-
-      return expireTimeA - expireTimeB;
-    });
-  };
-
-  const normalizeSwapList = (swapList) => {
-    let filterResult = swapList;
-
-    // remove expired swap
-    filterResult = filterResult.filter((singleSwap) =>
-      dayjs().isBefore(dayjs.unix(singleSwap.swap.expiration.toString()))
-    );
-
-    return sortSwap(filterResult, sort);
-  };
-
-  const handleSearch = (data) => {
-    if (data) {
-      const options = {
-        threshold: 0.1,
-        keys: ['offer', 'productA.metadata.name', 'productB.metadata.name']
-      };
-
-      const fuse = new Fuse(newZeSwapList, options);
-      const result = fuse.search(data).map((swap) => swap.item);
-      setFilteredZeSwapIdList(normalizeSwapList(result));
-    } else {
-      const newList = normalizeSwapList(newZeSwapList);
-      setFilteredZeSwapIdList(newList);
-    }
-  };
-
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
-      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList));
+      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);
@@ -97,9 +60,10 @@ export default function MainMarketPlaceSection() {
       setFilteredZeSwapIdList((curr) => {
         const currentSwapList = [...curr];
 
-        return sortSwap(currentSwapList, sort);
+        return sortSwapByExpireDate(sort, currentSwapList);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort]);
 
   return (
@@ -116,7 +80,15 @@ export default function MainMarketPlaceSection() {
               return 'ASC';
             });
           }}
-          handleSearch={handleSearch}
+          handleSearch={(searchValues) => {
+            const searchResult = swapLocalSearch(
+              searchValues,
+              newZeSwapList,
+              sort,
+              true
+            );
+            setFilteredZeSwapIdList(searchResult);
+          }}
         />
 
         {!isConnected ? (
