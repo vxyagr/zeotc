@@ -5,14 +5,13 @@ import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 
 import OtcHeader from '../../components/OtcHeader';
-import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 import SwapOffer from './SwapHistory';
 import TradesOffer from './TradesOffer';
 import Swaps from './Swaps';
 
 export default function OTCTrades() {
   const activeTab = useSelector((state) => state.otcTrades.currentTab);
-  const [searchValues, setSearchValues] = useState('');
+  const [searchValues, setSearchValues] = useState(null);
   const [sort, setSort] = useState('ASC');
 
   const TABS_DATA = [

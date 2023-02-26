@@ -23,7 +23,7 @@ export default function SwapOffer({ searchValues, sort }) {
   }, [newZeSwapList]);
 
   useEffect(() => {
-    if (filteredZeSwapIdList && searchValues) {
+    if (filteredZeSwapIdList && searchValues !== null) {
       setFilteredZeSwapIdList(swapLocalSearch(searchValues, newZeSwapList));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,7 +37,7 @@ export default function SwapOffer({ searchValues, sort }) {
   }, [sort]);
 
   useEffect(() => {
-    if (!searchValues && !swapListChange) {
+    if (searchValues === null && !swapListChange) {
       setFilteredZeSwapIdList(newZeSwapList);
     }
   }, [swapListChange]);

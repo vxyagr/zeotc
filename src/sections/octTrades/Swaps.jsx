@@ -39,7 +39,7 @@ export default function Swaps({ searchValues, sort }) {
   }, [newZeSwapList]);
 
   useEffect(() => {
-    if (allFinished && searchValues) {
+    if (allFinished && searchValues !== null) {
       setFilteredZeSwapIdList(swapLocalSearch(searchValues, newZeSwapList));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

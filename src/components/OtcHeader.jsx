@@ -216,7 +216,7 @@ export default function OtcHeader({ searchFunction, sortType, setSortType }) {
           <Box
             component='input'
             type='text'
-            placeholder='Search by asset address, asset name'
+            placeholder='Search by asset name or swap id'
             onChange={(e) => searchFunction(e.target.value)}
             sx={{
               px: 3,
