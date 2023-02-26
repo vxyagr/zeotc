@@ -4,6 +4,7 @@ import {
   useQueriesFilterMarketPlaceData,
   useQueryCounterOfferIdList,
   useQueriesFilterCounterOfferData,
+  useQueryZeSwapIdList,
   useQueryMyZeSwapId,
   useQueryOfferId
 } from 'hooks/react-query/queries';
@@ -12,8 +13,10 @@ import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 
 export default function TradesOffer() {
   const { data: counterOfferIdList } = useQueryCounterOfferIdList();
+  const { data: swaplist_ } = useQueryZeSwapIdList();
 
   const newZeSwapList = useQueriesFilterCounterOfferData(
+    swaplist_,
     counterOfferIdList,
     true
   );

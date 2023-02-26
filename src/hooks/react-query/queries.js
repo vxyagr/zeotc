@@ -152,17 +152,21 @@ export const useQueriesFilterCounterOfferData = (
   isTrade = false
 ) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  console.log('filtering offers ');
   //console.log('total swap ' + zeSwapIdList.length);
   //console.log(JSON.stringify(zeSwapIdList));
-
-  const queryFn = async (offer_id) => {
+  //const { swaplist } = useQueryZeSwapIdList();
+  //swaplist_ = zeSwapIdList;
+  const queryFn = async (offer_id, swaplist_) => {
     const data = [];
     console.log('looping offer id ' + offer_id);
     let swap_id_ = '0x1';
-    const { swaplist } = useQueryZeSwapIdList();
-    for (const swap_id of swaplist) {
+
+    console.log('swaplist : ' + JSON.stringify(swaplist_));
+    for (const swap_id of swaplist_) {
       const swap = await zeoTC_Contract.get_zeSwap(swap_id);
       for (const offer_id_ of swap.offers) {
+        console.log('the swap id ' + swap_id);
         if (offer_id_ == offer_id) {
           swap_id_ = swap_id;
           break;
@@ -212,9 +216,9 @@ export const useQueriesFilterCounterOfferData = (
     return Object.values(data);
   };
 
-  const queries = zeSwapIdList?.map((swap_id, idx) => ({
-    queryKey: [queryKeys.getQueriesSwapDetails, swap_id],
-    queryFn: () => queryFn(swap_id),
+  const queries = offerIdList?.map((offer_id, idx) => ({
+    queryKey: [queryKeys.getQueriesSwapDetails, offer_id],
+    queryFn: () => queryFn(offer_id, zeSwapIdList),
     enabled: !!zeoTC_Contract && !!zeSwapIdList
   }));
   const results = useQueries({
