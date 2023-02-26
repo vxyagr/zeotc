@@ -111,12 +111,15 @@ export default function MainMarketPlaceSection() {
                 component='img'
                 src='/assets/svg/disconnect-12.svg'
                 sx={{
-                  width: 300,
-                  height: 300
+                  width: 70,
+                  height: 70
                 }}
               />
 
-              <Typography>No Wallet Connection</Typography>
+              <Typography>
+                <br />
+                No Wallet Connection
+              </Typography>
 
               <Typography
                 sx={{

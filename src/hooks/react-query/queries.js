@@ -157,18 +157,19 @@ export const useQueriesFilterCounterOfferData = (
 
   const queryFn = async (offer_id) => {
     const data = [];
-
+    console.log('looping offer id ' + offer_id);
     let swap_id_ = '0x1';
     const { swaplist } = useQueryZeSwapIdList();
     for (const swap_id of swaplist) {
       const swap = await zeoTC_Contract.get_zeSwap(swap_id);
       for (const offer_id_ of swap.offers) {
-        if (offer_id_ == order_id) {
+        if (offer_id_ == offer_id) {
           swap_id_ = swap_id;
           break;
         }
       }
     }
+    console.log('found swap id ' + swap_id_);
     //console.log('getting swap id ' + swap_id.toString());
     //console.log(JSON.stringify(swap));
     data[swap_id_] = {

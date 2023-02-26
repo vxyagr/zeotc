@@ -89,10 +89,10 @@ export default function OfferCard({
   // }, [card?.amount, card?.metadata?.decimals, handleProductAmountA]);
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
-  const cardTokenBalance =
-    card.IERC.toString() == '20'
+  const cardTokenBalance = card.balance;
+  /*card.IERC.toString() == '20'
       ? card.balance / 1000000000000000000
-      : card.balance;
+      : card.balance;*/
 
   const handleChangeInputAmount = (value, selectedCard) => {
     setValueInput(value);

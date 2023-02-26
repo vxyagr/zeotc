@@ -18,6 +18,11 @@ export default function TradesOffer() {
     true
   );
 
+  /*const newZeSwapList = useQueriesFilterMarketPlaceData(
+    counterOfferIdList,
+    true
+  );*/
+
   const basicList = counterOfferIdList;
   //console.log(JSON.stringify(newZeSwapList));
   //console.log('total counter' + basicList.length);
