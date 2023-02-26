@@ -12,16 +12,11 @@ import debounce from 'lodash.debounce';
 
 import ERC20List from '../../public/assets/json/curatedErc20.json';
 import NFTList from '../../public/assets/json/curatedNFTs.json';
-
-import {
-  MOST_COMMON_ERC20,
-  MOST_COMMON_NFT,
-  MOST_COMMON_ERC20_GOERLI
-} from '../constant';
+import { MOST_COMMON_ERC20, MOST_COMMON_NFT } from '../constant';
 
 const mappingListAssets = {
   Token: {
-    common: MOST_COMMON_ERC20_GOERLI,
+    common: MOST_COMMON_ERC20[process.env.NEXT_PUBLIC_CHAIN],
     allList: ERC20List.tokens
   },
   NFTs: {

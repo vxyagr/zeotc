@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import DarkModeSwitch from 'components/ThemeSwitch';
 import WalletConnectButton from 'components/WalletConnectButton';
 
+import { MAPPING_CHAIN } from '../constant';
+
 export default function Navbar({ handleDrawerOpen }) {
   return (
     <Box
@@ -95,7 +97,9 @@ export default function Navbar({ handleDrawerOpen }) {
                 }}
               />
 
-              <Typography>Ethereum</Typography>
+              <Typography>
+                {MAPPING_CHAIN[process.env.NEXT_PUBLIC_CHAIN]}
+              </Typography>
             </Box>
 
             {/* </Box> */}
