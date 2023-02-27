@@ -39,7 +39,7 @@ export function getChainData(chainId) {
   return chainData;
 }
 
-export function switchNetwork(provider) {
+/*export function switchNetwork(provider) {
   const { chain_id: chainId, rpc_url: rpcUrl } = getChainData(NETWORK.ID);
 
   provider.request({
@@ -51,7 +51,7 @@ export function switchNetwork(provider) {
       }
     ]
   });
-}
+}*/
 
 export const conciseAddress = (address, startSlice = 6, endSlice = 3) =>
   `${address?.slice(0, startSlice)}...${address?.slice(
