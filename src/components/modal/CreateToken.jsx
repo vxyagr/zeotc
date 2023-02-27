@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CustomNft from 'components/CustomNft';
+import SearchAssets from 'components/SearchAssets';
 import {
   useQueryGetUserNFTs,
   useQuerySearchNFTs,
@@ -262,29 +263,11 @@ export default function CreateToken({
 
                   {/* search Input */}
 
-                  {isReceived && (
-                    <Box
-                      component='input'
-                      type='text'
-                      placeholder='Search by Name or ticket'
-                      value={newSearchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                      sx={{
-                        background: (theme) => theme.palette.primary.main,
-                        px: 3,
-                        maxWidth: {
-                          xs: '100%',
-                          sm: 260
-                        },
-                        width: '100%',
-                        outline: 'none',
-                        border: 'none',
-                        borderRadius: '12px',
-                        ml: {
-                          sm: 3
-                        },
-                        height: 46,
-                        fontFamily: 'Poppins'
+                  {isReceived && activeButton !== 'Custom' && (
+                    <SearchAssets
+                      assetType={activeButton}
+                      onSearchAssetAddress={(address) => {
+                        setSearchInput(address);
                       }}
                     />
                   )}

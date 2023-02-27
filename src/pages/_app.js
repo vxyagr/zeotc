@@ -21,9 +21,9 @@ import '@rainbow-me/rainbowkit/styles.css';
 import 'styles/globals.css';
 
 const { chains, provider } = configureChains(
-  [chain.goerli],
+  [chain[process.env.NEXT_PUBLIC_CHAIN]],
   [
-    alchemyProvider({ alchemyId: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
+    alchemyProvider({ alchemyId: process.env.NEXT_PUBLIC_CHAIN }),
     publicProvider()
   ]
 );
