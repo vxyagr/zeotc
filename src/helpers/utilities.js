@@ -14,7 +14,7 @@ import { supportedChains } from './chains';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-export function getChainData(chainId) {
+/* export function getChainData(chainId) {
   const chainData = supportedChains.find((chain) => chain.chain_id === chainId);
 
   if (!chainData) {
@@ -37,7 +37,7 @@ export function getChainData(chainId) {
   }
 
   return chainData;
-}
+}*/
 
 /*export function switchNetwork(provider) {
   const { chain_id: chainId, rpc_url: rpcUrl } = getChainData(NETWORK.ID);
