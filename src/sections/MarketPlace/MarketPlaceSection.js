@@ -16,7 +16,8 @@ import {
   useMutationAccept,
   useMutationReject,
   useMutationSwapAccept,
-  useMutationSwapCounterOffer
+  useMutationSwapCounterOffer,
+  useMutationCancelZeSwap
 } from 'hooks/react-query/mutation';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 
@@ -35,6 +36,8 @@ export default function MarketPlaceSection({
   const { mutate: acceptMutate } = useMutationSwapAccept();
 
   const { mutate: rejectOffer } = useMutationReject();
+
+  const { mutate: cancelSwap } = useMutationCancelZeSwap();
 
   const { mutate } = useMutationAccept();
   const [appStatus, setAppStatus] = useState('');
@@ -112,12 +115,17 @@ export default function MarketPlaceSection({
       ...zeSwapList,
       ProductA
     };
-
-    CounterOfferMutate(formattedData);
+    //console.log(JSON.stringify(zeSwapList));
+    //CounterOfferMutate(formattedData);
   };
 
   const handleSwapAccept = () => {
     acceptMutate(swap_id);
+  };
+
+  const handleSwapCancel = () => {
+    console.log('cancel swap');
+    cancelSwap(swap_id);
   };
 
   const handleFormateAmount = (item) => {
@@ -129,7 +137,7 @@ export default function MarketPlaceSection({
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
 
   const [SumOfAmountB, setSumOfAmountB] = useState(0);
-
+  //console.log(JSON.stringify(zeSwapList));
   useEffect(() => {
     let totalAmount =
       (ProductB?.length !== 0 &&
@@ -252,14 +260,6 @@ export default function MarketPlaceSection({
                 sm: 2,
                 md: 0,
                 lg: 0
-              }
-            }}
-            component={isMarketPlace && !isCopy.current ? Link : 'div'}
-            // component={Link}
-            href={{
-              pathname: '/marketPlace/swap',
-              query: {
-                id: `${swap_id}` // should be `title` not `id`
               }
             }}
           >
@@ -406,7 +406,7 @@ export default function MarketPlaceSection({
               pb: isOffer ? 0 : 5
             }}
           >
-            {!isSupplier && (
+            {!isSupplier && status == 1 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -451,12 +451,20 @@ export default function MarketPlaceSection({
                     background:
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
+                  component={isMarketPlace && !isCopy.current ? Link : 'div'}
+                  // component={Link}
+                  href={{
+                    pathname: '/marketPlace/swap',
+                    query: {
+                      id: `${swap_id}` // should be `title` not `id`
+                    }
+                  }}
                 >
                   Counter Offer
                 </Button>
               </Box>
             )}
-            {isSupplier && (
+            {isSupplier && status == 1 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -468,7 +476,7 @@ export default function MarketPlaceSection({
               >
                 <Button
                   disabled={!account}
-                  onClick={handleSwapAccept}
+                  onClick={handleSwapCancel}
                   sx={{
                     width: 150,
                     color: 'white',

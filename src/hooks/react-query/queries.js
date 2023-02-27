@@ -3,8 +3,12 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { Alchemy, Network } from 'alchemy-sdk';
 import { ethers } from 'ethers';
-
-import { erc1155_Contact_Abi, erc721_Contact_Abi } from 'contract';
+import axios from 'axios';
+import {
+  erc1155_Contact_Abi,
+  erc721_Contact_Abi,
+  erc20_Contact_Abi
+} from 'contract';
 import { delay, getUserNFts, isJsonString } from 'helpers/utilities';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 
@@ -12,15 +16,29 @@ import { queryKeys } from './queryConstants';
 
 const settings = {
   apiKey: '9BAxqf4GeMLJ4C9uwsOGo-1PSjtGmsFu',
-  network: Network.ETH_GOERLI,
+  network: Network.ETH_GOERLI
 };
 
+//a function to get USD value of a listed token, using CoinGecko API. Will return {} if coin is not listed
+export const useTokenPrice = (tokenAddress) => {
+  const queryKey = ['tokenPrice', tokenAddress];
+
+  return useQuery(queryKey, async () => {
+    const { data } = await axios.get(
+      `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${tokenAddress}&vs_currencies=usd`
+    );
+    return data[tokenAddress].usd;
+  });
+};
+
+//a function to get Metadata of a token
 const getMetaData = async (tokenAddress) => {
   const alchemy = new Alchemy(settings);
 
   return alchemy.core.getTokenMetadata(tokenAddress);
 };
 
+//a function to split metadata into readeable datas to be shown on OfferCard
 export const handleMetaData = (data) => {
   const url = data;
   const newUrl = url?.split(':');
@@ -36,10 +54,12 @@ export const handleMetaData = (data) => {
   return {
     name,
     description,
-    image,
+    image
   };
 };
 // =====================================================
+
+//a function to get all the existing zeSwaps, for example to be shown on marketplace page
 export const useQueryZeSwapIdList = () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   const queryKey = [queryKeys.getZeSwapIdList];
@@ -53,26 +73,28 @@ export const useQueryZeSwapIdList = () => {
     },
     onError: (err) => {
       console.log(err);
-    },
+    }
   });
 };
 
 // =====================================================
-
+//a function to filter certain list of swaps (could be initial or counter swaps), and split the data from chain into javascript variables respectively as swap structure
 export const useQueriesFilterMarketPlaceData = (
   zeSwapIdList = [],
-  isTrade = false,
+  isTrade = false
 ) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
-
+  //console.log('total swap ' + zeSwapIdList.length);
+  //console.log(JSON.stringify(zeSwapIdList));
   const queryFn = async (swap_id) => {
     const data = [];
 
     const swap = await zeoTC_Contract.get_zeSwap(swap_id);
-
+    //console.log('getting swap id ' + swap_id.toString());
+    //console.log(JSON.stringify(swap));
     data[swap_id] = {
       swap: swap,
-      swap_id,
+      swap_id
     };
 
     for (const offer_id of swap.offers) {
@@ -82,12 +104,11 @@ export const useQueriesFilterMarketPlaceData = (
         ...data[swap_id],
         offer,
         productA: [],
-        productB: [],
+        productB: []
       };
 
       for (const productA_id of offer.product_A_ids) {
         const product = await zeoTC_Contract.get_product(productA_id);
-
         let amount = product.amount.toString();
         amount = Number(amount);
 
@@ -95,7 +116,7 @@ export const useQueriesFilterMarketPlaceData = (
 
         data[swap_id].productA.push({
           ...product,
-          metadata,
+          metadata
         });
       }
 
@@ -105,7 +126,7 @@ export const useQueriesFilterMarketPlaceData = (
 
         data[swap_id].productB.push({
           ...product,
-          metadata,
+          metadata
         });
       }
     }
@@ -116,10 +137,92 @@ export const useQueriesFilterMarketPlaceData = (
   const queries = zeSwapIdList?.map((swap_id, idx) => ({
     queryKey: [queryKeys.getQueriesSwapDetails, swap_id],
     queryFn: () => queryFn(swap_id),
-    enabled: !!zeoTC_Contract && !!zeSwapIdList,
+    enabled: !!zeoTC_Contract && !!zeSwapIdList
   }));
   const results = useQueries({
-    queries,
+    queries
+  });
+
+  return results?.map((result) => result.data?.[0]);
+};
+
+export const useQueriesFilterCounterOfferData = (
+  zeSwapIdList = [],
+  offerIdList = [],
+  isTrade = false
+) => {
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  console.log('filtering offers ');
+  //console.log('total swap ' + zeSwapIdList.length);
+  //console.log(JSON.stringify(zeSwapIdList));
+  //const { swaplist } = useQueryZeSwapIdList();
+  //swaplist_ = zeSwapIdList;
+  const queryFn = async (offer_id, swaplist_) => {
+    const data = [];
+    console.log('looping offer id ' + offer_id);
+    let swap_id_ = '0x1';
+
+    console.log('swaplist : ' + JSON.stringify(swaplist_));
+    for (const swap_id of swaplist_) {
+      const swap = await zeoTC_Contract.get_zeSwap(swap_id);
+      for (const offer_id_ of swap.offers) {
+        console.log('the swap id ' + swap_id);
+        if (offer_id_ == offer_id) {
+          swap_id_ = swap_id;
+          break;
+        }
+      }
+    }
+    console.log('found swap id ' + swap_id_);
+    //console.log('getting swap id ' + swap_id.toString());
+    //console.log(JSON.stringify(swap));
+    data[swap_id_] = {
+      swap: swap,
+      swap_id_
+    };
+
+    const offer = await zeoTC_Contract.get_offers(offer_id);
+
+    data[swap_id] = {
+      ...data[swap_id],
+      offer,
+      productA: [],
+      productB: []
+    };
+
+    for (const productA_id of offer.product_A_ids) {
+      const product = await zeoTC_Contract.get_product(productA_id);
+      let amount = product.amount.toString();
+      amount = Number(amount);
+
+      const metadata = await getMetaData(product?.token);
+
+      data[swap_id].productA.push({
+        ...product,
+        metadata
+      });
+    }
+
+    for (const productB_id of offer.product_B_ids) {
+      const product = await zeoTC_Contract.get_product(productB_id);
+      const metadata = await getMetaData(product.token);
+
+      data[swap_id].productB.push({
+        ...product,
+        metadata
+      });
+    }
+
+    return Object.values(data);
+  };
+
+  const queries = offerIdList?.map((offer_id, idx) => ({
+    queryKey: [queryKeys.getQueriesSwapDetails, offer_id],
+    queryFn: () => queryFn(offer_id, zeSwapIdList),
+    enabled: !!zeoTC_Contract && !!zeSwapIdList
+  }));
+  const results = useQueries({
+    queries
   });
 
   return results?.map((result) => result.data?.[0]);
@@ -134,12 +237,12 @@ export const useQueryApprove = () => {
   };
 
   return useQuery(queryKey, queryFn, {
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false
   });
 };
 
 // ===================================================================
-
+//function to get list of tokens owned by an address, all will be returned : ERC721, ERC20, and ERC1155
 export const useQueryGetUserNFTs = () => {
   // // const notify = useNotify();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
@@ -150,6 +253,7 @@ export const useQueryGetUserNFTs = () => {
 
   const queryFn = async () => {
     const tokensData = await getUserNFts(tokensApi);
+    console.log('axios ' + tokensData.toString());
     let nftsData = await getUserNFts(nftApi);
     nftsData = nftsData.result;
     // nftsData = nftsData.slice(0, 2);
@@ -170,7 +274,7 @@ export const useQueryGetUserNFTs = () => {
           const contract = new ethers.Contract(
             item?.token_address,
             abi,
-            signer,
+            signer
           );
           // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
 
@@ -187,7 +291,7 @@ export const useQueryGetUserNFTs = () => {
           const contract = new ethers.Contract(
             item?.token_address,
             abi,
-            signer,
+            signer
           );
 
           balance = await contract.balanceOf(account, item?.token_id);
@@ -200,6 +304,7 @@ export const useQueryGetUserNFTs = () => {
       let newMetadata;
 
       if (balance > 0) {
+        //metadata.balance = balance;
         if (!metadata) {
           const fetchMetadata = await fetch(item?.token_uri);
           const res = await fetchMetadata.json();
@@ -214,7 +319,7 @@ export const useQueryGetUserNFTs = () => {
 
         nftsWithMetaData.push({
           ...item,
-          newMetadata,
+          newMetadata
         });
       }
     }
@@ -231,13 +336,13 @@ export const useQueryGetUserNFTs = () => {
 
     return {
       nftsData: nftsWithMetaData,
-      tokensData,
+      tokensData
     };
   };
 
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    enabled: !!account,
+    enabled: !!account
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };
@@ -275,7 +380,7 @@ export const useQueriesGetUserData = () => {
 };
 
 // ==========================================================
-
+//get ERC20 token owned by a certain address regardless of the balance
 export const useQuerySearchTokens = ({ account }) => {
   const queryKey = [queryKeys.getSearchTokens, account];
   const queryFn = async () => {
@@ -288,14 +393,14 @@ export const useQuerySearchTokens = ({ account }) => {
 
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    enabled: false,
+    enabled: false
 
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };
 
 // ================================================================
-
+//get NFT token owned by a certain address regardless of the balance
 export const useQuerySearchNFTs = ({ account }) => {
   const queryKey = [queryKeys.getSearchNFTs, account];
 
@@ -312,7 +417,7 @@ export const useQuerySearchNFTs = ({ account }) => {
 
       return {
         ...item,
-        newMetadata: res,
+        newMetadata: res
       };
     });
 
@@ -321,13 +426,13 @@ export const useQuerySearchNFTs = ({ account }) => {
 
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    enabled: false,
+    enabled: false
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };
 
 // ==========================================================================
-
+//function to get list of swaps created by the caller's address
 export const useQueryMyZeSwapId = () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
 
@@ -344,11 +449,11 @@ export const useQueryMyZeSwapId = () => {
 
       return res;
     },
-    enabled: !!account,
+    enabled: !!account
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };
-
+//function to get list of offers created by the caller's address
 export const useQueryOfferId = () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
 
@@ -363,24 +468,32 @@ export const useQueryOfferId = () => {
     select: (res) => {
       return res;
     },
-    enabled: !!account,
+    enabled: !!account
   });
 };
 
 // function get_counter_offers_id_list(address addr)
 
+//function to get list of counter offers created by the caller's address
 export const useQueryCounterOfferIdList = () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
 
   const queryKey = [queryKeys.createCounterOffer, account];
 
   const queryFn = async () => {
-    return await zeoTC_Contract.get_counter_offers_id_list(account);
+    const offersList = await zeoTC_Contract.get_counter_offers_id_list(account);
+    console.log('offers : ' + JSON.stringify(offersList));
+    for (const offer of offersList) {
+      console.log('offer list ' + JSON.stringify(offer));
+      const theoffer = await zeoTC_Contract.get_offers(offer);
+      console.log('theoffer ' + JSON.stringify(theoffer));
+    }
+    return offersList;
   };
 
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    enabled: !!account,
+    enabled: !!account
   });
 };
 
@@ -394,6 +507,7 @@ export const useQueryCounterOfferIdList = () => {
 //   token_id + '',
 // );
 
+//function to get list of Swap history with status completed created by the caller's address
 export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
 
@@ -408,7 +522,7 @@ export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
     // if (swap?.[7] == 2) {
     data[swap_id] = {
       swap: swap,
-      swap_id,
+      swap_id
     };
 
     for (const offer_id of swap.offers) {
@@ -418,7 +532,7 @@ export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
         ...data[swap_id],
         offer,
         productA: [],
-        productB: [],
+        productB: []
       };
 
       for (const productA_id of offer.product_A_ids) {
@@ -431,7 +545,7 @@ export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
 
         data[swap_id].productA.push({
           ...product,
-          metadata,
+          metadata
         });
       }
 
@@ -442,7 +556,7 @@ export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
 
         data[swap_id].productB.push({
           ...product,
-          metadata,
+          metadata
         });
       }
     }
@@ -459,11 +573,11 @@ export const useQueriesGetSwapHistory = (zeSwapIdList = []) => {
 
   const queries = zeSwapIdList?.map((swap_id, idx) => ({
     queryKey: [queryKeys.getSwapHistory, swap_id],
-    queryFn: () => queryFn(swap_id),
+    queryFn: () => queryFn(swap_id)
     // enabled: !!zeoTC_Contract && !!zeSwapIdList,
   }));
   const results = useQueries({
-    queries,
+    queries
   });
 
   const data = results.map((result) => {
@@ -489,7 +603,7 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
     if (swap?.status === 0 || swap?.status === 1) {
       data[swap_id] = {
         swap: swap,
-        swap_id,
+        swap_id
       };
 
       for (const offer_id of swap.offers) {
@@ -499,7 +613,7 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
           ...data[swap_id],
           offer,
           productA: [],
-          productB: [],
+          productB: []
         };
 
         for (const productA_id of offer.product_A_ids) {
@@ -512,7 +626,7 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
 
           data[swap_id].productA.push({
             ...product,
-            metadata,
+            metadata
           });
         }
 
@@ -522,7 +636,7 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
 
           data[swap_id].productB.push({
             ...product,
-            metadata,
+            metadata
           });
         }
       }
@@ -536,10 +650,10 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
   const queries = zeSwapIdList?.map((swap_id, idx) => ({
     queryKey: [queryKeys.getQueriesSwapDetails, swap_id],
     queryFn: () => queryFn(swap_id),
-    enabled: !!zeoTC_Contract && !!zeSwapIdList,
+    enabled: !!zeoTC_Contract && !!zeSwapIdList
   }));
   const results = useQueries({
-    queries,
+    queries
   });
 
   const swapData = results.map((result) => result?.data?.[0]);

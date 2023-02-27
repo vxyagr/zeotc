@@ -24,18 +24,11 @@ import {
 export default function DashboardSection() {
   const dispatch = useDispatch();
   const [openOffer, setOpenOffer] = useState(false);
-  const handleOpenOffer = () => setOpenOffer(true);
-  const handleCloseOffer = () => setOpenOffer(false);
+  const [openReceive, setOpenReceive] = useState(false);
   const [SumOfAmount, setSumOfAmount] = useState(0);
-
   const [isChecked, setIsChecked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-
   const [isApprove, setIsApprove] = useState('');
-
-  const [openReceive, setOpenReceive] = useState(false);
-  const handleOpenReceive = () => setOpenReceive(true);
-  const handleCloseReceive = () => setOpenReceive(false);
 
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
 
@@ -47,6 +40,20 @@ export default function DashboardSection() {
     isLoading: createIsLoading,
     mutate: createMutate
   } = useMutationCreateZeSwap();
+
+  useEffect(() => {
+    if (mutateData?.hash) {
+      setSumOfAmount(0);
+      setOpenOffer(false);
+      setOpenReceive(false);
+      setSumOfAmount(0);
+      setIsChecked(false);
+      setIsDisabled(true);
+      setIsApprove('');
+      dispatch(addNewTokenNftsReceive([]));
+      dispatch(addNewTokenNfts([]));
+    }
+  }, [mutateData]);
 
   const {
     isLoading: isApproveLoading,
@@ -125,8 +132,6 @@ export default function DashboardSection() {
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
 
-  console.log(date, '<<<<<<< date bro');
-
   return (
     <Box
       sx={{
@@ -203,7 +208,7 @@ export default function DashboardSection() {
           })}
 
           <Box
-            onClick={handleOpenOffer}
+            onClick={() => setOpenOffer(true)}
             sx={{
               border: '0.3px dashed #FFFFFF',
               borderRadius: '17px',
@@ -216,7 +221,10 @@ export default function DashboardSection() {
             <Typography variant='subtitle1'>+ Add new Token or NFT</Typography>
           </Box>
 
-          <CreateToken handleClose={handleCloseOffer} open={openOffer} />
+          <CreateToken
+            handleClose={() => setOpenOffer(false)}
+            open={openOffer}
+          />
         </Box>
 
         <Box
@@ -226,23 +234,7 @@ export default function DashboardSection() {
               md: 16
             }
           }}
-        >
-          <Button
-            variant='contained'
-            sx={{
-              py: 2,
-              transform: 'matrix(1, 0, 0, -1, 0, 0)'
-            }}
-          >
-            <Box
-              component='img'
-              src='/assets/svg/MyOtc.svg'
-              sx={{
-                width: 20
-              }}
-            />
-          </Button>
-        </Box>
+        ></Box>
 
         <Box
           sx={{
@@ -285,7 +277,7 @@ export default function DashboardSection() {
           })}
 
           <Box
-            onClick={handleOpenReceive}
+            onClick={() => setOpenReceive(true)}
             sx={{
               border: '0.3px dashed #FFFFFF',
               borderRadius: '17px',
@@ -299,7 +291,7 @@ export default function DashboardSection() {
           </Box>
 
           <CreateToken
-            handleClose={handleCloseReceive}
+            handleClose={() => setOpenReceive(false)}
             open={openReceive}
             isReceived
           />

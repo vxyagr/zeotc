@@ -1,5 +1,5 @@
 /* eslint-disable react-redux/useSelector-prefer-selectors */
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,45 +9,33 @@ import {
   useQueriesGetSwap,
   useQueriesGetSwapHistory,
   useQueryCounterOfferIdList,
-  useQueryMyZeSwapId,
-  useQueryOfferId,
+  useQueryMyZeSwapId
 } from 'hooks/react-query/queries';
 import { tradesTabs } from 'redux/slice/otcTrades';
 
 const TABS_DATA = [
   {
     title: 'Swaps',
-    number: 2,
+    number: 2
   },
   {
     title: 'Counter Offers',
-    number: 3,
+    number: 3
   },
   {
-    title: 'Swap History',
-  },
+    title: 'Swap History'
+  }
 ];
-export default function OtcHeader() {
+export default function OtcHeader({ searchFunction, sortType, setSortType }) {
   const dispatch = useDispatch();
-
   const activeButton = useSelector((state) => state.otcTrades.currentTab);
-
   const [age, setAge] = React.useState('');
   const { data: counterOfferIdList } = useQueryCounterOfferIdList();
-
   const offerId = useQueriesFilterMarketPlaceData(counterOfferIdList, true);
-
-  const [searchInput, setSearchInput] = useState();
-
   const { data: zeSwapIdsList } = useQueryMyZeSwapId();
-
-  // const { data: offerIdList, } = useQueryOfferId();
-
   const newZeSwapList = useQueriesGetSwapHistory(zeSwapIdsList, true);
-  // const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdsList, true);
   const ZeSwap = useQueriesGetSwap(zeSwapIdsList, false);
-  // const ZeSwap = '';
-  // const newZeSwapList = '';
+
   const handleChange = (event) => {
     setAge(event.target.value);
   };
@@ -58,19 +46,19 @@ export default function OtcHeader() {
         sx={{
           display: {
             xs: 'block',
-            lg: 'flex',
+            lg: 'flex'
           },
           width: '100%',
-          mt: 2,
+          mt: 2
         }}
       >
         <Box
           sx={{
             display: {
               xs: 'block',
-              sm: 'flex',
+              sm: 'flex'
             },
-            width: '100%',
+            width: '100%'
           }}
         >
           <Box
@@ -82,12 +70,12 @@ export default function OtcHeader() {
               display: 'grid',
               gridTemplateColumns: {
                 xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
+                sm: 'repeat(3, 1fr)'
               },
               my: {
                 xs: 2,
-                sm: 0,
-              },
+                sm: 0
+              }
             }}
           >
             {TABS_DATA.map((tab, idx) => (
@@ -97,7 +85,7 @@ export default function OtcHeader() {
                   position: 'relative',
                   zIndex: 1,
                   width: '100%',
-                  minHeight: 48,
+                  minHeight: 48
                 }}
               >
                 <Button
@@ -124,8 +112,8 @@ export default function OtcHeader() {
                           : (theme) => theme.palette.primary.main,
                       content: '""',
                       zIndex: -1,
-                      borderRadius: activeButton === tab.title && '10.19px',
-                    },
+                      borderRadius: activeButton === tab.title && '10.19px'
+                    }
                   }}
                 >
                   {tab.title}
@@ -135,7 +123,7 @@ export default function OtcHeader() {
                       background: '#1E1E1E',
                       borderRadius: 5,
                       ml: 2,
-                      width: 20,
+                      width: 20
                     }}
                   >
                     {idx === 0 && ZeSwap?.length !== 0 && ZeSwap?.length}
@@ -162,7 +150,7 @@ export default function OtcHeader() {
             justifyContent: 'start',
             alignItems: 'center',
             gap: 2,
-            mt: 3,
+            mt: 3
           }}
         >
           <Typography
@@ -175,7 +163,7 @@ export default function OtcHeader() {
               py: 1,
               borderRadius: 2,
               textTransform: 'capitalize',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             {/* pending received swap confirmations */}
@@ -191,7 +179,7 @@ export default function OtcHeader() {
               py: 1,
               borderRadius: 2,
               textTransform: 'capitalize',
-              color: 'gray',
+              color: 'gray'
             }}
           >
             {activeButton !== 'Swaps'
@@ -206,9 +194,9 @@ export default function OtcHeader() {
           display: 'flex',
           gap: 1.5,
           mr: {
-            lg: 7,
+            lg: 7
           },
-          mt: 3,
+          mt: 3
         }}
       >
         <Box
@@ -220,7 +208,7 @@ export default function OtcHeader() {
             px: 2,
             py: 0.5,
             maxWidth: 400,
-            width: '100%',
+            width: '100%'
           }}
         >
           <Box component='img' src='/assets/svg/search.svg' />
@@ -228,30 +216,33 @@ export default function OtcHeader() {
           <Box
             component='input'
             type='text'
-            placeholder='Search by asset address, asset name'
-            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder='Search by asset name or swap id'
+            onChange={(e) => searchFunction(e.target.value)}
             sx={{
               px: 3,
               maxWidth: {
                 xs: '100%',
-                sm: '100%',
+                sm: '100%'
               },
               width: '100%',
               outline: 'none',
               border: 'none',
               background: 'transparent',
               height: 46,
-              fontFamily: 'Poppins',
+              fontFamily: 'Poppins'
             }}
           />
         </Box>
 
         <IconButton
+          onClick={setSortType}
           sx={{
             background: (theme) => theme.palette.primary.main,
             display: 'flex',
             borderRadius: '12px',
             px: 2,
+            transform: sortType === 'DESC' ? 'rotate(180deg)' : 'none',
+            transition: 'transform 1s'
           }}
         >
           <Box component='img' src='/assets/svg/menu.svg' />

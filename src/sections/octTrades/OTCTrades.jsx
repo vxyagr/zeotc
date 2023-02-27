@@ -1,51 +1,64 @@
 /* eslint-disable react-redux/useSelector-prefer-selectors */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 
 import OtcHeader from '../../components/OtcHeader';
-import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 import SwapOffer from './SwapHistory';
 import TradesOffer from './TradesOffer';
 import Swaps from './Swaps';
 
 export default function OTCTrades() {
   const activeTab = useSelector((state) => state.otcTrades.currentTab);
+  const [searchValues, setSearchValues] = useState(null);
+  const [sort, setSort] = useState('ASC');
 
   const TABS_DATA = [
     {
       title: 'Swaps',
-      component: <Swaps />,
-      number: 3,
+      component: <Swaps searchValues={searchValues} sort={sort} />,
+      number: 3
     },
     {
       title: 'Counter Offers',
       component: <TradesOffer />,
 
-      number: 3,
+      number: 3
     },
     {
       title: 'Swap History',
-      component: <SwapOffer />,
+      component: <SwapOffer searchValues={searchValues} sort={sort} />
     }
   ];
 
   return (
     <Box
       sx={{
-        width: '100%',
+        width: '100%'
       }}
     >
       <Typography
         sx={{
-          fontSize: 20,
+          fontSize: 20
         }}
       >
         OTC Trades
       </Typography>
 
-      <OtcHeader />
+      <OtcHeader
+        searchFunction={setSearchValues}
+        sortType={sort}
+        setSortType={() => {
+          setSort((curr) => {
+            if (curr === 'ASC') {
+              return 'DESC';
+            }
+
+            return 'ASC';
+          });
+        }}
+      />
 
       {TABS_DATA.map((item) => {
         if (item.title === activeTab)
@@ -53,7 +66,7 @@ export default function OTCTrades() {
             <Box
               key={item.title}
               sx={{
-                mt: 1,
+                mt: 1
               }}
             >
               {item.component}

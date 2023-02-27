@@ -1,34 +1,35 @@
 import { useEffect, useState, useMemo } from 'react';
 
+import { Box, Typography } from '@mui/material';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import Fuse from 'fuse.js';
 import { useAccount } from 'wagmi';
 
-import { Box, Typography } from '@mui/material';
-import Fuse from 'fuse.js';
-import debounce from 'lodash.debounce';
-
-import { Border } from 'components/Style';
-
 import MarketPlaceHeader from 'components/MarketPlaceHeader';
+import { Border } from 'components/Style';
 import {
   useQueriesFilterMarketPlaceData,
   useQueryZeSwapIdList
 } from 'hooks/react-query/queries';
 
 import MarketPlaceSection from './MarketPlaceSection';
+import {
+  swapLocalSearch,
+  normalizeSwapList,
+  sortSwapByExpireDate
+} from '../../helpers/utilities';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 export default function MainMarketPlaceSection() {
   const { isConnected } = useAccount();
   const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
-
-  let newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
-  newZeSwapList = newZeSwapList?.reverse();
+  const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
+  const [sort, setSort] = useState('ASC');
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
-
-  useEffect(() => {
-    console.log(isConnected, '<<<<<<<< ');
-  }, [isConnected]);
-
-  // const allFinished = newZeSwapList?.some((data) => data);
 
   const allFinished = useMemo(() => {
     if (newZeSwapList.length !== 0) {
@@ -47,41 +48,48 @@ export default function MainMarketPlaceSection() {
   }, [newZeSwapList]);
 
   useEffect(() => {
-    console.log(allFinished, '<<<<<< allFinished');
-
     if (allFinished) {
       // all the queries have executed successfully
-      setFilteredZeSwapIdList(newZeSwapList);
+      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);
 
-  // const handleClicked = (data) => {
-  //   console.log(data);
-  //   router.push('/marketPlace/swap');
-  // };
+  useEffect(() => {
+    if (filteredZeSwapIdList) {
+      setFilteredZeSwapIdList((curr) => {
+        const currentSwapList = [...curr];
 
-  const handleSearch = (data) => {
-    if (data) {
-      const options = {
-        threshold: 0.1,
-        keys: ['offer', 'productA.metadata.name', 'productB.metadata.name']
-      };
-      const fuse = new Fuse(newZeSwapList, options);
-      const result = fuse.search(data).map((swap) => swap.item);
-      setFilteredZeSwapIdList(result);
-    } else {
-      const newList = newZeSwapList;
-      setFilteredZeSwapIdList(newList);
+        return sortSwapByExpireDate(sort, currentSwapList);
+      });
     }
-  };
-
-  const debouncedSearchChange = useMemo(() => debounce(handleSearch, 700), []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sort]);
 
   return (
     <Box>
       <Box>
-        <MarketPlaceHeader handleSearch={debouncedSearchChange} />
+        <MarketPlaceHeader
+          sortType={sort}
+          setSortType={() => {
+            setSort((curr) => {
+              if (curr === 'ASC') {
+                return 'DESC';
+              }
+
+              return 'ASC';
+            });
+          }}
+          handleSearch={(searchValues) => {
+            const searchResult = swapLocalSearch(
+              searchValues,
+              newZeSwapList,
+              sort,
+              true
+            );
+            setFilteredZeSwapIdList(searchResult);
+          }}
+        />
 
         {!isConnected ? (
           <Box
@@ -109,14 +117,17 @@ export default function MainMarketPlaceSection() {
             >
               <Box
                 component='img'
-                src='/assets/svg/no-wallet-connection.png'
+                src='/assets/svg/disconnect-12.svg'
                 sx={{
-                  width: 300,
-                  height: 300
+                  width: 70,
+                  height: 70
                 }}
               />
 
-              <Typography>No Wallet Connection</Typography>
+              <Typography>
+                <br />
+                No Wallet Connection
+              </Typography>
 
               <Typography
                 sx={{

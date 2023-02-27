@@ -19,9 +19,9 @@ import { queryKeys, TOKEN_TYPE } from './queryConstants';
 
 export const useMutationAddOffer = () => {
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
-  const mutationFn = async ({ isSupplier, }) => {
+  const mutationFn = async ({ isSupplier }) => {
     const tx = await (isSupplier
       ? zeoTC_Contract.add_offer_userA()
       : zeoTC_Contract.add_counter_offer_userB());
@@ -36,7 +36,7 @@ export const useMutationAddOffer = () => {
     onError: (error) => {
       console.log(error);
       //   notify('error', 'Error in Farm.');
-    },
+    }
   });
 };
 
@@ -45,7 +45,7 @@ export const useMutationAddOffer = () => {
 export const useMutationAcceptOffer = () => {
   //   const notify = useNotify();
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   // function accept(bytes32 zSwap_id) external
 
@@ -64,7 +64,7 @@ export const useMutationAcceptOffer = () => {
     onError: (error) => {
       console.log(error);
       //   notify('error', 'Error in Farm.');
-    },
+    }
   });
 };
 
@@ -72,14 +72,14 @@ export const useMutationAcceptOffer = () => {
 
 // --------------------------------
 export const useERC20_ERC721_ERC1155Approve = () => {
-  const { account, zeoTC_Contract, signer, } = useSelectWeb3();
+  const { account, zeoTC_Contract, signer } = useSelectWeb3();
 
   const mutationFn = async ({
     tokenAddress,
     tokenType,
     tokenId,
     decimal,
-    amount,
+    amount
   }) => {
     let tx;
 
@@ -129,7 +129,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
     onError: (error) => {
       console.log(error);
       // notify('error', 'Error while fetching useIsApprovedForAll');
-    },
+    }
   });
 };
 
@@ -141,19 +141,21 @@ export const useERC20_ERC721_ERC1155Approve = () => {
 export const useMutationCreateZeSwap = () => {
   //   const notify = useNotify();
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   //the supplier should give this info
   const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   const queryKey = [queryKeys.getZeSwapIdList, account];
 
-  const mutationFn = async ({ productA, productB, isChecked, newDate, }) => {
+  const mutationFn = async ({ productA, productB, isChecked, newDate }) => {
     const productAs = handleFormateData(productA);
     const productBs = handleFormateData(productB);
 
     const now = Math.floor(new Date(newDate).getTime() / 1000);
-    const userDate = newDate ? now : ethers.utils.hexlify(now + 60 * 60 * 24 * 6);
+    const userDate = newDate
+      ? now
+      : ethers.utils.hexlify(now + 60 * 60 * 24 * 6);
 
     // const expiration_in_UTC = ethers.utils.hexlify(now + 60 * 60 * 24 * 6);
     const expiration_in_UTC = userDate;
@@ -179,7 +181,7 @@ export const useMutationCreateZeSwap = () => {
     onError: (error) => {
       console.log(error);
       //   notify('error', 'Error in Farm.');
-    },
+    }
   });
 };
 // accept
@@ -188,7 +190,7 @@ export const useMutationCreateZeSwap = () => {
 export const useMutationAccept = () => {
   //   const notify = useNotify();
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   const queryKey = [queryKeys.createCounterOffer, account];
 
@@ -205,22 +207,26 @@ export const useMutationAccept = () => {
     onError: (error) => {
       console.log(error);
       //   notify('error', 'Error in Farm.');
-    },
+    }
   });
 };
 
 // =================================================================
 // add_new_product_A(zSwap_id, offer_id, newProductsA)
 // add_new_product_B(zSwap_id, offer_id,newProductsB
-
+//function to counter an offer
 export const useMutationSwapCounterOffer = () => {
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   const queryKey = [queryKeys.getZeSwapIdList];
-  const mutationFn = async ({ id: data, product, }) => {
+  const mutationFn = async ({ id: data, product }) => {
+    //console.log(JSON.stringify(data));
     const supplier = data?.swap?.supplier;
     const demander = data?.swap[2];
+    console.log('swap creator ' + supplier);
+    console.log('counter : ' + demander);
+    //return;
     const offer_id = data?.swap?.offers?.[0];
     const productA = data?.productA;
     const productB = data?.productB;
@@ -265,13 +271,13 @@ export const useMutationSwapCounterOffer = () => {
     },
     onError: (error) => {
       console.log(error);
-    },
+    }
   });
 };
 
 export const useMutationSwapAccept = () => {
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   const queryKey = [queryKeys.getZeSwapIdList];
   const mutationFn = async (id) => {
@@ -286,21 +292,19 @@ export const useMutationSwapAccept = () => {
     },
     onError: (error) => {
       console.log(error);
-    },
+    }
   });
 };
 
 export const useMutationSetProduct = () => {
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   const queryKey = [queryKeys.getZeSwapIdList];
   // function set_product(zSwap_id, offer_id, Product[] memory new_products) public
 
-  const mutationFn = async ({ swap_id, offer_id, ProductB, }) => {
+  const mutationFn = async ({ swap_id, offer_id, ProductB }) => {
     const productBs = handleFormateData(ProductB, true);
-
-    
 
     // return true
     const tx = await zeoTC_Contract.set_product(swap_id, offer_id, productBs);
@@ -314,7 +318,7 @@ export const useMutationSetProduct = () => {
     },
     onError: (error) => {
       console.log(error);
-    },
+    }
   });
 };
 
@@ -324,10 +328,10 @@ export const useMutationSetProduct = () => {
 
 export const useMutationReject = () => {
   const queryClient = useQueryClient();
-  const { account, zeoTC_Contract, } = useSelectWeb3();
+  const { account, zeoTC_Contract } = useSelectWeb3();
 
   const queryKey = [queryKeys.getZeSwapIdList];
-  const mutationFn = async ({ swap_id, expire, }) => {
+  const mutationFn = async ({ swap_id, expire }) => {
     // console.log( swap_id, expire);
 
     const tx = await zeoTC_Contract.reset_zeSwap(swap_id, expire);
@@ -341,6 +345,27 @@ export const useMutationReject = () => {
     },
     onError: (error) => {
       console.log(error);
+    }
+  });
+};
+
+export const useMutationCancelZeSwap = () => {
+  const queryClient = useQueryClient();
+  const { account, zeoTC_Contract } = useSelectWeb3();
+
+  const queryKey = [queryKeys.getZeSwapIdList];
+  const mutationFn = async (id) => {
+    const tx = await zeoTC_Contract.cancel_zSwap(id);
+
+    return tx.wait();
+  };
+
+  return useMutation(mutationFn, {
+    onSettled: () => {
+      queryClient.invalidateQueries(queryKey);
     },
+    onError: (error) => {
+      console.log(error);
+    }
   });
 };

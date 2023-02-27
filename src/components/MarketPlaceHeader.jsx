@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 
-export default function MarketPlaceHeader({ handleSearch, }) {
+export default function MarketPlaceHeader({
+  handleSearch,
+  sortType,
+  setSortType
+}) {
   const router = useRouter();
 
   const handleCreateOffer = () => {
     router.push('/dashboard');
-  };
-
-  const handleSearchInput = (value) => {
-    ;
   };
 
   return (
@@ -22,11 +22,11 @@ export default function MarketPlaceHeader({ handleSearch, }) {
         alignItems: 'center',
         width: {
           xs: '100%',
-          lg: '88%',
+          lg: '88%'
         },
         mx: {
-          md: 'auto',
-        },
+          md: 'auto'
+        }
       }}
     >
       <Box
@@ -38,7 +38,7 @@ export default function MarketPlaceHeader({ handleSearch, }) {
           width: '100%',
           border: '2px dashed #000',
           backgroundSize: '110% 110%',
-          flexGrow: 1,
+          flexGrow: 1
           // backgroundRepeat: 'no-repeat',
           // backgroundPosition: 'center',
         }}
@@ -57,18 +57,15 @@ export default function MarketPlaceHeader({ handleSearch, }) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}
         >
-          <Box
-            component='img'
-            src='/assets/svg/Otc.svg'
-          />
+          <Box component='img' src='/assets/svg/Otc.svg' />
 
           <Typography
             sx={{
               fontSize: 11,
-              ml: 1,
+              ml: 1
             }}
           >
             Create OTC Trade{' '}
@@ -81,8 +78,8 @@ export default function MarketPlaceHeader({ handleSearch, }) {
           display: 'flex',
           gap: 1.5,
           mr: {
-            lg: 7,
-          },
+            lg: 7
+          }
         }}
       >
         <Box
@@ -90,53 +87,50 @@ export default function MarketPlaceHeader({ handleSearch, }) {
             background: (theme) => theme.palette.primary.main,
             display: {
               xs: 'none',
-              md: 'flex',
+              md: 'flex'
             },
             borderRadius: '12px',
             alignItems: 'center',
             px: 2,
-            py: 0.5,
+            py: 0.5
           }}
         >
-          <Box
-            component='img'
-            src='/assets/svg/search.svg'
-          />
+          <Box component='img' src='/assets/svg/search.svg' />
 
           <Box
             component='input'
             type='text'
-            placeholder='Search by Name or ticket'
+            placeholder='Search by asset name or swap id'
             onChange={(e) => handleSearch(e.target.value)}
             sx={{
               px: 3,
               maxWidth: {
                 xs: '100%',
-                sm: 260,
+                sm: 260
               },
               width: '100%',
               outline: 'none',
               border: 'none',
               background: 'transparent',
               height: 46,
-              fontFamily: 'Poppins',
+              fontFamily: 'Poppins'
             }}
           />
         </Box>
 
         <IconButton
+          onClick={setSortType}
           sx={{
             background: (theme) => theme.palette.primary.main,
             display: 'flex',
             borderRadius: '12px',
             px: 2,
             py: 2,
+            transform: sortType === 'DESC' ? 'rotate(180deg)' : 'none',
+            transition: 'transform 1s'
           }}
         >
-          <Box
-            component='img'
-            src='/assets/svg/menu.svg'
-          />
+          <Box component='img' src='/assets/svg/menu.svg' />
         </IconButton>
       </Box>
     </Box>

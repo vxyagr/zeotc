@@ -186,6 +186,7 @@ export default function OfferReceived({ selectedCard }) {
       productB: ProductB,
       productA: ProductA
     };
+    console.log(JSON.stringify(selectedCard));
 
     CounterOfferMutate({
       id: formattedData,

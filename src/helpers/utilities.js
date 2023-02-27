@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { ethers } from 'ethers';
+import Fuse from 'fuse.js';
 
 import { NETWORK } from 'config';
 
@@ -298,9 +299,61 @@ export const getExpieredTime = (
 
   return formatSplited
     .map((time) => {
-      return `${timeDurationObject.get(time)}${
-        shortHand ? time : sortHandMapping[time]
-      }`;
+      const timeValue =
+        timeDurationObject.get(time) < 0 ? 0 : timeDurationObject.get(time);
+
+      return `${timeValue}${shortHand ? time : sortHandMapping[time]}`;
     })
     .join(' : ');
+};
+
+export const sortSwapByExpireDate = (sortType, swapList) => {
+  return swapList.sort((a, b) => {
+    const expireTimeA =
+      sortType === 'ASC'
+        ? dayjs.unix(a.swap.expiration.toString())
+        : dayjs.unix(b.swap.expiration.toString());
+    const expireTimeB =
+      sortType === 'ASC'
+        ? dayjs.unix(b.swap.expiration.toString())
+        : dayjs.unix(a.swap.expiration.toString());
+
+    return expireTimeA - expireTimeB;
+  });
+};
+
+export const normalizeSwapList = (swapList, sortType, hideExpire = false) => {
+  let filterResult = swapList;
+
+  // remove expired swap
+  if (hideExpire) {
+    filterResult = filterResult.filter((singleSwap) =>
+      dayjs().isBefore(dayjs.unix(singleSwap.swap.expiration.toString()))
+    );
+  }
+
+  return sortSwapByExpireDate(sortType, filterResult);
+};
+
+export const swapLocalSearch = (
+  searchValues,
+  swapList,
+  sortType = false,
+  hideExpire = false
+) => {
+  if (searchValues) {
+    const options = {
+      threshold: 0.1,
+      keys: ['swap_id', 'productA.metadata.name', 'productB.metadata.name']
+    };
+
+    const fuse = new Fuse(swapList, options);
+    const result = fuse.search(searchValues).map((swap) => swap.item);
+
+    return sortType ? normalizeSwapList(result, sortType, hideExpire) : result;
+  } else {
+    return sortType
+      ? normalizeSwapList(swapList, sortType, hideExpire)
+      : swapList;
+  }
 };

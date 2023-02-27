@@ -20,6 +20,7 @@ import useClipboard from 'react-use-clipboard';
 
 import MButton from 'components/MButton';
 import { useMutationSetProduct } from 'hooks/react-query/mutation';
+import { useQueryGetUserTokenBalance } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
 export default function OfferCard({
@@ -46,6 +47,7 @@ export default function OfferCard({
   isOfferReceived,
   swap_id,
   offer_id,
+  tokenBalance
 }) {
   const dispatch = useDispatch();
   // const initialValue = card?.newMetadata
@@ -62,8 +64,6 @@ export default function OfferCard({
 
   // const useValue = card?.amount?.toString();
   const useValue = 2.5;
-
-
 
   const initialValue =
     !isModal && !isDashboard && card?.amount?.toString()
@@ -89,6 +89,10 @@ export default function OfferCard({
   // }, [card?.amount, card?.metadata?.decimals, handleProductAmountA]);
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
+  const cardTokenBalance = card.balance;
+  /*card.IERC.toString() == '20'
+      ? card.balance / 1000000000000000000
+      : card.balance;*/
 
   const handleChangeInputAmount = (value, selectedCard) => {
     setValueInput(value);
@@ -103,13 +107,13 @@ export default function OfferCard({
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: value,
+              amount: value
             };
           }
 
           return {
             ...item,
-            amount: item.amount || '0',
+            amount: item.amount || '0'
           };
         });
 
@@ -121,13 +125,13 @@ export default function OfferCard({
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: value,
+              amount: value
             };
           }
 
           return {
             ...item,
-            amount: item.amount || '0',
+            amount: item.amount || '0'
           };
         });
 
@@ -142,54 +146,53 @@ export default function OfferCard({
       if (item?.token_address === card?.token_address) {
         return {
           ...item,
-          isApproved: true,
+          isApproved: true
         };
       }
 
       return {
-        ...item,
+        ...item
       };
     });
 
     dispatch(addNewTokenNfts(newData));
   };
 
-  const { mutate: mutateSetProduct, isLoading: isSetLoading, } =
+  const { mutate: mutateSetProduct, isLoading: isSetLoading } =
     useMutationSetProduct();
 
   const handleSetFun = (data) => {
- 
-
     mutateSetProduct({
       swap_id,
       offer_id,
-      ProductB: [data],
+      ProductB: [data]
     });
   };
-
-
 
   const cardArray = dataFetch.map((item) => {
     return item.token_id || item.token_address;
   });
 
   const isMatch = card.token_id || card.token_address;
+  //const token_balance = useQueryGetUserTokenBalance(card.token_address);
+  // console.log("bln " +token_balance[0].toString());
 
   return (
     <Box
       sx={{
         mb: 1.5,
-        display: cardArray?.includes(isMatch) || receivedData.includes(card)
-          ? isDashboard
-            ? 'flex'
-            : 'none'
-          : 'flex',
+        display:
+          cardArray?.includes(isMatch) || receivedData.includes(card)
+            ? isDashboard
+              ? 'flex'
+              : 'none'
+            : 'flex',
         gap: 2,
         background: (theme) => theme.palette.primary.main,
         borderRadius: '6px',
         border: isModal ? 0 : '0.3px solid #4e4e4eb0',
         py: 1.5,
-        px: 2,
+        px: 2
       }}
     >
       <Box
@@ -201,27 +204,27 @@ export default function OfferCard({
         }
         sx={{
           width: 45,
-          height: 45,
+          height: 45
         }}
       />
 
       <Box
         sx={{
-          width: '100%',
+          width: '100%'
         }}
       >
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center',
+              alignItems: 'center'
             }}
           >
             <Typography variant='subtitle1'>
@@ -235,13 +238,13 @@ export default function OfferCard({
             <IconButton
               onClick={setCopied}
               sx={{
-                py: 0,
+                py: 0
               }}
             >
               <Tooltip title={isCopied ? 'Copied' : 'Copy'}>
                 <CopyAllOutlined
                   sx={{
-                    width: 20,
+                    width: 20
                   }}
                 />
               </Tooltip>
@@ -256,7 +259,7 @@ export default function OfferCard({
               component='img'
               src='/assets/svg/removeIcon.png'
               sx={{
-                cursor: 'pointer',
+                cursor: 'pointer'
               }}
             />
           )}
@@ -267,7 +270,7 @@ export default function OfferCard({
               component='img'
               src='/assets/svg/addItem.svg'
               sx={{
-                cursor: 'pointer',
+                cursor: 'pointer'
               }}
             />
           )}
@@ -278,28 +281,17 @@ export default function OfferCard({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            mt: isDashboard || unSelectedItems ? 2 : 0,
+            mt: isDashboard || unSelectedItems ? 2 : 0
           }}
         >
           <Typography
             variant='subtitle1'
             color='#AEAEAE'
             sx={{
-              mt: 0.5,
+              mt: 0.5
             }}
           >
-            {card?.price || '$0.999149'}
-          </Typography>
-
-          <Typography
-            variant='subtitle1'
-            color='#AEAEAE'
-            sx={{
-              mt: 0.5,
-              color: card?.status === 'Available' ? '#0DFBBF' : '#FF1E4C',
-            }}
-          >
-            {card?.status || 'Available'}
+            {cardTokenBalance || '$0.999149aa'}
           </Typography>
         </Box>
 
@@ -309,32 +301,35 @@ export default function OfferCard({
           isOfferReceived) && (
           <>
             {' '}
-
             <Divider
               sx={{
-                my: 1,
+                my: 1
               }}
             />
-
             <Box
               sx={{
                 display: {
                   xs: 'block',
-                  sm: 'flex',
+                  sm: 'flex'
                 },
                 mt: 0.5,
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
               <Typography variant='subtitle1'>Amount</Typography>
 
               <Box
                 component='input'
-                value={valueInput}
-                onChange={(e) => handleChangeInputAmount(e.target.value, card)}
+                value={card?.amount / 1000000000000000000}
+                onChange={(e) =>
+                  handleChangeInputAmount(
+                    e.target.value * 1000000000000000000,
+                    card
+                  )
+                }
                 sx={{
                   ml: {
-                    sm: 2,
+                    sm: 2
                   },
                   background: (theme) => theme.palette.primary.main,
                   p: 1,
@@ -343,7 +338,7 @@ export default function OfferCard({
                   width: '100%',
                   border: 'none',
                   outline: 'none',
-                  color: value === 'Amount' ? ' gray' : '#fff',
+                  color: value === 'Amount' ? ' gray' : '#fff'
                 }}
               />
             </Box>
@@ -367,7 +362,7 @@ export default function OfferCard({
               sx={{
                 boxShadow: 0,
                 fontSize: 14,
-                backgroundColor: 'orange !important',
+                backgroundColor: 'orange !important'
               }}
               onClick={() => {
                 handleSetFun(card);
@@ -388,7 +383,7 @@ export default function OfferCard({
               disabled={card?.isApproved || valueInput <= '0'}
               sx={{
                 boxShadow: 0,
-                fontSize: 14,
+                fontSize: 14
               }}
               onClick={() => {
                 handleApproveClick(card);
