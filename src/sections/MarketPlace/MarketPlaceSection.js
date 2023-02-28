@@ -443,7 +443,7 @@ export default function MarketPlaceSection({
               >
                 <Button
                   disabled={!account}
-                  onClick={}
+                  onClick={handleSwapAccept}
                   sx={{
                     width: 150,
                     color: 'white',
