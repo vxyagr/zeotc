@@ -7,7 +7,13 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
-import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import {
+  mainnet,
+  goerli,
+  configureChains,
+  createClient,
+  WagmiConfig
+} from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -20,8 +26,13 @@ import 'simplebar/src/simplebar.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import 'styles/globals.css';
 
+const mappingChain = {
+  mainnet,
+  goerli
+};
+
 const { chains, provider } = configureChains(
-  [chain[process.env.NEXT_PUBLIC_CHAIN]],
+  [mappingChain[process.env.NEXT_PUBLIC_CHAIN]],
   [
     alchemyProvider({ alchemyId: process.env.NEXT_PUBLIC_CHAIN }),
     publicProvider()
