@@ -61,13 +61,17 @@ export default function TradesOffer() {
       }}
     >
       <Box>
-        {filteredOffer?.map((swapList, idx) => (
-          <MarketPlaceSection
-            isOffer
-            key={swapList?.swap_id}
-            zeSwapList={swapList}
-          />
-        ))}
+        {filteredOffer?.map((swapList, idx) =>
+          swapList.swap.status != 4 ? (
+            <MarketPlaceSection
+              isOffer
+              key={swapList?.swap_id}
+              zeSwapList={swapList}
+            />
+          ) : (
+            ''
+          )
+        )}
       </Box>
     </Box>
   );

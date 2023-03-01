@@ -333,7 +333,8 @@ export const useMutationReject = () => {
   const queryKey = [queryKeys.getZeSwapIdList];
   const mutationFn = async ({ swap_id, expire }) => {
     // console.log( swap_id, expire);
-
+    console.log('rejecting ' + swap_id.toString());
+    console.log('reject expiry ' + expire);
     const tx = await zeoTC_Contract.reset_zeSwap(swap_id, expire);
 
     return tx.wait();

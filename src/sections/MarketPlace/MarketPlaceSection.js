@@ -55,6 +55,7 @@ export default function MarketPlaceSection({
   expire = getExpieredTime(expire, 'd', false);
 
   const handleRejectOffer = () => {
+    //console.log('rejecting ' + zeSwapList?.swap_id?.toString());
     rejectOffer({
       swap_id,
       expire: zeSwapList?.swap?.expiration?.toString()
@@ -72,6 +73,8 @@ export default function MarketPlaceSection({
         setAppStatus('Accepted');
       } else if (status === 3) {
         setAppStatus('Rejected  ');
+      } else if (status === 4) {
+        setAppStatus('Canceled');
       }
     }
 
@@ -84,6 +87,22 @@ export default function MarketPlaceSection({
         setAppStatus('Fullfilled');
       } else if (status === 3) {
         setAppStatus('Ended');
+      } else if (status === 4) {
+        setAppStatus('Canceled');
+      }
+
+      //if(expire)
+    }
+
+    if (isOffer) {
+      if (status === 0) {
+        setAppStatus('Initial');
+      } else if (status === 1) {
+        setAppStatus('Pending confirmations');
+      } else if (status === 2) {
+        setAppStatus('Accepted');
+      } else if (status === 3) {
+        setAppStatus('Rejected  ');
       } else if (status === 4) {
         setAppStatus('Canceled');
       }
@@ -561,6 +580,7 @@ export default function MarketPlaceSection({
                   fontSize: 13
                 }}
               >
+                {' '}
                 {appStatus}
               </Typography>
             </Box>

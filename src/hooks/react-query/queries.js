@@ -242,7 +242,7 @@ export const useQueryApprove = () => {
 };
 
 // ===================================================================
-//function to get list of tokens owned by an address, all will be returned : ERC721, ERC20, and ERC1155
+//function to get list of tokens owned by an address, all will be returned : ERC721, ERC20, and ERC1155. Used in selecting token in Create OTC
 export const useQueryGetUserNFTs = () => {
   // // const notify = useNotify();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
@@ -336,6 +336,60 @@ export const useQueryGetUserNFTs = () => {
 
     return {
       nftsData: nftsWithMetaData,
+      tokensData
+    };
+  };
+
+  return useQuery(queryKey, queryFn, {
+    refetchOnWindowFocus: false,
+    enabled: !!account
+    // onError: (error) => notify('error', 'Error while fetching the name'),
+  });
+};
+
+
+//function to get custom ERC20 token metadata on create OTC
+export const useQueryGetCustomERC20 = (tokenAddress_) => {
+  // // const notify = useNotify();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const queryKey = [queryKeys.getUserNFTS, account];
+  const tokenAddress = tokenAddress_;
+  const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}`;
+  
+
+  const queryFn = async () => {
+    const tokensData = await getUserNFts(url);
+    console.log('axios ' + tokensData.toString());
+    
+
+    return {
+      tokensData
+    };
+  };
+
+  return useQuery(queryKey, queryFn, {
+    refetchOnWindowFocus: false,
+    enabled: !!account
+    // onError: (error) => notify('error', 'Error while fetching the name'),
+  });
+};
+
+//function to get custom ERC20 token metadata on create OTC
+export const useQueryGetCustomNFT = (tokenAddress_,tokenId_) => {
+  // // const notify = useNotify();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const queryKey = [queryKeys.getUserNFTS, account];
+  const tokenAddress = tokenAddress_;
+  const url = `https://deep-index.moralis.io/api/v2/nft/${tokenAddress}/${tokenId_}`;
+
+  const queryFn = async () => {
+    const tokensData = await getUserNFts(url);
+    console.log('axios ' + tokensData.toString());
+    
+
+    return {
       tokensData
     };
   };

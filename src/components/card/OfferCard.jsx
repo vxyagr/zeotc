@@ -89,7 +89,13 @@ export default function OfferCard({
   // }, [card?.amount, card?.metadata?.decimals, handleProductAmountA]);
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
-  const cardTokenBalance = card.balance;
+  const cardTokenBalance =
+    card?.contract_type == 'ERC721'
+      ? card.amount
+      : Math.floor(card?.balance / 10 ** card?.decimals);
+  console.log(
+    'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
+  );
   /*card.IERC.toString() == '20'
       ? card.balance / 1000000000000000000
       : card.balance;*/

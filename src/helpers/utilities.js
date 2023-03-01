@@ -14,7 +14,7 @@ import { supportedChains } from './chains';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-/* export function getChainData(chainId) {
+export function getChainData(chainId) {
   const chainData = supportedChains.find((chain) => chain.chain_id === chainId);
 
   if (!chainData) {
@@ -37,9 +37,9 @@ dayjs.extend(relativeTime);
   }
 
   return chainData;
-}*/
+}
 
-/*export function switchNetwork(provider) {
+export function switchNetwork(provider) {
   const { chain_id: chainId, rpc_url: rpcUrl } = getChainData(NETWORK.ID);
 
   provider.request({
@@ -51,7 +51,7 @@ dayjs.extend(relativeTime);
       }
     ]
   });
-}*/
+}
 
 export const conciseAddress = (address, startSlice = 6, endSlice = 3) =>
   `${address?.slice(0, startSlice)}...${address?.slice(

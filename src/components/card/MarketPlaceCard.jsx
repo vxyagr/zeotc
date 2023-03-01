@@ -16,27 +16,26 @@ const LIST_DETAILS = [
     title: 'BTC',
     price: '$1,212',
     token: '0.0000 BTC',
-    img: '/assets/images/Dollar.png',
+    img: '/assets/images/Dollar.png'
   },
   {
     id: 2,
     title: 'XRP',
     price: '$600',
     token: '0.0000 XRP',
-    img: '/assets/images/xrp.png',
+    img: '/assets/images/xrp.png'
   },
   {
     id: 3,
     title: 'BNB',
     price: '$212',
     token: '212 BNB',
-    img: '/assets/images/Bnb.png',
+    img: '/assets/images/Bnb.png'
   }
 ];
 
-export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
-  const [tokenMetaData, setTokenMetaData] = useState({
-});
+export default function MarketPlaceCard({ Image, title, isOffer, token }) {
+  const [tokenMetaData, setTokenMetaData] = useState({});
 
   // Get all outbound transfers for a provided address
 
@@ -51,9 +50,9 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
     }
   };
 
-  const handleTokenAmount = (amount) => {
+  const handleTokenAmount = (amount, decimals) => {
     let price = amount.toString();
-    price = Math.floor(price / 10 ** 18);
+    price = Math.floor(price / 10 ** decimals);
 
     return price;
   };
@@ -63,7 +62,7 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
       sx={{
         position: 'relative',
         // background:'red',
-        zIndex: 9,
+        zIndex: 9
       }}
     >
       <Box
@@ -84,14 +83,14 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
             ' linear-gradient(180deg, rgba(54, 54, 54, 0.19) 0%, rgba(54, 54, 54, 0) 100%)',
           p: 3,
           borderRadius: 2,
-          border: '0.3px solid #3b1939',
+          border: '0.3px solid #3b1939'
         }}
       >
         <Box
           component='img'
           src={Image}
           sx={{
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}
         />
 
@@ -103,20 +102,16 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
 
             <span
               style={{
-                color: '#69A5E6',
+                color: '#69A5E6'
               }}
             >
               {' '}
-
               {token?.length > 1 && `${token?.length - 1} more`}
             </span>
           </Typography>
 
           {token?.length > 1 && (
-            <Typography
-              variant='subtitle1'
-              color='#69A5E6'
-            >
+            <Typography variant='subtitle1' color='#69A5E6'>
               Preview List
             </Typography>
           )}
@@ -135,7 +130,7 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
           position: 'absolute',
           right: 0,
           left: 0,
-          height: 100,
+          height: 100
         }}
       >
         <Scrollbar>
@@ -155,22 +150,22 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
                     borderBottom: '1px solid #252525',
                     cursor: 'pointer',
                     '& p': {
-                      fontSize: 14,
-                    },
+                      fontSize: 14
+                    }
                   }}
                 >
                   <Box
                     sx={{
                       display: 'flex',
                       gap: 2,
-                      alignItems: 'center',
+                      alignItems: 'center'
                     }}
                   >
                     <Box
                       component='img'
                       src={item.img}
                       sx={{
-                        width: 28,
+                        width: 28
                       }}
                     />
 
@@ -179,18 +174,18 @@ export default function MarketPlaceCard({ Image, title, isOffer, token, }) {
 
                   <Typography
                     sx={{
-                      textAlign: 'center',
+                      textAlign: 'center'
                     }}
                   >
                     {/* {item.price}*/}
 
-                    {handleTokenAmount(item.amount)}
+                    {handleTokenAmount(item.amount, item.decimals)}
                   </Typography>
 
                   <Typography
                     sx={{
                       textAlign: 'right',
-                      width: 90,
+                      width: 90
                     }}
                   >
                     {conciseAddress(item.token)}
