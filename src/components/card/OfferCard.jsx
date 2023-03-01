@@ -206,7 +206,11 @@ export default function OfferCard({
         src={
           card?.newMetadata
             ? card.newMetadata?.image || '/assets/images/NFT.png'
-            : card?.img || '/assets/images/token.png'
+            : card?.img
+            ? card?.img
+            : card?.logo
+            ? card?.logo
+            : '/assets/images/token.png'
         }
         sx={{
           width: 45,
