@@ -23,7 +23,12 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 export default function MainMarketPlaceSection() {
-  const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
+  const {
+    data: zeSwapIdList,
+    error,
+    isLoading,
+    status
+  } = useQueryZeSwapIdList();
   const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
   const [sort, setSort] = useState('ASC');
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
@@ -63,6 +68,60 @@ export default function MainMarketPlaceSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort]);
 
+  useEffect(() => {
+    console.log(isLoading, '<<<<<<< isLoading');
+  }, [isLoading]);
+
+  if (!isLoading && newZeSwapList.length === 0) {
+    return (
+      <Box
+        sx={{
+          maxWidth: 'lg',
+          width: '100%'
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            minHeight: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignContent: 'center'
+          }}
+        >
+          <Box
+            sx={{
+              ...Border,
+              p: 3,
+              maxWidth: 'md',
+              borderRadius: 3,
+              mt: 7,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '40%'
+            }}
+          >
+            <Box
+              component='img'
+              src='/assets/svg/disconnect-12.svg'
+              sx={{
+                width: 70,
+                height: 70
+              }}
+            />
+
+            <Typography>
+              <br />
+              No Swaps Available
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box>
@@ -87,6 +146,8 @@ export default function MainMarketPlaceSection() {
             setFilteredZeSwapIdList(searchResult);
           }}
         />
+
+        {}
 
         {filteredZeSwapIdList ? (
           filteredZeSwapIdList?.map((swapList, idx) => (
