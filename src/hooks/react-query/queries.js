@@ -173,6 +173,10 @@ export const useQueriesFilterCounterOfferData = (
         }
       }
     }
+
+    //function get_swap_by_offer(bytes32 offer_id) public view returns(ZeSwap memory)
+
+    
     console.log('found swap id ' + swap_id_);
     //console.log('getting swap id ' + swap_id.toString());
     //console.log(JSON.stringify(swap));
