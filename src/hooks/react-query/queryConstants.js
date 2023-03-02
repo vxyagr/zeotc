@@ -8,15 +8,17 @@ export const queryKeys = {
   getQueriesSwapDetails: 'getQueriesSwapDetails',
   getSearchNFTDetails: 'getSearchNFTDetails',
   createCounterOffer: 'createCounterOffer',
-  getZeSwap:'getZeSwap',
-  myZeSwapId:'myZeSwapId',
-  offerIdList:'offerIdList',
-  getAmountsOut:'getAmountsOut',
-  getSwapHistory:'getSwapHistory',
+  getZeSwap: 'getZeSwap',
+  myZeSwapId: 'myZeSwapId',
+  offerIdList: 'offerIdList',
+  getAmountsOut: 'getAmountsOut',
+  getSwapHistory: 'getSwapHistory',
+  searchCustomNFTS: 'searchCustomNFTS',
+  searchCustomTokens: 'searchCustomTokens'
 };
 
 export const TOKEN_TYPE = {
   erc720: 'ERC720',
   erc721: 'ERC721',
-  erc1155: 'ERC1155',
+  erc1155: 'ERC1155'
 };

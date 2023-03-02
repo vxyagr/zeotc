@@ -351,21 +351,18 @@ export const useQueryGetUserNFTs = () => {
   });
 };
 
-
 //function to get custom ERC20 token metadata on create OTC
 export const useQueryGetCustomERC20 = (tokenAddress_) => {
   // // const notify = useNotify();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
 
-  const queryKey = [queryKeys.getUserNFTS, account];
+  const queryKey = [queryKeys.searchCustomTokens, account];
   const tokenAddress = tokenAddress_;
   const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}`;
-  
 
   const queryFn = async () => {
     const tokensData = await getUserNFts(url);
     console.log('axios ' + tokensData.toString());
-    
 
     return {
       tokensData
@@ -374,33 +371,38 @@ export const useQueryGetCustomERC20 = (tokenAddress_) => {
 
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    enabled: !!account
+    enabled: false
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };
 
-//function to get custom ERC20 token metadata on create OTC
-export const useQueryGetCustomNFT = (tokenAddress_,tokenId_) => {
+//function to get custom NFT metadata on create OTC
+export const useQueryGetCustomNFT = (tokenAddress_, tokenId_) => {
   // // const notify = useNotify();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
 
-  const queryKey = [queryKeys.getUserNFTS, account];
+  const queryKey = [queryKeys.searchCustomNFTS, account];
   const tokenAddress = tokenAddress_;
   const url = `https://deep-index.moralis.io/api/v2/nft/${tokenAddress}/${tokenId_}`;
 
   const queryFn = async () => {
-    const tokensData = await getUserNFts(url);
-    console.log('axios ' + tokensData.toString());
-    
+    const NFTData = await getUserNFts(url);
+
+    const NFTDataMapping = {
+      ...NFTData,
+      ...(typeof NFTData.metadata === 'string' && {
+        newMetadata: JSON.parse(NFTData.metadata)
+      })
+    };
 
     return {
-      tokensData
+      tokensData: NFTDataMapping
     };
   };
 
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    enabled: !!account
+    enabled: false
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };

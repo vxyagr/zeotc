@@ -8,6 +8,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CustomNft from 'components/CustomNft';
 import SearchAssets from 'components/SearchAssets';
 import {
   useQueryGetUserNFTs,
@@ -60,21 +61,6 @@ export default function CreateTokenSwap({
   const [tokensDataSearch, setTokensDataSearch] = useState([]);
   const [nftsDataSearch, setNftsDataSearch] = useState([]);
 
-  const TAB_OPTIONS = [
-    {
-      label: 'Token',
-      component: tokensData
-    },
-    {
-      label: 'NFTs',
-      component: nftsData
-    },
-    {
-      label: 'Custom',
-      component: []
-    }
-  ];
-
   const [searchInput, setSearchInput] = useState('');
   const [isSearch, setIsSearch] = useState(false);
 
@@ -123,6 +109,23 @@ export default function CreateTokenSwap({
     //   }
     // }
   };
+
+  const TAB_OPTIONS = [
+    {
+      label: 'Token',
+      component: tokensData
+    },
+    {
+      label: 'NFTs',
+      component: nftsData
+    },
+    {
+      label: 'Custom',
+      component: (
+        <CustomNft handleSelectAsset={(asset) => handleSelected(asset)} />
+      )
+    }
+  ];
 
   useEffect(() => {
     if (!isReceived) {
@@ -296,19 +299,33 @@ export default function CreateTokenSwap({
                       const currentItem = item?.component;
 
                       // !isReceived &&
-                      return currentItem?.map((card, idx) => {
-                        if (card.name !== '') {
-                          return (
-                            <OfferCard
-                              onClick={() => handleSelected(card)}
-                              key={card?.name + idx}
-                              card={card}
-                              unSelectedItems
-                              isModal
-                            />
-                          );
-                        }
-                      });
+                      if (item.label !== 'Custom') {
+                        return currentItem?.map((card, idx) => {
+                          if (card.name !== '') {
+                            return (
+                              <OfferCard
+                                onClick={() => handleSelected(card)}
+                                key={card?.name + idx}
+                                card={card}
+                                unSelectedItems
+                                isModal
+                              />
+                            );
+                          }
+                        });
+                      } else {
+                        // custom component
+                        return (
+                          <Box
+                            key={item?.label + idx}
+                            sx={{
+                              gridColumn: '1/-1'
+                            }}
+                          >
+                            {item.component}
+                          </Box>
+                        );
+                      }
                     }
                   })}
                 </Box>

@@ -57,22 +57,6 @@ export default function CreateToken({
 
   const [tokensData, setTokensData] = useState([]);
   const [nftsData, setNftsData] = useState([]);
-
-  const TAB_OPTIONS = [
-    {
-      label: 'Token',
-      component: tokensData
-    },
-    {
-      label: 'NFTs',
-      component: nftsData
-    },
-    {
-      label: 'Custom',
-      component: <CustomNft />
-    }
-  ];
-
   const [searchInput, setSearchInput] = useState();
   const [isSearch, setIsSearch] = useState(false);
 
@@ -120,6 +104,23 @@ export default function CreateToken({
       }
     }
   };
+
+  const TAB_OPTIONS = [
+    {
+      label: 'Token',
+      component: tokensData
+    },
+    {
+      label: 'NFTs',
+      component: nftsData
+    },
+    {
+      label: 'Custom',
+      component: (
+        <CustomNft handleSelectAsset={(asset) => handleSelected(asset)} />
+      )
+    }
+  ];
 
   useEffect(() => {
     if (newSearchInput?.length === 42 && isReceived) {
