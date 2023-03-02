@@ -8,6 +8,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 
+import SearchAssets from 'components/SearchAssets';
 import {
   useQueryGetUserNFTs,
   useQuerySearchNFTs,
@@ -33,13 +34,13 @@ const style = {
   outline: 'none',
   height: {
     xs: '90vh',
-    sm: '70vh',
+    sm: '70vh'
   },
   overflow: 'auto',
   py: {
     xs: 2,
-    md: 0,
-  },
+    md: 0
+  }
 };
 
 export default function CreateTokenSwap({
@@ -49,11 +50,11 @@ export default function CreateTokenSwap({
   handleProducts,
   counterArr,
   productDetailsA,
-  supplier,
+  supplier
 }) {
   const dispatch = useDispatch();
   const [activeButton, setActiveButton] = useState('Token');
-  const { account, } = useSelectWeb3();
+  const { account } = useSelectWeb3();
   const [tokensData, setTokensData] = useState([]);
   const [nftsData, setNftsData] = useState([]);
   const [tokensDataSearch, setTokensDataSearch] = useState([]);
@@ -62,28 +63,28 @@ export default function CreateTokenSwap({
   const TAB_OPTIONS = [
     {
       label: 'Token',
-      component: tokensData,
+      component: tokensData
     },
     {
       label: 'NFTs',
-      component: nftsData,
+      component: nftsData
     },
     {
       label: 'Custom',
-      component: [],
+      component: []
     }
   ];
 
-  const [searchInput, setSearchInput] = useState('hello');
+  const [searchInput, setSearchInput] = useState('');
   const [isSearch, setIsSearch] = useState(false);
 
-  const { data: getUserNfts, } = useQueryGetUserNFTs();
-  const { data: searchTokens, refetch: tokensRefetch, } = useQuerySearchTokens({
-    account: searchInput,
+  const { data: getUserNfts } = useQueryGetUserNFTs();
+  const { data: searchTokens, refetch: tokensRefetch } = useQuerySearchTokens({
+    account: searchInput
   });
 
-  const { data: searchNFTs, refetch: nftRefetch, } = useQuerySearchNFTs({
-    account: searchInput,
+  const { data: searchNFTs, refetch: nftRefetch } = useQuerySearchNFTs({
+    account: searchInput
   });
 
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
@@ -135,7 +136,7 @@ export default function CreateTokenSwap({
         setTokensData(searchTokens);
       }
     } else if (isReceived) {
-      const { nftsData, tokensData, } =
+      const { nftsData, tokensData } =
         getUserNfts ||
         {
           //
@@ -150,7 +151,8 @@ export default function CreateTokenSwap({
     nftRefetch,
     searchNFTs,
     searchTokens,
-    tokensRefetch
+    tokensRefetch,
+    searchInput
   ]);
 
   const leftSide = supplier === account ? productDetailsA : counterArr;
@@ -172,8 +174,8 @@ export default function CreateTokenSwap({
                 gridTemplateColumns: {
                   xs: 'repeat(1,1fr)',
                   sm: 'repeat(2, 1fr)',
-                  md: 'repeat(3, 1fr)',
-                },
+                  md: 'repeat(3, 1fr)'
+                }
               }}
             >
               {/* Modal part 1 */}
@@ -185,8 +187,8 @@ export default function CreateTokenSwap({
                   pt: 2,
                   gridColumn: {
                     xs: '1/2',
-                    sm: '1/3',
-                  },
+                    sm: '1/3'
+                  }
                 }}
               >
                 {/* modal header */}
@@ -194,7 +196,7 @@ export default function CreateTokenSwap({
                 <Box
                   sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
                   <Typography
@@ -203,17 +205,14 @@ export default function CreateTokenSwap({
                     component='h2'
                     sx={{
                       flexGrow: 1,
-                      textAlign: 'center',
+                      textAlign: 'center'
                     }}
                   >
                     Choose what you want to {!isReceived ? 'receive' : 'offer'}
                   </Typography>
 
                   <IconButton onClick={handleClose}>
-                    <Box
-                      component='img'
-                      src='/assets/svg/close.svg'
-                    />
+                    <Box component='img' src='/assets/svg/close.svg' />
                   </IconButton>
                 </Box>
 
@@ -223,10 +222,10 @@ export default function CreateTokenSwap({
                   sx={{
                     display: {
                       xs: 'block',
-                      sm: 'flex',
+                      sm: 'flex'
                     },
                     alignItems: 'center',
-                    mt: 2,
+                    mt: 2
                   }}
                 >
                   <Box
@@ -235,15 +234,15 @@ export default function CreateTokenSwap({
                       borderRadius: '12px',
                       maxWidth: {
                         xs: '100%',
-                        sm: 321,
+                        sm: 321
                       },
                       width: '100%',
                       display: 'grid',
                       gridTemplateColumns: 'repeat(3, 1fr)',
                       my: {
                         xs: 2,
-                        sm: 0,
-                      },
+                        sm: 0
+                      }
                     }}
                   >
                     {TAB_OPTIONS.map((btn, idx) => (
@@ -260,7 +259,7 @@ export default function CreateTokenSwap({
                           color: '#fff',
                           px: 2,
                           py: 1,
-                          gap: 1,
+                          gap: 1
                         }}
                       >
                         {btn.label}
@@ -269,30 +268,11 @@ export default function CreateTokenSwap({
                   </Box>
 
                   {/* search Input */}
-
-                  {!isReceived && (
-                    <Box
-                      component='input'
-                      type='text'
-                      placeholder='Search by Name or ticket'
-                      value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                      sx={{
-                        background: (theme) => theme.palette.primary.main,
-                        px: 3,
-                        maxWidth: {
-                          xs: '100%',
-                          sm: 260,
-                        },
-                        width: '100%',
-                        outline: 'none',
-                        border: 'none',
-                        borderRadius: '12px',
-                        ml: {
-                          sm: 3,
-                        },
-                        height: 46,
-                        fontFamily: 'Poppins',
+                  {!isReceived && activeButton !== 'Custom' && (
+                    <SearchAssets
+                      assetType={activeButton}
+                      onSearchAssetAddress={(address) => {
+                        setSearchInput(address);
                       }}
                     />
                   )}
@@ -305,10 +285,10 @@ export default function CreateTokenSwap({
                     display: 'grid',
                     gridTemplateColumns: {
                       xs: 'repeat(1, 1fr)',
-                      sm: 'repeat(2, 1fr)',
+                      sm: 'repeat(2, 1fr)'
                     },
                     columnGap: 2,
-                    mt: 2,
+                    mt: 2
                   }}
                 >
                   {TAB_OPTIONS.map((item, idx) => {
@@ -352,7 +332,7 @@ export default function CreateTokenSwap({
                       mx: 'auto',
                       cursor: 'pointer',
                       textAlign: 'center',
-                      width: 'fit-content',
+                      width: 'fit-content'
                     }}
                   >
                     Load More
@@ -368,7 +348,7 @@ export default function CreateTokenSwap({
                   borderLeft: '0.4px solid #4D4D4D',
                   display: 'flex',
                   flexDirection: 'column',
-                  minHeight: '70vh',
+                  minHeight: '70vh'
                 }}
               >
                 <Typography variant='h5'>Selected Assets</Typography>
@@ -376,7 +356,7 @@ export default function CreateTokenSwap({
                 <Box
                   sx={{
                     mt: 2,
-                    flexGrow: 1,
+                    flexGrow: 1
                   }}
                 >
                   {!isReceived &&
@@ -416,7 +396,7 @@ export default function CreateTokenSwap({
                     background:
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)',
                     py: 1.3,
-                    borderRadius: '10.1927px',
+                    borderRadius: '10.1927px'
                   }}
                 >
                   CONFIRM selection
