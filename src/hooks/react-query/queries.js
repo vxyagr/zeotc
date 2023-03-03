@@ -147,7 +147,6 @@ export const useQueriesFilterMarketPlaceData = (
 };
 
 export const useQueriesFilterCounterOfferData = (
-  zeSwapIdList = [],
   offerIdList = [],
   isTrade = false
 ) => {
@@ -161,7 +160,8 @@ export const useQueriesFilterCounterOfferData = (
     const data = [];
     console.log('looping offer id ' + offer_id);
     let swap_id_ = '0x1';
-    swap_id_ = await zeoTC_Contract.get_swap_by_offer(offer_id);
+    const swap = await zeoTC_Contract.get_swap_by_offer(offer_id);
+    swap_id_ = swap.swap_id;
     console.log('swaplist : ' + JSON.stringify(swaplist_));
     
     //console.log('getting swap id ' + swap_id.toString());
@@ -208,8 +208,8 @@ export const useQueriesFilterCounterOfferData = (
 
   const queries = offerIdList?.map((offer_id, idx) => ({
     queryKey: [queryKeys.getQueriesSwapDetails, offer_id],
-    queryFn: () => queryFn(offer_id, zeSwapIdList),
-    enabled: !!zeoTC_Contract && !!zeSwapIdList
+    queryFn: () => queryFn(offer_id),
+    enabled: !!zeoTC_Contract 
   }));
   const results = useQueries({
     queries
