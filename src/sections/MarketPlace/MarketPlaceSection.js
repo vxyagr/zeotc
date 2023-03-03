@@ -160,7 +160,7 @@ export default function MarketPlaceSection({
   useEffect(() => {
     let totalAmount =
       (ProductB?.length !== 0 &&
-        ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
+        ProductB?.map((item) => handleFormateAmount(item?.amount,item?.metadata?.decimals))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
           0
         )) ||
@@ -182,6 +182,7 @@ export default function MarketPlaceSection({
     // totalAmount = totalAmoun;
     setSumOfAmountA(totalAmount);
   }, [ProductA, ProductA?.length]);
+  //cconsole.log("supplier? " + isSupplier);
 
   return (
     <Box>
@@ -483,7 +484,7 @@ export default function MarketPlaceSection({
                 </Button>
               </Box>
             )}
-            {isSupplier && status == 1 && (
+            {isSupplier && status <4 && (
               <Box
                 sx={{
                   display: 'flex',

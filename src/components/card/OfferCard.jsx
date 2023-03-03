@@ -20,7 +20,7 @@ import useClipboard from 'react-use-clipboard';
 
 import MButton from 'components/MButton';
 import { useMutationSetProduct } from 'hooks/react-query/mutation';
-import { useQueryGetUserTokenBalance } from 'hooks/react-query/queries';
+import { useQueryGetUserTokenBalance,useTokenPrice } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
 export default function OfferCard({
@@ -89,6 +89,7 @@ export default function OfferCard({
   // }, [card?.amount, card?.metadata?.decimals, handleProductAmountA]);
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
+  const tokenPrice = useTokenPrice(card?.token_address);
   const cardTokenBalance =
     card?.contract_type == 'ERC721'
       ? card.amount
@@ -96,24 +97,34 @@ export default function OfferCard({
   console.log(
     'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
   );
+
+  
   /*card.IERC.toString() == '20'
       ? card.balance / 1000000000000000000
       : card.balance;*/
-
+  
+      const handleFormateAmount = (item) => {
+        const amount = item?.toString() || 0;
+    
+        return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+      };
+      const initVal = handleFormateAmount(card?.amount);
   const handleChangeInputAmount = (value, selectedCard) => {
-    setValueInput(value);
+    let val = parseFloat(value);
+    let weiVal = val * (10 ** selectedCard.decimals);
+    setValueInput(weiVal);
 
     if (handleProductDetails) {
-      handleProductDetails(idx, value);
+      handleProductDetails(idx, weiVal);
     } else if (handleProductAmountA) {
-      handleProductAmountA(idx, value);
+      handleProductAmountA(idx, weiVal);
     } else {
       if (!isDashboardR) {
         const newData = dataFetch.map((item, index) => {
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: value
+              amount: weiVal
             };
           }
 
@@ -301,7 +312,7 @@ export default function OfferCard({
               mt: 0.5
             }}
           >
-            {cardTokenBalance || '$0.999149aa'}
+            {cardTokenBalance || 'unlisted on exchange'}
           </Typography>
         </Box>
 
@@ -330,10 +341,10 @@ export default function OfferCard({
 
               <Box
                 component='input'
-                value={card?.amount / 1000000000000000000}
+                value={initVal}
                 onChange={(e) =>
                   handleChangeInputAmount(
-                    e.target.value * 1000000000000000000,
+                    e.target.value,
                     card
                   )
                 }

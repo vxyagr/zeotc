@@ -233,7 +233,7 @@ export default function CustomNft({ handleSelectAsset }) {
                 gap: 1
               }}
             >
-              Search NTF
+              Search NFT
             </LoadingButton>
           </Box>
         </Box>
