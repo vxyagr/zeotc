@@ -164,7 +164,7 @@ export const useMutationCreateZeSwap = () => {
     // const zSwap_id = data?.events?.[0]?.['args']?.[0];
 
     // await zeoTC_Contract.set_allow_counter_offer(zSwap_id, isChecked);
-
+    console.log("creating OTC");
     return await zeoTC_Contract.create_zeSwap(
       productAs,
       productBs,

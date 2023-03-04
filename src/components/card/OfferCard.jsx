@@ -94,9 +94,9 @@ export default function OfferCard({
     card?.contract_type == 'ERC721'
       ? card.amount
       : Math.floor(card?.balance / 10 ** card?.decimals);
-  console.log(
-    'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
-  );
+  //console.log(
+    //'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
+  //);
 
   
   /*card.IERC.toString() == '20'
@@ -104,14 +104,17 @@ export default function OfferCard({
       : card.balance;*/
   
       const handleFormateAmount = (item) => {
-        const amount = item?.toString() || 0;
-    
+        const amount = Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) || 0;
+        console.log("offer card formatting attempt " + amount);
         return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
       };
-      const initVal = handleFormateAmount(card?.amount);
+      const initVal = handleFormateAmount(card?.amount? card.amount : 0);
   const handleChangeInputAmount = (value, selectedCard) => {
+    console.log("val " + value.toString());
     let val = parseFloat(value);
+    console.log("parsed val " + val);
     let weiVal = val * (10 ** selectedCard.decimals);
+    if (weiVal > card?.balance) weiVal = card?.balance;
     setValueInput(weiVal);
 
     if (handleProductDetails) {
@@ -142,7 +145,7 @@ export default function OfferCard({
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: value
+              amount: weiVal
             };
           }
 
@@ -312,7 +315,7 @@ export default function OfferCard({
               mt: 0.5
             }}
           >
-            {cardTokenBalance || 'unlisted on exchange'}
+            {isOfferReceived? 'ok' : cardTokenBalance}
           </Typography>
         </Box>
 

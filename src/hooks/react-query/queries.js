@@ -146,12 +146,22 @@ export const useQueriesFilterMarketPlaceData = (
   return results?.map((result) => result.data?.[0]);
 };
 
+export const testFunction = async () => {
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const swap = await zeoTC_Contract.get_swap_by_offer('0xebf3ecde85f662ccaf6049e5ac83bfae86ead2016b43a4d32a24cc018bdbf5d8');
+  
+
+  return swap;
+  
+}
+
 export const useQueriesFilterCounterOfferData = (
   offerIdList = [],
   isTrade = false
 ) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   console.log('filtering offers ');
+  
   //console.log('total swap ' + zeSwapIdList.length);
   //console.log(JSON.stringify(zeSwapIdList));
   //const { swaplist } = useQueryZeSwapIdList();

@@ -148,8 +148,8 @@ export default function MarketPlaceSection({
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item?.toString() || 0;
-
+    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
+    console.log("marketplace value " + item);
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
 
@@ -160,7 +160,7 @@ export default function MarketPlaceSection({
   useEffect(() => {
     let totalAmount =
       (ProductB?.length !== 0 &&
-        ProductB?.map((item) => handleFormateAmount(item?.amount,item?.metadata?.decimals))?.reduce(
+        ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
           0
         )) ||

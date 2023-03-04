@@ -132,8 +132,8 @@ export const handleFormateData = (receivedData, useId = false) => {
     const decimal = item?.metadata?.decimals || item?.decimals;
     let tokenAddress;
     let tokenId;
-    let amountValue = item?.amount?.toString() || '0.00002';
-
+    //let amountValue = item?.amount?.toString() || '0.00002';
+    let amountValue = item? Number(item?.amount?.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0 || '0.00002';
     // ? IF TYPE DOS'T EXIST ITS MEANS TOKEN TYPE IS ERC20
 
     if (!tokenType || tokenType === '20') {
