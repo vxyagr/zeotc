@@ -149,7 +149,7 @@ export default function MarketPlaceSection({
 
   const handleFormateAmount = (item) => {
     const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
-    console.log("marketplace value " + item);
+    //console.log("marketplace value " + item);
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
 

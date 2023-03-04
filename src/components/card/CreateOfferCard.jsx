@@ -72,7 +72,7 @@ export default function OfferCard({
           ?.split('.')[0]
       : '0';
 
-  const [valueInput, setValueInput] = useState(initialValue);
+  
 
   // useEffect(() => {
   //   if (!handleProductAmountA) {
@@ -109,7 +109,8 @@ export default function OfferCard({
         return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
       };
       //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
-      const initVal = isOfferReceived? (card?.amount? handleFormateAmount(card.amount) : 0) : (card?.amount? card.amount : 0);
+  const initVal = isOfferReceived ? (card?.amount ? handleFormateAmount(card.amount) : 0) : (card?.amount ? card.amount : 0);
+  const [valueInput, setValueInput] = useState(initialValue);
   const handleChangeInputAmount = (value, selectedCard) => {
     console.log("val " + value.toString());
     let val = parseFloat(value);
@@ -118,7 +119,7 @@ export default function OfferCard({
     console.log("processed val " + weiVal);
     //let weiVal = val;
     if (val * (10 ** selectedCard.decimals) > card?.balance) weiVal = (card?.balance)/(10 ** selectedCard.decimals) ;
-    setValueInput(weiVal);
+    setValueInput(val);
 
     if (handleProductDetails) {
       handleProductDetails(idx, weiVal);
@@ -347,7 +348,7 @@ export default function OfferCard({
 
               <Box
                 component='input'
-                value={initVal}
+                value={valueInput}
                 onChange={(e) =>
                   handleChangeInputAmount(
                     e.target.value,

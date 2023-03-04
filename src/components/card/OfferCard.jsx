@@ -54,7 +54,7 @@ export default function OfferCard({
   //   ? card?.amount
   //   : Math.floor(card?.balance / 10 ** 18) || '0';
   const [isCopied, setCopied] = useClipboard(card.token || card.token_address);
-
+  const [amountValue, setAmountValue] = useState(0);
   const [updateProductB, setUpdateProductB] = useState([]);
 
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
@@ -72,7 +72,7 @@ export default function OfferCard({
           ?.split('.')[0]
       : '0';
 
-  const [valueInput, setValueInput] = useState(initialValue);
+  
 
   // useEffect(() => {
   //   if (!handleProductAmountA) {
@@ -90,7 +90,7 @@ export default function OfferCard({
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
   const tokenPrice = useTokenPrice(card?.token_address);
-  console.log("card detail " + JSON.stringify(card));
+  //console.log("card detail " + JSON.stringify(card));
   const cardTokenBalance =
     card?.contract_type == 'ERC721'
       ? card.amount
@@ -110,16 +110,20 @@ export default function OfferCard({
         return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
       };
       //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
-      const initVal = isOfferReceived? (card?.amount? handleFormateAmount(card.amount) : 0) : (card?.amount? card.amount : 0);
+  //const initVal = isOfferReceived ? (card?.amount ? handleFormateAmount(card.amount) : 0) : (card?.amount ? card.amount : 0);
+  const initVal = card?.amount ? handleFormateAmount(card.amount) : 0;
+  const [valueInput, setValueInput] = useState(initVal);
   const handleChangeInputAmount = (value, selectedCard) => {
-    console.log("val " + value.toString());
+    console.log("val " + value.toString() + " " + JSON.stringify(selectedCard));
+    let decs = selectedCard?.decimals ? selectedCard.decimals  : selectedCard.metadata.decimals;
     let val = parseFloat(value);
-    console.log("parsed val " + val + " " + isOfferReceived + " " + selectedCard.metadata.decimals);
-    let weiVal = isOfferReceived? val * (10 ** selectedCard.metadata.decimals) : val;
+    console.log("parsed val " + val + " " + isOfferReceived + " " + decs);
+    let weiVal = isOfferReceived ? val : val;
+    //let weiVal =  val;
     console.log("processed val " + weiVal);
     //let weiVal = val;
-    if (val * (10 ** selectedCard.metadata.decimals) > card?.balance) weiVal = (card?.balance)/(10 ** selectedCard.metadata.decimals) ;
-    setValueInput(weiVal);
+    if (val * (10 ** decs) > card?.balance) weiVal = (card?.balance)/(10 ** decs) ;
+    setValueInput(val);
 
     if (handleProductDetails) {
       handleProductDetails(idx, weiVal);
@@ -319,7 +323,8 @@ export default function OfferCard({
               mt: 0.5
             }}
           >
-            {isOfferReceived? 'ok' : cardTokenBalance}
+            {isOfferReceived ? 'ok' : cardTokenBalance}
+            
           </Typography>
         </Box>
 
@@ -348,7 +353,7 @@ export default function OfferCard({
 
               <Box
                 component='input'
-                value={initVal}
+                value={valueInput}
                 onChange={(e) =>
                   handleChangeInputAmount(
                     e.target.value,
