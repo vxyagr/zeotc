@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Checkbox, Divider, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 
-import OfferCard from 'components/card/OfferCard';
+import OfferCard from 'components/card/CreateOfferCard';
 import ReactDatePicker from 'components/DateTimePicker';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
@@ -133,8 +133,8 @@ export default function DashboardSection() {
       (dataFetch?.length !== 0 &&
         dataFetch
           ?.map((item) => item?.amount)
-          ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-      0;
+          //?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
+          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
     setSumOfAmount(totalAmount);
   }, [dataFetch, dataFetch?.length]);
 
@@ -144,8 +144,8 @@ export default function DashboardSection() {
       (receivedData?.length !== 0 &&
         receivedData
           ?.map((item) => item?.amount)
-          ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-      0;
+        //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
+        ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
     setSumOfReceive(totalAmount);
   }, [receivedData, receivedData?.length]);
 

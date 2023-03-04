@@ -20,7 +20,7 @@ import useClipboard from 'react-use-clipboard';
 
 import MButton from 'components/MButton';
 import { useMutationSetProduct } from 'hooks/react-query/mutation';
-import { useQueryGetUserTokenBalance,useTokenPrice,useQueryTokenBalance } from 'hooks/react-query/queries';
+import { useQueryGetUserTokenBalance,useTokenPrice } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
 export default function OfferCard({
@@ -90,7 +90,6 @@ export default function OfferCard({
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
   const tokenPrice = useTokenPrice(card?.token_address);
-  console.log("card detail " + JSON.stringify(card));
   const cardTokenBalance =
     card?.contract_type == 'ERC721'
       ? card.amount
@@ -114,11 +113,11 @@ export default function OfferCard({
   const handleChangeInputAmount = (value, selectedCard) => {
     console.log("val " + value.toString());
     let val = parseFloat(value);
-    console.log("parsed val " + val + " " + isOfferReceived + " " + selectedCard.metadata.decimals);
-    let weiVal = isOfferReceived? val * (10 ** selectedCard.metadata.decimals) : val;
+    console.log("parsed val " + val + " " + isOfferReceived + " " + selectedCard.decimals);
+    let weiVal = isOfferReceived? val * (10 ** selectedCard.decimals) : val;
     console.log("processed val " + weiVal);
     //let weiVal = val;
-    if (val * (10 ** selectedCard.metadata.decimals) > card?.balance) weiVal = (card?.balance)/(10 ** selectedCard.metadata.decimals) ;
+    if (val * (10 ** selectedCard.decimals) > card?.balance) weiVal = (card?.balance)/(10 ** selectedCard.decimals) ;
     setValueInput(weiVal);
 
     if (handleProductDetails) {

@@ -199,7 +199,7 @@ export default function OfferReceived({ selectedCard }) {
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item?.toString() || 0;
+    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
 
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
@@ -417,21 +417,7 @@ export default function OfferReceived({ selectedCard }) {
             justifySelf: 'center'
           }}
         >
-          <Button
-            variant='contained'
-            sx={{
-              py: 2,
-              transform: 'matrix(1, 0, 0, -1, 0, 0)'
-            }}
-          >
-            <Box
-              component='img'
-              src='/assets/svg/MyOtc.svg'
-              sx={{
-                width: 20
-              }}
-            />
-          </Button>
+          
         </Box>
 
         <Box

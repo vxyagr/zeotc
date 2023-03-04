@@ -340,11 +340,45 @@ export const useQueryGetUserNFTs = () => {
     };
   };
 
+
+  ///function to get specific token balance
+  
+
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
     enabled: !!account
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
+};
+
+//function to get specific token balance
+export const useQueryTokenBalance = (tokenAddress) => {
+  // // const notify = useNotify();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const queryKey = [queryKeys.getUserNFTS, account];
+  const tokenAddress_ = tokenAddress;
+
+  const queryFn = async () => {
+    const abi = erc20_Contact_Abi;
+
+          const contract = new ethers.Contract(
+            tokenAddress_,
+            abi,
+            signer
+          );
+          // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
+
+          balance = await contract.balanceOf(account);
+    balance = Number(balance?.toString());
+    return balance;
+  };
+
+return useQuery(queryKey, queryFn, {
+  refetchOnWindowFocus: false,
+  enabled: !!account
+  // onError: (error) => notify('error', 'Error while fetching the name'),
+});
 };
 
 //function to get custom ERC20 token metadata on create OTC
