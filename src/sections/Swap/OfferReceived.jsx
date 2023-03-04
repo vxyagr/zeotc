@@ -199,7 +199,11 @@ export default function OfferReceived({ selectedCard }) {
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
+    const amount = item
+      ? Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0;
 
     //return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
     return amount;
@@ -219,7 +223,7 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
-    console.log("total amount product B" + totalAmount);     
+    console.log('total amount product B' + totalAmount);
     totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -232,7 +236,7 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
-      console.log("total amount product A" + totalAmount); 
+    console.log('total amount product A' + totalAmount);
     totalAmount = `${totalAmount}`.replace('e-18', '');
 
     // totalAmount = totalAmoun;
@@ -323,6 +327,7 @@ export default function OfferReceived({ selectedCard }) {
                 isMarketCard={isSupplier && selectedCard}
                 isApproveLoading={isSupplier && isApproveLoading}
                 handleApproveClick={isSupplier && handleApproveClick}
+                isProvideItems={supplier === account}
                 isOfferReceived
               />
             );
@@ -418,9 +423,7 @@ export default function OfferReceived({ selectedCard }) {
             alignSelf: 'center',
             justifySelf: 'center'
           }}
-        >
-          
-        </Box>
+        ></Box>
 
         <Box
           sx={{
@@ -474,6 +477,7 @@ export default function OfferReceived({ selectedCard }) {
                 isMarketCard={!isSupplier && selectedCard}
                 isApproveLoading={!isSupplier && isApproveLoading}
                 handleApproveClick={!isSupplier && handleApproveClick}
+                isProvideItems={supplier !== account}
                 isOfferReceived
               />
             );
