@@ -201,7 +201,8 @@ export default function OfferReceived({ selectedCard }) {
   const handleFormateAmount = (item) => {
     const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
 
-    return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+    //return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+    return amount;
   };
 
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
@@ -218,7 +219,7 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
-
+    console.log("total amount product B" + totalAmount);     
     totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -231,6 +232,7 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
+      console.log("total amount product A" + totalAmount); 
     totalAmount = `${totalAmount}`.replace('e-18', '');
 
     // totalAmount = totalAmoun;

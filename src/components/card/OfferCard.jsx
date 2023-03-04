@@ -106,7 +106,7 @@ export default function OfferCard({
   
       const handleFormateAmount = (item) => {
         const amount = Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) || 0;
-        console.log("offer card formatting attempt " + amount);
+        //console.log("offer card formatting attempt " + amount);
         return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
       };
       //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
