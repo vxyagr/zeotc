@@ -2,7 +2,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect, useRef, useState } from 'react';
 
-import { CopyAllOutlined } from '@mui/icons-material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import { ethers } from 'ethers';
 import Link from 'next/link';
@@ -114,6 +114,7 @@ export default function MarketPlaceSection({
   const [open, setOpen] = useState(false);
   const [isCard, setIsCard] = useState(false);
   const [isCopied, setCopied] = useClipboard(offer_id);
+  const [isCopySwapId, setIsCopySwapId] = useState('asdasdsa');
   const isCopy = useRef(false);
 
   const handleCloseModal = () => setOpen(false);
@@ -148,8 +149,12 @@ export default function MarketPlaceSection({
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
-    console.log("marketplace value " + item);
+    const amount = item
+      ? Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0;
+    console.log('marketplace value ' + item);
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
 
@@ -183,6 +188,11 @@ export default function MarketPlaceSection({
     setSumOfAmountA(totalAmount);
   }, [ProductA, ProductA?.length]);
   //cconsole.log("supplier? " + isSupplier);
+
+  const handleCopySwapId = () => {
+    // document.execCommand(`${swap_id}`);
+    navigator.clipboard.writeText(`${swap_id}`);
+  };
 
   return (
     <Box>
@@ -231,6 +241,22 @@ export default function MarketPlaceSection({
             ></Typography>
 
             <Typography sx={{}}> {appStatus}</Typography>
+
+            <Tooltip
+              sx={{
+                backgroundColor: (theme) => theme.palette.primary.main
+              }}
+              placement='top'
+              title='Copy Swap ID'
+            >
+              <ContentCopyIcon
+                onClick={() => handleCopySwapId()}
+                sx={{
+                  fontSize: 16,
+                  color: '#fff'
+                }}
+              />
+            </Tooltip>
           </Box>
         )}
 
@@ -484,7 +510,7 @@ export default function MarketPlaceSection({
                 </Button>
               </Box>
             )}
-            {isSupplier && status <4 && (
+            {isSupplier && status < 4 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -654,6 +680,25 @@ export default function MarketPlaceSection({
                 Me
               </Typography>
             )}
+
+            <Tooltip
+              sx={{
+                backgroundColor: (theme) => theme.palette.primary.main
+              }}
+              placement='top'
+              title='Copy Swap ID'
+            >
+              <ContentCopyIcon
+                onClick={() => handleCopySwapId()}
+                sx={{
+                  fontSize: 16,
+                  mt: {
+                    md: 4
+                  },
+                  color: '#fff'
+                }}
+              />
+            </Tooltip>
 
             {/* <MarketPlaceCard title='BTC, XRP and ' Image='/assets/svg/CardImg.svg' /> */}
           </Box>
