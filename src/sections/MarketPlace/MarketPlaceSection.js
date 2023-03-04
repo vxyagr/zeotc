@@ -17,7 +17,8 @@ import {
   useMutationReject,
   useMutationSwapAccept,
   useMutationSwapCounterOffer,
-  useMutationCancelZeSwap
+  useMutationCancelZeSwap,
+  useERC20_ERC721_ERC1155Approve
 } from 'hooks/react-query/mutation';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 
@@ -60,6 +61,16 @@ export default function MarketPlaceSection({
       swap_id,
       expire: zeSwapList?.swap?.expiration?.toString()
     });
+  };
+
+  const {
+    isLoading: isApproveLoading,
+    mutate : mutateApprove,
+    data: approvedData
+  } = useERC20_ERC721_ERC1155Approve();
+
+  const handleApproveClick = (token) => {
+    
   };
 
   // Moralis end
@@ -139,6 +150,33 @@ export default function MarketPlaceSection({
   };
 
   const handleSwapAccept = () => {
+    /*setSelectedObjForSet(token.id);
+
+    const tokenAddress = token?.token?.toString() || token?.token_address;
+
+    setSelectedTokenAddress(tokenAddress);
+
+    const tokenType = token?.IERC?.toString() || token?.contract_type;
+    setIsApprove(tokenAddress);
+    const tokenId = token?.token_id?.toString();
+    const decimal = token?.decimals?.toString() || token?.decimals;
+    const amount = token?.amount;
+
+    const zeroAddress = '0x0000000000000000000000000000000000000000';
+
+    if (tokenAddress && amount) {
+      mutateApprove({
+        tokenAddress,
+        tokenType,
+        tokenId,
+        decimal,
+        amount
+      });
+    }
+
+    if (demander === zeroAddress) {
+      setIsSetState(true);
+    }*/
     acceptMutate(swap_id);
   };
 
@@ -289,7 +327,7 @@ export default function MarketPlaceSection({
               }}
             >
               {/*offr[0]*/}
-              You will provide
+              You Will Receive
             </Typography>
 
             {/* {ProductA.map((token, idx)=>{
@@ -366,7 +404,7 @@ export default function MarketPlaceSection({
                 px: 2
               }}
             >
-              You will receive
+              You Will Provide
             </Typography>
 
             <MarketPlaceCard
@@ -452,7 +490,7 @@ export default function MarketPlaceSection({
               </Box>
             )}
             {counterOfferStatus && !isSupplier && (
-              <Box
+              <><Box
                 sx={{
                   display: 'flex',
                   justifyContent: 'center',
@@ -468,21 +506,41 @@ export default function MarketPlaceSection({
                     width: 150,
                     color: 'white',
                     // width:'100%',
-                    background:
-                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
-                  }}
-                  component={isMarketPlace && !isCopy.current ? Link : 'div'}
-                  // component={Link}
-                  href={{
-                    pathname: '/marketPlace/swap',
-                    query: {
-                      id: `${swap_id}` // should be `title` not `id`
-                    }
+                    background: ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
-                  Counter Offer
+                  Accept Offer
                 </Button>
-              </Box>
+              </Box><Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  verticalAlign: 'middle',
+                  mt: 2
+                }}
+              >
+                  <Button
+                    disabled={!account}
+
+                    sx={{
+                      width: 150,
+                      color: 'white',
+                      // width:'100%',
+                      background: ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+                    }}
+                    component={isMarketPlace && !isCopy.current ? Link : 'div'}
+                    // component={Link}
+                    href={{
+                      pathname: '/marketPlace/swap',
+                      query: {
+                        id: `${swap_id}` // should be `title` not `id`
+                      }
+                    }}
+                  >
+                    Counter Offer
+                  </Button>
+                </Box></>
             )}
             {isSupplier && status <4 && (
               <Box
