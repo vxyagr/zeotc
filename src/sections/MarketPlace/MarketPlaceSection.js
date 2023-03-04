@@ -65,13 +65,11 @@ export default function MarketPlaceSection({
 
   const {
     isLoading: isApproveLoading,
-    mutate : mutateApprove,
+    mutate: mutateApprove,
     data: approvedData
   } = useERC20_ERC721_ERC1155Approve();
 
-  const handleApproveClick = (token) => {
-    
-  };
+  const handleApproveClick = (token) => {};
 
   // Moralis end
   useEffect(() => {
@@ -125,6 +123,7 @@ export default function MarketPlaceSection({
   const [open, setOpen] = useState(false);
   const [isCard, setIsCard] = useState(false);
   const [isCopied, setCopied] = useClipboard(offer_id);
+  const [isCopySwapId, setIsCopySwapId] = useClipboard(swap_id);
   const isCopy = useRef(false);
 
   const handleCloseModal = () => setOpen(false);
@@ -186,7 +185,11 @@ export default function MarketPlaceSection({
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
+    const amount = item
+      ? Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0;
     //console.log("marketplace value " + item);
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
@@ -269,6 +272,16 @@ export default function MarketPlaceSection({
             ></Typography>
 
             <Typography sx={{}}> {appStatus}</Typography>
+
+            <IconButton onClick={setIsCopySwapId}>
+              <Tooltip title={isCopySwapId ? 'Copied' : 'Copy Swap ID'}>
+                <CopyAllOutlined
+                  sx={{
+                    width: 20
+                  }}
+                />
+              </Tooltip>
+            </IconButton>
           </Box>
         )}
 
@@ -490,44 +503,47 @@ export default function MarketPlaceSection({
               </Box>
             )}
             {counterOfferStatus && !isSupplier && (
-              <><Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  verticalAlign: 'middle',
-                  mt: 2
-                }}
-              >
-                <Button
-                  disabled={!account}
-                  onClick={handleSwapAccept}
+              <>
+                <Box
                   sx={{
-                    width: 150,
-                    color: 'white',
-                    // width:'100%',
-                    background: ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    verticalAlign: 'middle',
+                    mt: 2
                   }}
                 >
-                  Accept Offer
-                </Button>
-              </Box><Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  verticalAlign: 'middle',
-                  mt: 2
-                }}
-              >
                   <Button
                     disabled={!account}
-
+                    onClick={handleSwapAccept}
                     sx={{
                       width: 150,
                       color: 'white',
                       // width:'100%',
-                      background: ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+                      background:
+                        ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+                    }}
+                  >
+                    Accept Offer
+                  </Button>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    verticalAlign: 'middle',
+                    mt: 2
+                  }}
+                >
+                  <Button
+                    disabled={!account}
+                    sx={{
+                      width: 150,
+                      color: 'white',
+                      // width:'100%',
+                      background:
+                        ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                     }}
                     component={isMarketPlace && !isCopy.current ? Link : 'div'}
                     // component={Link}
@@ -540,9 +556,10 @@ export default function MarketPlaceSection({
                   >
                     Counter Offer
                   </Button>
-                </Box></>
+                </Box>
+              </>
             )}
-            {isSupplier && status <4 && (
+            {isSupplier && status < 4 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -712,6 +729,24 @@ export default function MarketPlaceSection({
                 Me
               </Typography>
             )}
+
+            <IconButton
+              onClick={setIsCopySwapId}
+              sx={{
+                py: 0
+              }}
+            >
+              <Tooltip title={isCopySwapId ? 'Copied' : 'Copy Swap ID'}>
+                <CopyAllOutlined
+                  sx={{
+                    width: 20,
+                    mt: {
+                      md: 2
+                    }
+                  }}
+                />
+              </Tooltip>
+            </IconButton>
 
             {/* <MarketPlaceCard title='BTC, XRP and ' Image='/assets/svg/CardImg.svg' /> */}
           </Box>
