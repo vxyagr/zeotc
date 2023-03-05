@@ -48,7 +48,6 @@ export default function OfferCard({
   isProvideItems,
   tokenBalance
 }) {
-  console.log(card, '<<<<<<xx card');
   const dispatch = useDispatch();
   const { data: tokenBalanceInWallet } = useQueryTokenBalance(card.token || 0);
   const [balanceInWallet, setBalanceInWallet] = useState('-');
