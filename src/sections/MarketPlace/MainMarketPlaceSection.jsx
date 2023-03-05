@@ -58,7 +58,8 @@ export default function MainMarketPlaceSection() {
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
-      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList.filter(((item) => (item.swap[2] == account || item.swap[2] == '0x0000000000000000000000000000000000000000')&&item.swap[1]!=account )), sort, true));
+      //setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList.filter(((item) => (item.swap[2] == account || item.swap[2] == '0x0000000000000000000000000000000000000000')&&item.swap[1]!=account )), sort, true));
+      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);

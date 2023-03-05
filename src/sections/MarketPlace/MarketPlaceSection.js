@@ -177,8 +177,48 @@ export default function MarketPlaceSection({
     if (demander === zeroAddress) {
       setIsSetState(true);
     }*/
+
+    
     acceptMutate(swap_id);
   };
+  
+  const handleQuickSwapAccept = () => {
+    if (isSupplier) {
+      console.log("list produk A " + JSON.stringify(ProductA));
+    } else {
+      console.log("list produk B " + JSON.stringify(ProductB));
+      ProductB?.map((item) => console.log("addr " + 
+        item.token + " type " +  item.IERC + " id " +item.token_id + " dec " +
+        item.metadata.decimals + " amnt " + item.amount
+      ));
+      ProductB?.map((item) => {
+        const tokenAddress = item.token;
+        console.log("tk addr " + tokenAddress);
+        const tokenType = item.IERC.toString();
+        const tokenId = item.token_id;
+        const decimal = item.metadata.decimals;
+        const amount = item.amount;
+        mutateApprove({
+          tokenAddress,
+        tokenType,
+        tokenId,
+        decimal,
+        amount
+      });
+      });
+
+    }
+    /*if (tokenAddress && amount) {
+      mutate({
+        tokenAddress,
+        tokenType,
+        tokenId,
+        decimal,
+        amount
+      });
+    }
+    acceptMutate(swap_id);*/
+  }
 
   const handleSwapCancel = () => {
     console.log('cancel swap');
@@ -199,10 +239,7 @@ export default function MarketPlaceSection({
     let totalAmount =
       (ProductB?.length !== 0 &&
         ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
-          (prev, curr) => Number(prev) + Number(curr),
-          0
-        )) ||
-      '0';
+          (prev, curr) => Number(prev) + Number(curr),  0  )) || '0';
 
     totalAmount = `${totalAmount}`.replace('e-12', '');
     setSumOfAmountB(totalAmount);
@@ -322,6 +359,12 @@ export default function MarketPlaceSection({
             }}
           >
             <Typography
+              component={Link} href={{
+                pathname: '/marketPlace/swap',
+                query: {
+                  id: `${swap_id}` // should be `title` not `id`
+                }
+              }}
               sx={{
                 px: 2
               }}
@@ -476,7 +519,7 @@ export default function MarketPlaceSection({
               >
                 <Button
                   disabled={!account}
-                  onClick={handleSwapAccept}
+                  onClick={handleQuickSwapAccept}
                   sx={{
                     width: 150,
                     color: 'white',
@@ -501,7 +544,7 @@ export default function MarketPlaceSection({
               >
                 <Button
                   disabled={!account}
-                  onClick={handleSwapAccept}
+                  onClick={handleQuickSwapAccept}
                   sx={{
                     width: 150,
                     color: 'white',
@@ -803,7 +846,7 @@ export default function MarketPlaceSection({
 
           <Button
             // onClick={() => mutate(swap_id)}
-            onClick={handleSwapAccept}
+            onClick={handleQuickSwapAccept}
             sx={{
               width: 150,
               background:

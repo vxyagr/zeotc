@@ -90,9 +90,10 @@ export const useERC20_ERC721_ERC1155Approve = () => {
     //   decimal,
     //   amount,
     // });
-
+    console.log("approving " + tokenType + " " + amount);
     // ? ERC20
     if (!tokenType || tokenType === '20') {
+      console.log("approving ERC 20 " + amount);
       const abi = erc20_Contact_Abi;
       const contract = new ethers.Contract(tokenAddress, abi, signer);
 
@@ -102,7 +103,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
       const amounts = amount.toString();
 
       const amount1 = ethers.utils.parseUnits(amounts, decimals);
-
+      
       tx = await contract?.approve(zeoTC_Contract.address, amount1);
     }
 
