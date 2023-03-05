@@ -82,6 +82,8 @@ export default function OfferReceived({ selectedCard }) {
   const [selectedObjForSet, setSelectedObjForSet] = useState(null);
   const [selectedTokenAddress, setSelectedTokenAddress] = useState();
   const [appStatus, setAppStatus] = useState('');
+  const [zeroProductA, setZeroProductA] = useState(0);
+  const [zeroProductB, setZeroProductB] = useState(0);
 
   const ProductA = productDetailsA;
   const ProductB = productDetails;
@@ -150,6 +152,7 @@ export default function OfferReceived({ selectedCard }) {
     const tokenId = token?.token_id?.toString();
     const decimal = token?.decimals?.toString() || token?.decimals;
     const amount = token?.amount;
+    console.log("to be approved " + amount);
 
     const zeroAddress = '0x0000000000000000000000000000000000000000';
 
@@ -204,9 +207,9 @@ export default function OfferReceived({ selectedCard }) {
           useGrouping: false
         })
       : 0;
-
-    //return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
-    return amount;
+    
+      return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+    
   };
 
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
@@ -218,12 +221,16 @@ export default function OfferReceived({ selectedCard }) {
   useEffect(() => {
     let totalAmount =
       (ProductB?.length !== 0 &&
-        ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
+        ProductB?.map((item) => (item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
           0
         )) ||
       '0';
-    console.log('total amount product B' + totalAmount);
+      if (zeroProductB==0 && parseInt(totalAmount) > 0) {
+        totalAmount = handleFormateAmount(totalAmount);
+        setZeroProductB(totalAmount);
+      } 
+    console.log('total amount product B ' + totalAmount);
     totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -231,12 +238,16 @@ export default function OfferReceived({ selectedCard }) {
   useEffect(() => {
     let totalAmount =
       (ProductA?.length !== 0 &&
-        ProductA?.map((item) => handleFormateAmount(item?.amount))?.reduce(
+        ProductA?.map((item) => (item?.amount))?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
           0
         )) ||
       '0';
-    console.log('total amount product A' + totalAmount);
+      if (zeroProductA==0 && parseInt(totalAmount) > 0) {
+        totalAmount = handleFormateAmount(totalAmount);
+        setZeroProductA(totalAmount);
+      } 
+    console.log('total amount product A ' + totalAmount);
     totalAmount = `${totalAmount}`.replace('e-18', '');
 
     // totalAmount = totalAmoun;

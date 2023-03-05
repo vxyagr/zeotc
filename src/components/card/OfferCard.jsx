@@ -154,6 +154,8 @@ export default function OfferCard({
     }
   };
 
+  
+
   const handleAddApproveState = (card) => {
     setValueInput(value);
     const newData = dataFetch.map((item, index) => {
@@ -338,6 +340,7 @@ export default function OfferCard({
               <Box
                 component='input'
                 value={valueInput}
+                onLoad={(e) => console.log("card loading")}
                 onChange={(e) => handleChangeInputAmount(e.target.value, card)}
                 sx={{
                   ml: {

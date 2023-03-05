@@ -7,7 +7,8 @@ import axios from 'axios';
 import {
   erc1155_Contact_Abi,
   erc721_Contact_Abi,
-  erc20_Contact_Abi
+  erc20_Contact_Abi,
+  zeoTC_Contract_Address
 } from 'contract';
 import { delay, getUserNFts, isJsonString } from 'helpers/utilities';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
@@ -18,7 +19,45 @@ const settings = {
   apiKey: '9BAxqf4GeMLJ4C9uwsOGo-1PSjtGmsFu',
   network: Network.ETH_GOERLI
 };
+//a function to get tokenAllowance
+export const useQueryGetERC20TokenAllowance = async (tokenType, tokenAddress)=>{
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
 
+  const tokenAddress_ = tokenAddress;
+  if (!tokenType || tokenType === '20') {
+    const abi = erc20_Contact_Abi;
+
+    const contract = new ethers.Contract(tokenAddress_, abi, signer);
+    // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
+
+    let balance = await contract.allow;
+    balance = Number(balance?.toString(account, zeoTC_Contract_Address));
+
+    return balance;
+  }
+  if (!tokenType || tokenType === '721') {
+    const abi = erc721_Contact_Abi;
+
+    const contract = new ethers.Contract(tokenAddress_, abi, signer);
+    // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
+
+    let balance = await contract.allow;
+    balance = Number(balance?.toString(account, zeoTC_Contract_Address));
+
+    return balance;
+  }
+  if (!tokenType || tokenType === '20') {
+    const abi = erc721_Contact_Abi;
+
+    const contract = new ethers.Contract(tokenAddress_, abi, signer);
+    // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
+
+    let balance = await contract.allow;
+    balance = Number(balance?.toString(account, zeoTC_Contract_Address));
+
+    return balance;
+  }
+}
 //a function to get USD value of a listed token, using CoinGecko API. Will return {} if coin is not listed
 export const useTokenPrice = (tokenAddress) => {
   const queryKey = ['tokenPrice', tokenAddress];

@@ -70,7 +70,8 @@ export default function DashboardSection() {
     setIsApprove(tokenAddress);
     const tokenId = token.token_id;
     const decimal = token.decimals;
-    const amount = token?.amount;
+    const amount = ethers.utils.parseUnits(token?.amount.toString(), decimal);
+    console.log("to be approved : " + amount);
 
     if (tokenAddress && amount) {
       mutate({
