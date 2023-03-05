@@ -20,7 +20,7 @@ import useClipboard from 'react-use-clipboard';
 
 import MButton from 'components/MButton';
 import { useMutationSetProduct } from 'hooks/react-query/mutation';
-import { useQueryGetUserTokenBalance,useTokenPrice,useQueryTokenBalance } from 'hooks/react-query/queries';
+import { useTokenPrice, useQueryTokenBalance } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
 export default function OfferCard({
@@ -37,8 +37,6 @@ export default function OfferCard({
   isMarketCard,
   isDashboardR,
   isSetState,
-  // handleSetFun,
-  // isSetLoading,
   handleProductDetails,
   handleProductAmountA,
   counterOfferStatus,
@@ -47,24 +45,20 @@ export default function OfferCard({
   isOfferReceived,
   swap_id,
   offer_id,
+  isProvideItems,
   tokenBalance
 }) {
+  console.log(card, '<<<<<<xx card');
   const dispatch = useDispatch();
-  // const initialValue = card?.newMetadata
-  //   ? card?.amount
-  //   : Math.floor(card?.balance / 10 ** 18) || '0';
+  const { data: tokenBalanceInWallet } = useQueryTokenBalance(card.token || 0);
+  const [balanceInWallet, setBalanceInWallet] = useState('-');
   const [isCopied, setCopied] = useClipboard(card.token || card.token_address);
-  const [amountValue, setAmountValue] = useState(0);
-  const [updateProductB, setUpdateProductB] = useState([]);
-
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
 
-  // const useValue = card?.amount?.toString();
   const useValue = 2.5;
-
   const initialValue =
     !isModal && !isDashboard && card?.amount?.toString()
       ? ethers.utils
@@ -72,57 +66,50 @@ export default function OfferCard({
           ?.split('.')[0]
       : '0';
 
-  
-
-  // useEffect(() => {
-  //   if (!handleProductAmountA) {
-  //     const amount = card?.amount?.toString();
-  //     const decimals = card?.metadata?.decimals;
-  //     const initialValue =
-  //       amount && decimals
-  //         ? ethers.utils
-  //             .formatUnits(amount, card?.metadata?.decimals)
-  //             ?.split('.')[0]
-  //         : amount;
-  //     // setValueInput(amount);
-  //   }
-  // }, [card?.amount, card?.metadata?.decimals, handleProductAmountA]);
-
-  const productB = useSelector((state) => state.otcTrades.productDetails);
-  const tokenPrice = useTokenPrice(card?.token_address);
-  //console.log("card detail " + JSON.stringify(card));
   const cardTokenBalance =
     card?.contract_type == 'ERC721'
       ? card.amount
       : Math.floor(card?.balance / 10 ** card?.decimals);
-  //console.log(
-    //'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
-  //);
 
-  
-  /*card.IERC.toString() == '20'
-      ? card.balance / 1000000000000000000
-      : card.balance;*/
-  
-      const handleFormateAmount = (item) => {
-        const amount = Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) || 0;
-        //console.log("offer card formatting attempt " + amount);
-        return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
-      };
-      //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
-  //const initVal = isOfferReceived ? (card?.amount ? handleFormateAmount(card.amount) : 0) : (card?.amount ? card.amount : 0);
+  const handleFormateAmount = (item, decimalsValue) => {
+    const amount =
+      Number(item.toString()).toLocaleString('fullwide', {
+        useGrouping: false
+      }) || 0;
+    const decimals = decimalsValue ? decimalsValue : item?.metadata?.decimals;
+
+    return ethers.utils.formatUnits(amount, decimals);
+  };
+
+  useEffect(() => {
+    console.log(tokenBalanceInWallet, '<<<<<< tokenBalanceInWallet');
+    if (tokenBalanceInWallet && typeof tokenBalanceInWallet === 'number') {
+      setBalanceInWallet(
+        handleFormateAmount(tokenBalanceInWallet, card?.metadata?.decimals)
+      );
+    }
+  }, [tokenBalanceInWallet]);
+
   const initVal = card?.amount ? handleFormateAmount(card.amount) : 0;
   const [valueInput, setValueInput] = useState(initVal);
+
   const handleChangeInputAmount = (value, selectedCard) => {
-    console.log("val " + value.toString() + " " + JSON.stringify(selectedCard));
-    let decs = selectedCard?.decimals ? selectedCard.decimals  : selectedCard.metadata.decimals;
+    if (Number(value) > balanceInWallet) {
+      setValueInput(balanceInWallet);
+      return;
+    }
+
+    console.log('val ' + value.toString() + ' ' + JSON.stringify(selectedCard));
+    let decs = selectedCard?.decimals
+      ? selectedCard.decimals
+      : selectedCard.metadata.decimals;
     let val = parseFloat(value);
-    console.log("parsed val " + val + " " + isOfferReceived + " " + decs);
+    console.log('parsed val ' + val + ' ' + isOfferReceived + ' ' + decs);
     let weiVal = isOfferReceived ? val : val;
     //let weiVal =  val;
-    console.log("processed val " + weiVal);
+    console.log('processed val ' + weiVal);
     //let weiVal = val;
-    if (val * (10 ** decs) > card?.balance) weiVal = (card?.balance)/(10 ** decs) ;
+    if (val * 10 ** decs > card?.balance) weiVal = card?.balance / 10 ** decs;
     setValueInput(val);
 
     if (handleProductDetails) {
@@ -202,8 +189,6 @@ export default function OfferCard({
   });
 
   const isMatch = card.token_id || card.token_address;
-  //const token_balance = useQueryGetUserTokenBalance(card.token_address);
-  // console.log("bln " +token_balance[0].toString());
 
   return (
     <Box
@@ -313,18 +298,18 @@ export default function OfferCard({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            mt: isDashboard || unSelectedItems ? 2 : 0
+            mt: isDashboard || unSelectedItems ? 0.5 : 0
           }}
         >
           <Typography
             variant='subtitle1'
             color='#AEAEAE'
             sx={{
-              mt: 0.5
+              mt: '-5px',
+              fontSize: '12px'
             }}
           >
-            {isOfferReceived ? 'ok' : cardTokenBalance}
-            
+            {isProvideItems && `Available Balance: ${balanceInWallet}`}
           </Typography>
         </Box>
 
@@ -333,12 +318,12 @@ export default function OfferCard({
           (handleProductAmountA && counterOfferStatus) ||
           isOfferReceived) && (
           <>
-            {' '}
             <Divider
               sx={{
                 my: 1
               }}
             />
+
             <Box
               sx={{
                 display: {
@@ -354,12 +339,7 @@ export default function OfferCard({
               <Box
                 component='input'
                 value={valueInput}
-                onChange={(e) =>
-                  handleChangeInputAmount(
-                    e.target.value,
-                    card
-                  )
-                }
+                onChange={(e) => handleChangeInputAmount(e.target.value, card)}
                 sx={{
                   ml: {
                     sm: 2
