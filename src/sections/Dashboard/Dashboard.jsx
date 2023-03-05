@@ -70,7 +70,7 @@ export default function DashboardSection() {
     setIsApprove(tokenAddress);
     const tokenId = token.token_id;
     const decimal = token.decimals;
-    const amount = ethers.utils.parseUnits(token?.amount.toString(), decimal);
+    const amount = token?.amount.toString();
     console.log("to be approved : " + amount);
 
     if (tokenAddress && amount) {
@@ -136,7 +136,7 @@ export default function DashboardSection() {
           ?.map((item) => item?.amount)
           //?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
           ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
-    setSumOfAmount(totalAmount);
+    setSumOfAmount(handleFormateAmount(totalAmount));
   }, [dataFetch, dataFetch?.length]);
 
 
@@ -147,7 +147,7 @@ export default function DashboardSection() {
           ?.map((item) => item?.amount)
         //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
         ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
-    setSumOfReceive(totalAmount);
+    setSumOfReceive(handleFormateAmount(totalAmount));
   }, [receivedData, receivedData?.length]);
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);

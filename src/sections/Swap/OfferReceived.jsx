@@ -227,11 +227,12 @@ export default function OfferReceived({ selectedCard }) {
         )) ||
       '0';
       if (zeroProductB==0 && parseInt(totalAmount) > 0) {
-        totalAmount = handleFormateAmount(totalAmount);
+        
         setZeroProductB(totalAmount);
-      } 
+    } 
+    totalAmount = handleFormateAmount(totalAmount);
     console.log('total amount product B ' + totalAmount);
-    totalAmount = `${totalAmount}`.replace('e-18', '');
+    //totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
 
@@ -244,11 +245,12 @@ export default function OfferReceived({ selectedCard }) {
         )) ||
       '0';
       if (zeroProductA==0 && parseInt(totalAmount) > 0) {
-        totalAmount = handleFormateAmount(totalAmount);
+        
         setZeroProductA(totalAmount);
-      } 
+    } 
+    totalAmount = handleFormateAmount(totalAmount);
     console.log('total amount product A ' + totalAmount);
-    totalAmount = `${totalAmount}`.replace('e-18', '');
+    //totalAmount = `${totalAmount}`.replace('e-18', '');
 
     // totalAmount = totalAmoun;
     setSumOfAmountA(totalAmount);

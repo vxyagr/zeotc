@@ -109,17 +109,17 @@ export default function OfferCard({
         return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
       };
       //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
-  const initVal = isOfferReceived ? (card?.amount ? handleFormateAmount(card.amount) : 0) : (card?.amount ? card.amount : 0);
+  const initVal =  (card?.amount ? handleFormateAmount(card.amount) : 0) ;
   const [valueInput, setValueInput] = useState(initialValue);
   const handleChangeInputAmount = (value, selectedCard) => {
     console.log("val " + value.toString());
     let val = parseFloat(value);
     console.log("parsed val " + val + " " + isOfferReceived + " " + selectedCard.decimals);
-    let weiVal = isOfferReceived? val * (10 ** selectedCard.decimals) : val;
+    let weiVal = val * (10 ** selectedCard.decimals) ;
     console.log("processed val " + weiVal);
     //let weiVal = val;
-    if (val * (10 ** selectedCard.decimals) > card?.balance) weiVal = (card?.balance)/(10 ** selectedCard.decimals) ;
-    setValueInput(val);
+    if (val * (10 ** selectedCard.decimals) > card?.balance) weiVal = (card?.balance) ;
+    setValueInput(handleFormateAmount(weiVal));
 
     if (handleProductDetails) {
       handleProductDetails(idx, weiVal);

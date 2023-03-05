@@ -71,15 +71,17 @@ export default function OfferCard({
       : Math.floor(card?.balance / 10 ** card?.decimals);
 
   const handleFormateAmount = (item, decimalsValue) => {
+    
     const amount =
       Number(item.toString()).toLocaleString('fullwide', {
         useGrouping: false
       }) || 0;
+    //console.log("for 1 " + amount);
     const decimals = decimalsValue ? decimalsValue : item?.metadata?.decimals;
-
+    //console.log("for " + ethers.utils.formatUnits(amount, decimals))
     return ethers.utils.formatUnits(amount, decimals);
   };
-
+  
   useEffect(() => {
     console.log(tokenBalanceInWallet, '<<<<<< tokenBalanceInWallet');
     if (tokenBalanceInWallet && typeof tokenBalanceInWallet === 'number') {
@@ -88,8 +90,9 @@ export default function OfferCard({
       );
     }
   }, [tokenBalanceInWallet]);
-
+  //console.log("exc " + card.amount);
   const initVal = card?.amount ? handleFormateAmount(card.amount) : 0;
+  //console.log("render " + initVal);
   const [valueInput, setValueInput] = useState(initVal);
 
   const handleChangeInputAmount = (value, selectedCard) => {
@@ -98,18 +101,18 @@ export default function OfferCard({
       return;
     }
 
-    console.log('val ' + value.toString() + ' ' + JSON.stringify(selectedCard));
+    //console.log('val ' + value.toString() + ' ' + JSON.stringify(selectedCard));
     let decs = selectedCard?.decimals
       ? selectedCard.decimals
       : selectedCard.metadata.decimals;
     let val = parseFloat(value);
-    console.log('parsed val ' + val + ' ' + isOfferReceived + ' ' + decs);
-    let weiVal = isOfferReceived ? val : val;
+    //console.log('parsed val ' + val + ' ' + isOfferReceived + ' ' + decs);
+    let weiVal = val * 10 ** decs;
     //let weiVal =  val;
-    console.log('processed val ' + weiVal);
+   // console.log('processed val ' + weiVal);
     //let weiVal = val;
     if (val * 10 ** decs > card?.balance) weiVal = card?.balance / 10 ** decs;
-    setValueInput(val);
+    setValueInput(handleFormateAmount(weiVal));
 
     if (handleProductDetails) {
       handleProductDetails(idx, weiVal);
@@ -270,7 +273,7 @@ export default function OfferCard({
 
             {/* )} */}
           </Box>
-
+{ /*
           {isDashboard && (
             <Box
               onClick={onClick}
@@ -280,7 +283,7 @@ export default function OfferCard({
                 cursor: 'pointer'
               }}
             />
-          )}
+            )} */}
 
           {unSelectedItems && (
             <Box
