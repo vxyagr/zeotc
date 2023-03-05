@@ -22,6 +22,8 @@ import { store } from 'redux/store';
 import ThemeConfig from 'theme';
 import GlobalStyles from 'theme/globalStyles';
 
+import WalletConnectionGuard from '../components/WalletConnectionGuard';
+
 import 'simplebar/src/simplebar.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import 'styles/globals.css';
@@ -83,7 +85,9 @@ function MyApp(props) {
                   })}
                   chains={chains}
                 >
-                  <Component {...pageProps} />
+                  <WalletConnectionGuard>
+                    <Component {...pageProps} />
+                  </WalletConnectionGuard>
                 </RainbowKitProvider>
               </WagmiConfig>
             </ThemeConfig>

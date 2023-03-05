@@ -70,7 +70,13 @@ const SearchAssets = ({ assetType, onSearchAssetAddress }) => {
       const fuse = new Fuse(mappingListAssets[assetType].allList, options);
 
       const result = fuse.search(value).map((asset) => asset.item);
-      setListOptions(result);
+
+      if (result.length === 0) {
+        onSearchAssetAddress(value);
+        setListOptions([]);
+      } else {
+        setListOptions(result);
+      }
     } else {
       setListOptions(mappingListAssets[assetType].common);
     }
@@ -86,8 +92,9 @@ const SearchAssets = ({ assetType, onSearchAssetAddress }) => {
 
   return (
     <Autocomplete
+      freeSolo
       disablePortal
-      id='combo-box-demo'
+      id='search-asset'
       options={listOptions}
       filterOptions={(x) => x}
       onInputChange={debouncedSearchChange}
@@ -95,7 +102,6 @@ const SearchAssets = ({ assetType, onSearchAssetAddress }) => {
       getOptionLabel={(e) => e.name}
       sx={{
         background: (theme) => theme.palette.primary.main,
-        // px: 3,
         maxWidth: {
           xs: '100%',
           sm: 260

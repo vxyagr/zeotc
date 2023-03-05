@@ -199,9 +199,14 @@ export default function OfferReceived({ selectedCard }) {
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item?.toString() || 0;
+    const amount = item
+      ? Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0;
 
-    return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+    //return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+    return amount;
   };
 
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
@@ -218,7 +223,7 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
-
+    console.log('total amount product B' + totalAmount);
     totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -231,6 +236,7 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
+    console.log('total amount product A' + totalAmount);
     totalAmount = `${totalAmount}`.replace('e-18', '');
 
     // totalAmount = totalAmoun;
@@ -321,6 +327,7 @@ export default function OfferReceived({ selectedCard }) {
                 isMarketCard={isSupplier && selectedCard}
                 isApproveLoading={isSupplier && isApproveLoading}
                 handleApproveClick={isSupplier && handleApproveClick}
+                isProvideItems={supplier === account}
                 isOfferReceived
               />
             );
@@ -416,23 +423,7 @@ export default function OfferReceived({ selectedCard }) {
             alignSelf: 'center',
             justifySelf: 'center'
           }}
-        >
-          <Button
-            variant='contained'
-            sx={{
-              py: 2,
-              transform: 'matrix(1, 0, 0, -1, 0, 0)'
-            }}
-          >
-            <Box
-              component='img'
-              src='/assets/svg/MyOtc.svg'
-              sx={{
-                width: 20
-              }}
-            />
-          </Button>
-        </Box>
+        ></Box>
 
         <Box
           sx={{
@@ -486,6 +477,7 @@ export default function OfferReceived({ selectedCard }) {
                 isMarketCard={!isSupplier && selectedCard}
                 isApproveLoading={!isSupplier && isApproveLoading}
                 handleApproveClick={!isSupplier && handleApproveClick}
+                isProvideItems={supplier !== account}
                 isOfferReceived
               />
             );

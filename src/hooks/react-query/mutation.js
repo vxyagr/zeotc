@@ -164,7 +164,7 @@ export const useMutationCreateZeSwap = () => {
     // const zSwap_id = data?.events?.[0]?.['args']?.[0];
 
     // await zeoTC_Contract.set_allow_counter_offer(zSwap_id, isChecked);
-
+    console.log("creating OTC");
     return await zeoTC_Contract.create_zeSwap(
       productAs,
       productBs,
@@ -333,7 +333,8 @@ export const useMutationReject = () => {
   const queryKey = [queryKeys.getZeSwapIdList];
   const mutationFn = async ({ swap_id, expire }) => {
     // console.log( swap_id, expire);
-
+    console.log('rejecting ' + swap_id.toString());
+    console.log('reject expiry ' + expire);
     const tx = await zeoTC_Contract.reset_zeSwap(swap_id, expire);
 
     return tx.wait();

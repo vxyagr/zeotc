@@ -985,6 +985,73 @@
     "constant": true
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "offer_id",
+        "type": "bytes32"
+      }
+    ],
+    "name": "get_swap_by_offer",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "supplier",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "demander",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expiration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "offers",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "visibility",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "allow_counter_offer",
+            "type": "bool"
+          },
+          {
+            "internalType": "enum ZeOTC.Status_zeSwap",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "created",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ZeOTC.ZeSwap",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
     "inputs": [],
     "name": "get_my_offer_ids",
     "outputs": [
@@ -1013,6 +1080,11 @@
           {
             "internalType": "bytes32",
             "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "swap_id",
             "type": "bytes32"
           },
           {

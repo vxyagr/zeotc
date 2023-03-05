@@ -5,7 +5,8 @@ import { Box } from '@mui/material';
 import {
   useQueriesFilterMarketPlaceData,
   useQueryCounterOfferIdList,
-  useQueryZeSwapIdList
+  useQueryZeSwapIdList,
+  testFunction
 } from 'hooks/react-query/queries';
 
 import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
@@ -14,8 +15,9 @@ export default function TradesOffer() {
   const { data: counterOfferIdList } = useQueryCounterOfferIdList();
   const { data: swaplist_ } = useQueryZeSwapIdList();
   const allSwapList = useQueriesFilterMarketPlaceData(swaplist_);
+  const theswap = testFunction();
   const [filteredOffer, setFillteredOffer] = useState();
-
+  console.log("fetched swap " + JSON.stringify(theswap));
   const allFinished = useMemo(() => {
     if (allSwapList.length !== 0) {
       let flag = true;
@@ -61,13 +63,17 @@ export default function TradesOffer() {
       }}
     >
       <Box>
-        {filteredOffer?.map((swapList, idx) => (
-          <MarketPlaceSection
-            isOffer
-            key={swapList?.swap_id}
-            zeSwapList={swapList}
-          />
-        ))}
+        {filteredOffer?.map((swapList, idx) =>
+          swapList.swap.status != 4 ? (
+            <MarketPlaceSection
+              isOffer
+              key={swapList?.swap_id}
+              zeSwapList={swapList}
+            />
+          ) : (
+            ''
+          )
+        )}
       </Box>
     </Box>
   );

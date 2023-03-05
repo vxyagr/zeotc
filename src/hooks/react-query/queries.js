@@ -91,7 +91,7 @@ export const useQueriesFilterMarketPlaceData = (
 
     const swap = await zeoTC_Contract.get_zeSwap(swap_id);
     //console.log('getting swap id ' + swap_id.toString());
-    //console.log(JSON.stringify(swap));
+
     data[swap_id] = {
       swap: swap,
       swap_id
@@ -146,13 +146,22 @@ export const useQueriesFilterMarketPlaceData = (
   return results?.map((result) => result.data?.[0]);
 };
 
+export const testFunction = async () => {
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const swap = await zeoTC_Contract.get_swap_by_offer(
+    '0xebf3ecde85f662ccaf6049e5ac83bfae86ead2016b43a4d32a24cc018bdbf5d8'
+  );
+
+  return swap;
+};
+
 export const useQueriesFilterCounterOfferData = (
-  zeSwapIdList = [],
   offerIdList = [],
   isTrade = false
 ) => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   console.log('filtering offers ');
+
   //console.log('total swap ' + zeSwapIdList.length);
   //console.log(JSON.stringify(zeSwapIdList));
   //const { swaplist } = useQueryZeSwapIdList();
@@ -161,19 +170,10 @@ export const useQueriesFilterCounterOfferData = (
     const data = [];
     console.log('looping offer id ' + offer_id);
     let swap_id_ = '0x1';
-
+    const swap = await zeoTC_Contract.get_swap_by_offer(offer_id);
+    swap_id_ = swap.swap_id;
     console.log('swaplist : ' + JSON.stringify(swaplist_));
-    for (const swap_id of swaplist_) {
-      const swap = await zeoTC_Contract.get_zeSwap(swap_id);
-      for (const offer_id_ of swap.offers) {
-        console.log('the swap id ' + swap_id);
-        if (offer_id_ == offer_id) {
-          swap_id_ = swap_id;
-          break;
-        }
-      }
-    }
-    console.log('found swap id ' + swap_id_);
+
     //console.log('getting swap id ' + swap_id.toString());
     //console.log(JSON.stringify(swap));
     data[swap_id_] = {
@@ -218,8 +218,8 @@ export const useQueriesFilterCounterOfferData = (
 
   const queries = offerIdList?.map((offer_id, idx) => ({
     queryKey: [queryKeys.getQueriesSwapDetails, offer_id],
-    queryFn: () => queryFn(offer_id, zeSwapIdList),
-    enabled: !!zeoTC_Contract && !!zeSwapIdList
+    queryFn: () => queryFn(offer_id),
+    enabled: !!zeoTC_Contract
   }));
   const results = useQueries({
     queries
@@ -242,7 +242,7 @@ export const useQueryApprove = () => {
 };
 
 // ===================================================================
-//function to get list of tokens owned by an address, all will be returned : ERC721, ERC20, and ERC1155
+//function to get list of tokens owned by an address, all will be returned : ERC721, ERC20, and ERC1155. Used in selecting token in Create OTC
 export const useQueryGetUserNFTs = () => {
   // // const notify = useNotify();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
@@ -340,9 +340,94 @@ export const useQueryGetUserNFTs = () => {
     };
   };
 
+  ///function to get specific token balance
+
   return useQuery(queryKey, queryFn, {
     refetchOnWindowFocus: false,
     enabled: !!account
+    // onError: (error) => notify('error', 'Error while fetching the name'),
+  });
+};
+
+//function to get specific token balance
+export const useQueryTokenBalance = (tokenAddress) => {
+  // // const notify = useNotify();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const queryKey = [queryKeys.getUserNFTS, tokenAddress];
+  const tokenAddress_ = tokenAddress;
+
+  const queryFn = async () => {
+    const abi = erc20_Contact_Abi;
+
+    const contract = new ethers.Contract(tokenAddress_, abi, signer);
+    // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
+
+    let balance = await contract.balanceOf(account);
+    balance = Number(balance?.toString());
+
+    return balance;
+  };
+
+  return useQuery(queryKey, queryFn, {
+    refetchOnWindowFocus: false,
+    enabled: !!account
+    // onError: (error) => notify('error', 'Error while fetching the name'),
+  });
+};
+
+//function to get custom ERC20 token metadata on create OTC
+export const useQueryGetCustomERC20 = (tokenAddress_) => {
+  // // const notify = useNotify();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const queryKey = [queryKeys.searchCustomTokens, account];
+  const tokenAddress = tokenAddress_;
+  const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}`;
+
+  const queryFn = async () => {
+    const tokensData = await getUserNFts(url);
+    console.log('axios ' + tokensData.toString());
+
+    return {
+      tokensData
+    };
+  };
+
+  return useQuery(queryKey, queryFn, {
+    refetchOnWindowFocus: false,
+    enabled: false
+    // onError: (error) => notify('error', 'Error while fetching the name'),
+  });
+};
+
+//function to get custom NFT metadata on create OTC
+export const useQueryGetCustomNFT = (tokenAddress_, tokenId_) => {
+  // // const notify = useNotify();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const queryKey = [queryKeys.searchCustomNFTS, account];
+  const tokenAddress = tokenAddress_;
+  const url = `https://deep-index.moralis.io/api/v2/nft/${tokenAddress}/${tokenId_}`;
+
+  const queryFn = async () => {
+    const NFTData = await getUserNFts(url);
+
+    const NFTDataMapping = {
+      ...NFTData,
+      ...(typeof NFTData.metadata === 'string' && {
+        newMetadata: JSON.parse(NFTData.metadata)
+      })
+    };
+
+    return {
+      tokensData: NFTDataMapping
+    };
+  };
+
+  return useQuery(queryKey, queryFn, {
+    refetchOnWindowFocus: false,
+    enabled: false
     // onError: (error) => notify('error', 'Error while fetching the name'),
   });
 };

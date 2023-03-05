@@ -4,9 +4,7 @@ import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import Fuse from 'fuse.js';
-import { useAccount } from 'wagmi';
-
+import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import MarketPlaceHeader from 'components/MarketPlaceHeader';
 import { Border } from 'components/Style';
 import {
@@ -25,9 +23,19 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 export default function MainMarketPlaceSection() {
-  const { isConnected } = useAccount();
-  const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
+  const {
+    data: zeSwapIdList,
+    error,
+    isLoading,
+    status
+  } = useQueryZeSwapIdList();
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
+  //const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
+  /*newZeSwapList?.map((swapList, idx) => (
+    console.log(JSON.stringify(swapList.swap[2]))
+  )) */
+  //console.log(JSON.stringify(newZeSwapList));
   const [sort, setSort] = useState('ASC');
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
 
@@ -50,7 +58,7 @@ export default function MainMarketPlaceSection() {
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
-      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
+      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList.filter(((item) => (item.swap[2] == account || item.swap[2] == '0x0000000000000000000000000000000000000000')&&item.swap[1]!=account )), sort, true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);
@@ -65,6 +73,60 @@ export default function MainMarketPlaceSection() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort]);
+
+  useEffect(() => {
+    console.log(isLoading, '<<<<<<< isLoading');
+  }, [isLoading]);
+
+  if (!isLoading && newZeSwapList.length === 0) {
+    return (
+      <Box
+        sx={{
+          maxWidth: 'lg',
+          width: '100%'
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            minHeight: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignContent: 'center'
+          }}
+        >
+          <Box
+            sx={{
+              ...Border,
+              p: 3,
+              maxWidth: 'md',
+              borderRadius: 3,
+              mt: 7,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '40%'
+            }}
+          >
+            <Box
+              component='img'
+              src='/assets/svg/disconnect-12.svg'
+              sx={{
+                width: 70,
+                height: 70
+              }}
+            />
+
+            <Typography>
+              <br />
+              No Swaps Available
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -91,55 +153,9 @@ export default function MainMarketPlaceSection() {
           }}
         />
 
-        {!isConnected ? (
-          <Box
-            sx={{
-              width: '100%',
-              minHeight: '400px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignContent: 'center'
-            }}
-          >
-            <Box
-              sx={{
-                ...Border,
-                p: 3,
-                maxWidth: 'md',
-                borderRadius: 3,
-                mt: 7,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '40%'
-              }}
-            >
-              <Box
-                component='img'
-                src='/assets/svg/disconnect-12.svg'
-                sx={{
-                  width: 70,
-                  height: 70
-                }}
-              />
+        {}
 
-              <Typography>
-                <br />
-                No Wallet Connection
-              </Typography>
-
-              <Typography
-                sx={{
-                  fontSize: 13,
-                  color: '#A3A3A3'
-                }}
-              >
-                Please connect wallet before continue.
-              </Typography>
-            </Box>
-          </Box>
-        ) : filteredZeSwapIdList ? (
+        {filteredZeSwapIdList ? (
           filteredZeSwapIdList?.map((swapList, idx) => (
             <MarketPlaceSection
               key={swapList?.swap_id}

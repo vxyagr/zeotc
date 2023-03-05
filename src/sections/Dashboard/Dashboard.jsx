@@ -5,11 +5,12 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Checkbox, Divider, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 
-import OfferCard from 'components/card/OfferCard';
+import OfferCard from 'components/card/CreateOfferCard';
 import ReactDatePicker from 'components/DateTimePicker';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
 import Slider from 'components/Slider';
+import { ethers } from 'ethers';
 import { Border } from 'components/Style';
 import {
   useERC20_ERC721_ERC1155Approve,
@@ -26,6 +27,7 @@ export default function DashboardSection() {
   const [openOffer, setOpenOffer] = useState(false);
   const [openReceive, setOpenReceive] = useState(false);
   const [SumOfAmount, setSumOfAmount] = useState(0);
+  const [SumOfReceive, setSumOfReceive] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isApprove, setIsApprove] = useState('');
@@ -103,6 +105,12 @@ export default function DashboardSection() {
     dispatch(getCreateDateTime(value));
   };
 
+  const handleFormateAmount = (item) => {
+    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
+    console.log("item value " + item);
+    return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+  };
+
   useEffect(() => {
     const newData = dataFetch.filter(
       (item) => item?.isApproved === true && item.amount > 0
@@ -118,17 +126,28 @@ export default function DashboardSection() {
       setIsDisabled(true);
       console.log('Please Approve All tokens and NFTs before create');
     }
-  }, [dataFetch, dataFetch.length, receivedData.length]);
+  }, [dataFetch,receivedData, dataFetch.length, receivedData.length]);
 
   useEffect(() => {
     const totalAmount =
       (dataFetch?.length !== 0 &&
         dataFetch
           ?.map((item) => item?.amount)
-          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) ||
-      0;
+          //?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
+          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
     setSumOfAmount(totalAmount);
   }, [dataFetch, dataFetch?.length]);
+
+
+  useEffect(() => {
+    const totalAmount =
+      (receivedData?.length !== 0 &&
+        receivedData
+          ?.map((item) => item?.amount)
+        //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
+        ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
+    setSumOfReceive(totalAmount);
+  }, [receivedData, receivedData?.length]);
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
 
@@ -261,7 +280,7 @@ export default function DashboardSection() {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>0 USDC</Typography>
+            <Typography>{SumOfReceive} USDC</Typography>
           </Box>
 
           {receivedData?.map((card, idx) => {

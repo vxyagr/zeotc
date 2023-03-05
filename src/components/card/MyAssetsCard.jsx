@@ -2,8 +2,7 @@
 
 import { Box, Typography } from '@mui/material';
 
-export default function MyAssetsCard({ card, isNFTs, }) {
-
+export default function MyAssetsCard({ card, isNFTs }) {
   return (
     <Box
       sx={{
@@ -15,14 +14,14 @@ export default function MyAssetsCard({ card, isNFTs, }) {
         justifyContent: 'space-between',
         borderRadius: 2,
         border: '0.3px solid #3b1939',
-        my: 1.3,
+        my: 1.3
       }}
     >
       <Box
         sx={{
           pl: 2,
           display: 'flex',
-          gap: 2.4,
+          gap: 2.4
         }}
       >
         <Box
@@ -34,23 +33,19 @@ export default function MyAssetsCard({ card, isNFTs, }) {
           }
           sx={{
             width: 44,
-            height: 44,
+            height: 44
           }}
         />
 
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{
-}}
-          >
+          <Typography variant='subtitle1' sx={{}}>
             {isNFTs ? card?.newMetadata?.name : card?.name}
           </Typography>
 
           <Typography
             variant='subtitle1'
             sx={{
-              color: 'gray',
+              color: 'gray'
             }}
           >
             $1,212 USD
@@ -61,14 +56,10 @@ export default function MyAssetsCard({ card, isNFTs, }) {
       <Box
         sx={{
           pl: 2,
-          textAlign: 'right',
+          textAlign: 'right'
         }}
       >
-        <Typography
-          variant='subtitle1'
-          sx={{
-}}
-        >
+        <Typography variant='subtitle1' sx={{}}>
           {isNFTs ? card.amount : Math.floor(card?.balance / 10 ** 18)}
 
           {/* {card.price} */}
@@ -77,7 +68,7 @@ export default function MyAssetsCard({ card, isNFTs, }) {
         <Typography
           variant='subtitle1'
           sx={{
-            color: 'gray',
+            color: 'gray'
           }}
         >
           $212 USD
