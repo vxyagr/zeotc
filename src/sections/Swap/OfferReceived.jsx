@@ -44,15 +44,31 @@ export default function OfferReceived({ selectedCard }) {
   useEffect(() => {
     setProductDetails(selectedCard?.productB);
     setProductDetailsA(selectedCard?.productA);
+    /*let pB = selectedCard?.productB;
+    let newPB = pB?.map((item) => {
+      //console.log("token amt" + item.amount + " " + (item.amount / (10 ** item.metadata.decimals)) ) ;
+      handleProductDetails(item.idx, (item.amount / (10 ** item.metadata.decimals)));
+    });
+    
+    //setProductDetails(newPB);
+    let pA = selectedCard?.productA;
+    let newPA = pA?.map((item) => {
+      //console.log("token amt" + item.amount);
+      handleProductAmountA(item.idx, (item.amount / (10 ** item.metadata.decimals)))
+    });
+    //setProductDetailsA(selectedCard?.productA);
+    //setProductDetailsA(newPA);*/
   }, [selectedCard]);
 
   const handleProductDetails = (idx, value) => {
+    console.log("details " + value);
     const updatedAmount = [...productDetails];
     updatedAmount[idx].amount = value;
     setProductDetails(updatedAmount);
   };
 
   const handleProductAmountA = (idx, value) => {
+    console.log("detailsA " + value);
     const updatedAmount = [...productDetailsA];
     updatedAmount[idx].amount = value;
     setProductDetailsA(updatedAmount);
@@ -139,7 +155,9 @@ export default function OfferReceived({ selectedCard }) {
       ProductB: [data]
     });
   };
-
+  const [initA, setInitA] = useState(0);
+    const [initB, setInitB] = useState(0);
+  const zeroAddress = '0x0000000000000000000000000000000000000000';
   const handleApproveClick = (token) => {
     setSelectedObjForSet(token.id);
 
@@ -152,9 +170,10 @@ export default function OfferReceived({ selectedCard }) {
     const tokenId = token?.token_id?.toString();
     const decimal = token?.decimals?.toString() || token?.decimals;
     const amount = token?.amount;
+    
     console.log("to be approved " + amount);
 
-    const zeroAddress = '0x0000000000000000000000000000000000000000';
+    
 
     if (tokenAddress && amount) {
       mutate({
@@ -226,12 +245,17 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
-      if (zeroProductB==0 && parseInt(totalAmount) > 0) {
+    if (zeroProductB == 0 && parseInt(totalAmount) > 0) {
         
-        setZeroProductB(totalAmount);
-    } 
-    totalAmount = handleFormateAmount(totalAmount);
+      setZeroProductB(totalAmount);
+    }
     console.log('total amount product B ' + totalAmount);
+    if (totalAmount > 0 && initB == 0) {
+      totalAmount = handleFormateAmount(totalAmount);
+      setInitB(totalAmount);
+  }
+    //console.log('total formatted amount product B ' + totalAmount);
+    
     //totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -248,8 +272,12 @@ export default function OfferReceived({ selectedCard }) {
         
         setZeroProductA(totalAmount);
     } 
-    totalAmount = handleFormateAmount(totalAmount);
     console.log('total amount product A ' + totalAmount);
+    if (totalAmount > 0 && initA == 0) {
+      totalAmount = handleFormateAmount(totalAmount);
+      setInitA(totalAmount);
+    }
+    //console.log('total formatted amount product A ' + totalAmount);
     //totalAmount = `${totalAmount}`.replace('e-18', '');
 
     // totalAmount = totalAmoun;
@@ -322,6 +350,7 @@ export default function OfferReceived({ selectedCard }) {
             return (
               <OfferCard
                 idx={idx}
+                prod={"productA"}
                 key={`productA__${idx}__${card?.id}`}
                 card={card}
                 handleProductAmountA={handleProductAmountA}
@@ -339,7 +368,9 @@ export default function OfferReceived({ selectedCard }) {
                 isApprove={isSupplier && isApprove}
                 isMarketCard={isSupplier && selectedCard}
                 isApproveLoading={isSupplier && isApproveLoading}
+                isCounterOfferLoading={isCounterOfferLoading}
                 handleApproveClick={isSupplier && handleApproveClick}
+                handleCounterOffer={handleCounterOffer}
                 isProvideItems={supplier === account}
                 isOfferReceived
               />
@@ -350,13 +381,14 @@ export default function OfferReceived({ selectedCard }) {
             <Box
               sx={{
                 display: 'grid',
+                width:'100%',
                 gridTemplateColumns: 'min-content 1fr',
                 justifyContent: 'center',
                 gap: 1,
                 alignItems: 'center'
               }}
             >
-              <Box
+             <Box
                 sx={{
                   position: 'relative',
                   zIndex: 1,
@@ -378,8 +410,8 @@ export default function OfferReceived({ selectedCard }) {
                     background: '#000',
                     border: '1px solid transparent',
                     position: 'absolute',
+                    // fontSize: 14,
                     fontSize: 13,
-
                     color: '#fff',
                     top: 0,
                     bottom: 0,
@@ -394,8 +426,9 @@ export default function OfferReceived({ selectedCard }) {
                       background:
                         'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                       content: '""',
+                      // overflow: 'hidden',
+
                       zIndex: -1,
-                      overflow: 'hidden',
                       borderRadius: '10.19px'
                     }
                   }}
@@ -406,8 +439,8 @@ export default function OfferReceived({ selectedCard }) {
                 onClick={
                   // supplier === account ?
                   handleOpenOffer
-                  //  :
-                  //  handleOpenReceive
+                  // :
+                  //  handleOpenOffer
                 }
                 sx={{
                   border: '0.3px dashed #FFFFFF',
@@ -416,10 +449,6 @@ export default function OfferReceived({ selectedCard }) {
                   py: 2,
                   textAlign: 'center',
                   cursor: 'pointer',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: 2,
-                  alignItems: 'center',
                   px: 2
                 }}
               >
@@ -490,6 +519,7 @@ export default function OfferReceived({ selectedCard }) {
                 isMarketCard={!isSupplier && selectedCard}
                 isApproveLoading={!isSupplier && isApproveLoading}
                 handleApproveClick={!isSupplier && handleApproveClick}
+                handleCounterOffer={handleCounterOffer}
                 isProvideItems={supplier !== account}
                 isOfferReceived
               />
@@ -518,7 +548,7 @@ export default function OfferReceived({ selectedCard }) {
                   }
                 }}
               >
-                <MButton
+                <MButton //B
                   disabled={!account}
                   Loading={isCounterOfferLoading}
                   title='Counter Offer'
@@ -710,7 +740,7 @@ export default function OfferReceived({ selectedCard }) {
                 }
               }
             }}
-          >
+          >{(demander===zeroAddress) && (
             <Button
               disabled={!account}
               onClick={handleSwapAccept}
@@ -722,7 +752,22 @@ export default function OfferReceived({ selectedCard }) {
               }}
             >
               Accept Offer
-            </Button>
+              </Button>
+            )}
+            {(demander===account) && (
+            <Button
+              disabled={!account}
+              onClick={handleSwapAccept}
+              sx={{
+                width: 200,
+                // width:'100%',
+                background:
+                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+              }}
+            >
+              Cancel Counter Offer
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>

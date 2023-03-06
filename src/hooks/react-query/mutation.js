@@ -90,7 +90,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
     //   decimal,
     //   amount,
     // });
-    console.log("approving " + tokenType + " " + amount);
+    
     // ? ERC20
     if (!tokenType || tokenType === '20') {
       console.log("approving ERC 20 " + amount);
@@ -215,6 +215,64 @@ export const useMutationAccept = () => {
 // =================================================================
 // add_new_product_A(zSwap_id, offer_id, newProductsA)
 // add_new_product_B(zSwap_id, offer_id,newProductsB
+export const useMutationAddProductAToCounterOffer = () => {
+  const queryClient = useQueryClient();
+  const { account, zeoTC_Contract } = useSelectWeb3();
+
+  const queryKey = [queryKeys.getZeSwapIdList];
+  const mutationFn = async ({ id: data, product }) => {
+    //console.log(JSON.stringify(data));
+      //return;
+    const offer_id = data?.swap?.offers?.[0];
+    const productA = data?.productA;
+    const productB = data?.productB;
+    const zSwap_id = data?.swap_id;
+    const queryKey = [queryKeys.getQueriesSwapDetails, zSwap_id];
+    const oldList = queryClient.getQueryData(queryKey);
+    const oldIds = oldList?.[0]?.[product]?.map((product) => product.id);
+
+    if (product === 'productA') {
+      const productAs = handleFormateData(productA, true);
+
+      const filteredProducts = productAs.filter(
+        (product) => !oldIds.includes(product.id)
+      );
+
+      const tx = await zeoTC_Contract.add_new_product_A(
+        zSwap_id,
+        offer_id,
+        filteredProducts
+      );
+      await tx.wait();
+    }
+
+    if (product === 'productB') {
+      const productBs = handleFormateData(productB, true);
+      const filteredProducts = productBs.filter(
+        (product) => !oldIds.includes(product.id)
+      );
+
+      const tx = await zeoTC_Contract.add_new_product_B(
+        zSwap_id,
+        offer_id,
+        filteredProducts
+      );
+      await tx.wait();
+    }
+  };
+
+  return useMutation(mutationFn, {
+    onSettled: () => {
+      queryClient.invalidateQueries(queryKey);
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+};
+
+
+
 //function to counter an offer
 export const useMutationSwapCounterOffer = () => {
   const queryClient = useQueryClient();

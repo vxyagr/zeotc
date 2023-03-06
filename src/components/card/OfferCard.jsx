@@ -26,6 +26,7 @@ import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 export default function OfferCard({
   idx,
   value,
+  prod,
   isDashboard,
   unSelectedItems,
   onClick,
@@ -46,9 +47,12 @@ export default function OfferCard({
   swap_id,
   offer_id,
   isProvideItems,
-  tokenBalance
+  tokenBalance,
+  handleCounterOffer,
+  isCounterOfferLoading
 }) {
   const dispatch = useDispatch();
+  const [passInit, setPassInit] = useState(false);
   const { data: tokenBalanceInWallet } = useQueryTokenBalance(card.token || 0);
   const [balanceInWallet, setBalanceInWallet] = useState('-');
   const [isCopied, setCopied] = useClipboard(card.token || card.token_address);
@@ -56,7 +60,7 @@ export default function OfferCard({
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
-
+ // console.log("kard " + JSON.stringify(card.id));
   const useValue = 2.5;
   const initialValue =
     !isModal && !isDashboard && card?.amount?.toString()
@@ -70,54 +74,76 @@ export default function OfferCard({
       ? card.amount
       : Math.floor(card?.balance / 10 ** card?.decimals);
 
-  const handleFormateAmount = (item, decimalsValue) => {
+  
+//function handle format
+  const handleFormateAmount = (item, decimalsValue, isInit) => {
     
-    const amount =
-      Number(item.toString()).toLocaleString('fullwide', {
+    let item_ =
+      Number(item.toString()).toLocaleString('fullwide', {  
         useGrouping: false
       }) || 0;
-    //console.log("for 1 " + amount);
-    const decimals = decimalsValue ? decimalsValue : item?.metadata?.decimals;
-    //console.log("for " + ethers.utils.formatUnits(amount, decimals))
-    return ethers.utils.formatUnits(amount, decimals);
+    if (!isInit) {
+      item_=Number((item).toString()).toLocaleString('fullwide', {  
+        useGrouping: false
+      }) || 0;
+    } else {
+      console.log("call from init");
+    }
+    //console.log("formatting " + item_);
+    
+    //console.log("format result " + ethers.utils.formatUnits(item_, decimalsValue))
+    return ethers.utils.formatUnits(item_, decimalsValue);
   };
+  const [valueInput, setValueInput] = useState(0);
+  useEffect(() => {
+    let initVal = card?.amount ? handleFormateAmount(card.amount,card?.metadata?.decimals,true) : 0;
+    //console.log("render " + card.amount + " " + initVal);
+    setValueInput(initVal);
+    
+  }, [card?.metadata?.decimals]);
+
   
+
   useEffect(() => {
     console.log(tokenBalanceInWallet, '<<<<<< tokenBalanceInWallet');
     if (tokenBalanceInWallet && typeof tokenBalanceInWallet === 'number') {
       setBalanceInWallet(
-        handleFormateAmount(tokenBalanceInWallet, card?.metadata?.decimals)
+        handleFormateAmount(tokenBalanceInWallet, card?.metadata?.decimals,false)
       );
     }
   }, [tokenBalanceInWallet]);
   //console.log("exc " + card.amount);
-  const initVal = card?.amount ? handleFormateAmount(card.amount) : 0;
-  //console.log("render " + initVal);
-  const [valueInput, setValueInput] = useState(initVal);
+ 
+
+
+//function handle change input
 
   const handleChangeInputAmount = (value, selectedCard) => {
+    //setPassInit(true);
     if (Number(value) > balanceInWallet) {
       //setValueInput(balanceInWallet);
       //return;
     }
-    console.log("in wallet " + balanceInWallet + " " );
+    //console.log("in wallet " + balanceInWallet + " " );
     //console.log('val ' + value.toString() + ' ' + JSON.stringify(selectedCard));
     let decs = selectedCard?.decimals
       ? selectedCard.decimals
       : selectedCard.metadata.decimals;
     let val = parseFloat(value);
-    //console.log('parsed val ' + val + ' ' + isOfferReceived + ' ' + decs);
+    
     let weiVal = val * 10 ** decs;
     //let weiVal =  val;
-   // console.log('processed val ' + weiVal);
+   console.log('processed val ' + val + ' ' + weiVal);
     //let weiVal = val;
-    if (val * 10 ** decs > balanceInWallet) weiVal = balanceInWallet / 10 ** decs;
-    setValueInput(handleFormateAmount(weiVal));
-
+    //console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
+    if (!isOfferReceived && val * 10 ** decs > balanceInWallet) weiVal = balanceInWallet / 10 ** decs;
+   
+    setValueInput(handleFormateAmount(weiVal,decs,false));
+    console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
     if (handleProductDetails) {
-      handleProductDetails(idx, weiVal);
+      handleProductDetails(idx, val);
     } else if (handleProductAmountA) {
-      handleProductAmountA(idx, weiVal);
+      handleProductAmountA(idx, val);
     } else {
       if (!isDashboardR) {
         const newData = dataFetch.map((item, index) => {
@@ -181,6 +207,7 @@ export default function OfferCard({
     useMutationSetProduct();
 
   const handleSetFun = (data) => {
+    //console.log("list data " + JSON.stringify(data));
     mutateSetProduct({
       swap_id,
       offer_id,
@@ -372,7 +399,7 @@ export default function OfferCard({
           alignItems='center'
           mt={1}
         >
-          {isOfferReceived && (
+          {isOfferReceived &&  card.id !=undefined && (
             <MButton
               loading={isSetLoading}
               variant='contained'
@@ -385,7 +412,23 @@ export default function OfferCard({
               onClick={() => {
                 handleSetFun(card);
               }}
-              title='Set'
+              title='Set' 
+            />
+          )}
+          {isOfferReceived &&  card.id ==undefined && (
+            <MButton
+              loading={isCounterOfferLoading}
+              variant='contained'
+              disabled={card?.isApproved || valueInput <= '0'}
+              sx={{
+                boxShadow: 0,
+                fontSize: 14,
+                backgroundColor: 'orange !important'
+              }}
+              onClick={() => {
+                handleCounterOffer(prod);
+              }}
+              title='Add Token' 
             />
           )}
 
