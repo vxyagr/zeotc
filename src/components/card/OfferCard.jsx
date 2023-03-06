@@ -97,10 +97,10 @@ export default function OfferCard({
 
   const handleChangeInputAmount = (value, selectedCard) => {
     if (Number(value) > balanceInWallet) {
-      setValueInput(balanceInWallet);
-      return;
+      //setValueInput(balanceInWallet);
+      //return;
     }
-
+    console.log("in wallet " + balanceInWallet + " " );
     //console.log('val ' + value.toString() + ' ' + JSON.stringify(selectedCard));
     let decs = selectedCard?.decimals
       ? selectedCard.decimals
@@ -111,7 +111,7 @@ export default function OfferCard({
     //let weiVal =  val;
    // console.log('processed val ' + weiVal);
     //let weiVal = val;
-    if (val * 10 ** decs > card?.balance) weiVal = card?.balance / 10 ** decs;
+    if (val * 10 ** decs > balanceInWallet) weiVal = balanceInWallet / 10 ** decs;
     setValueInput(handleFormateAmount(weiVal));
 
     if (handleProductDetails) {

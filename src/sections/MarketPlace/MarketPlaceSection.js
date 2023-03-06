@@ -49,6 +49,7 @@ export default function MarketPlaceSection({
   const offr = zeSwapList?.swap?.offers;
   const offer_id = zeSwapList?.swap?.offers?.[0];
   const supplier = zeSwapList?.swap?.supplier;
+  const demander = zeSwapList?.swap?.demander;
   const isSupplier = supplier === account;
   const Trade = zeSwapList?.swap?.visibility;
   const swap_id = zeSwapList?.swap_id;
@@ -383,7 +384,7 @@ export default function MarketPlaceSection({
               }}
             >
               {/*offr[0]*/}
-              You Will Receive
+              You Will Receive 
             </Typography>
 
             {/* {ProductA.map((token, idx)=>{
@@ -520,7 +521,7 @@ export default function MarketPlaceSection({
               pb: isOffer ? 0 : 5
             }}
           >
-            {!isSupplier && status == 1 && (
+            {!isSupplier && status <2 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -547,29 +548,7 @@ export default function MarketPlaceSection({
             )}
             {counterOfferStatus && !isSupplier && (
               <>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    verticalAlign: 'middle',
-                    mt: 2
-                  }}
-                >
-                  <Button
-                    disabled={!account}
-                    onClick={handleSwapAccept}
-                    sx={{
-                      width: 150,
-                      color: 'white',
-                      // width:'100%',
-                      background:
-                        ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
-                    }}
-                  >
-                    Accept Offer
-                  </Button>
-                </Box>
+                
                 <Box
                   sx={{
                     display: 'flex',
@@ -602,7 +581,7 @@ export default function MarketPlaceSection({
                 </Box>
               </>
             )}
-            {isSupplier && status < 4 && (
+            {isSupplier && !isSwapHistory && status < 3 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -623,7 +602,7 @@ export default function MarketPlaceSection({
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
-                  Cancel Offer
+                  Cancel Offer 
                 </Button>
               </Box>
             )}

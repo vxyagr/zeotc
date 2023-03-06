@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Network, Alchemy } from 'alchemy-sdk';
 import { useRouter } from 'next/router';
+import { ethers } from 'ethers';
 
 import { conciseAddress } from 'helpers/utilities';
 
@@ -49,12 +50,14 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
       setOpenList(0);
     }
   };
-
+  const item = token;
   const handleTokenAmount = (amount, decimals) => {
-    let price = amount.toString();
-    price = Math.floor(price / 10 ** decimals);
-
-    return price;
+    const amount_ = amount ? ethers.utils.formatUnits(Number(amount.toString()).toLocaleString('fullwide', {
+      useGrouping: false
+    }), decimals)
+      : 0;
+    //console.log("marketplace value " + item);
+    return amount_;
   };
 
   return (
@@ -178,7 +181,7 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
                     }}
                   >
                     {/* {item.price}*/}
-
+                    
                     {handleTokenAmount(item.amount, item.decimals)}
                   </Typography>
 
