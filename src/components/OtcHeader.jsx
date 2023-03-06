@@ -1,5 +1,5 @@
 /* eslint-disable react-redux/useSelector-prefer-selectors */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import {
   useQueryCounterOfferIdList,
   useQueryMyZeSwapId
 } from 'hooks/react-query/queries';
-import { tradesTabs } from 'redux/slice/otcTrades';
+import { tradesTabs, tradesTabsSubMenu } from 'redux/slice/otcTrades';
 
 const TABS_DATA = [
   {
@@ -26,9 +26,23 @@ const TABS_DATA = [
     title: 'Swap History'
   }
 ];
+
+const MENU_DATA = {
+  Swaps: [
+    'pending received swap confirmations',
+    'pending sent swap confirmations'
+  ],
+  'Counter Offers': [
+    'pending received counter offers',
+    'pending sent counter offers'
+  ]
+};
 export default function OtcHeader({ searchFunction, sortType, setSortType }) {
   const dispatch = useDispatch();
   const activeButton = useSelector((state) => state.otcTrades.currentTab);
+  const activeSubMenu = useSelector(
+    (state) => state.otcTrades.currentTabSubMenu
+  );
   const [age, setAge] = React.useState('');
   const { data: counterOfferIdList } = useQueryCounterOfferIdList();
   const offerId = useQueriesFilterMarketPlaceData(counterOfferIdList, true);
@@ -153,39 +167,24 @@ export default function OtcHeader({ searchFunction, sortType, setSortType }) {
             mt: 3
           }}
         >
-          <Typography
-            variant='subtitle1'
-            // component={Link}
-            // href='/swapOfferDetails'
-            sx={{
-              background: (theme) => theme.palette.primary.main,
-              px: 2,
-              py: 1,
-              borderRadius: 2,
-              textTransform: 'capitalize',
-              cursor: 'pointer'
-            }}
-          >
-            {/* pending received swap confirmations */}
-
-            {activeButton !== 'Swaps'
-              ? 'pending received counter offers'
-              : 'pending received swap confirmations'}
-          </Typography>
-
-          <Typography
-            sx={{
-              px: 2,
-              py: 1,
-              borderRadius: 2,
-              textTransform: 'capitalize',
-              color: 'gray'
-            }}
-          >
-            {activeButton !== 'Swaps'
-              ? 'pending sent counter offers'
-              : 'pending sent swap confirmations'}
-          </Typography>
+          {MENU_DATA[`${activeButton}`].map((menu, idx) => (
+            <Typography
+              key={idx}
+              onClick={() => dispatch(tradesTabsSubMenu(menu))}
+              variant='subtitle1'
+              sx={{
+                background: (theme) => theme.palette.primary.main,
+                px: 2,
+                py: 1,
+                borderRadius: 2,
+                textTransform: 'capitalize',
+                cursor: 'pointer',
+                color: activeSubMenu === menu ? 'white' : 'gray'
+              }}
+            >
+              {menu}
+            </Typography>
+          ))}
         </Box>
       )}
 
