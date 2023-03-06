@@ -11,18 +11,33 @@ import Swaps from './Swaps';
 
 export default function OTCTrades() {
   const activeTab = useSelector((state) => state.otcTrades.currentTab);
+  const activeSubMenu = useSelector(
+    (state) => state.otcTrades.currentTabSubMenu
+  );
   const [searchValues, setSearchValues] = useState(null);
   const [sort, setSort] = useState('ASC');
 
   const TABS_DATA = [
     {
       title: 'Swaps',
-      component: <Swaps searchValues={searchValues} sort={sort} />,
+      component: (
+        <Swaps
+          searchValues={searchValues}
+          sort={sort}
+          subMenu={activeSubMenu}
+        />
+      ),
       number: 3
     },
     {
       title: 'Counter Offers',
-      component: <TradesOffer />,
+      component: (
+        <TradesOffer
+          searchValues={searchValues}
+          sort={sort}
+          subMenu={activeSubMenu}
+        />
+      ),
 
       number: 3
     },
