@@ -65,12 +65,7 @@ export default function OfferCard({
   // const useValue = card?.amount?.toString();
   const useValue = 2.5;
 
-  const initialValue =
-    !isModal && !isDashboard && card?.amount?.toString()
-      ? ethers.utils
-          .formatUnits(useValue, card?.metadata?.decimals)
-          ?.split('.')[0]
-      : '0';
+  
 
   
 
@@ -105,13 +100,84 @@ export default function OfferCard({
   
       const handleFormateAmount = (item) => {
         const amount = Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) || 0;
-        console.log("offer card formatting attempt " + amount);
+        //console.log("offer card formatting attempt " + amount);
         return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
       };
       //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
-  const initVal =  (card?.amount ? handleFormateAmount(card.amount) : 0) ;
-  const [valueInput, setValueInput] = useState(initialValue);
-  const handleChangeInputAmount = (value, selectedCard) => {
+  const initVal = (card?.amount ? (card.amount) : 0);
+  const initialValue =
+    !isModal && !isDashboard && card?.amount?.toString()
+      ? ethers.utils
+          .formatUnits(useValue, card?.metadata?.decimals)
+          ?.split('.')[0]
+      : '0';
+      const [valueInput, setValueInput] = useState(0);
+  useEffect(() => {
+    setValueInput(initVal);
+    handleChangeInputAmount(initVal, card);
+  }, [card.decimals]
+
+  );
+  
+  
+  const checkIfNFTOwned=(id, selectedCard) => {
+    if (!isDashboardR) {
+      const newData = dataFetch.map((item, index) => {
+        if (item?.token_address === selectedCard?.token_address) {
+          return {
+            ...item,
+            token_id: id,
+            amount: 0
+          };
+        }
+
+        return {
+          ...item,
+          token_id: item.token_id || '0',
+          amount : 0
+        };
+      });
+
+      dispatch(addNewTokenNfts(newData));
+    }
+  }
+
+  const checkIf1155Owned=(id, selectedCard,nftAmount) => {
+    if (!isDashboardR) {
+      const newData = dataFetch.map((item, index) => {
+        if (item?.token_address === selectedCard?.token_address) {
+          return {
+            ...item,
+            token_id: id,
+            amount: nftAmount
+          };
+        }
+
+        return {
+          ...item,
+          token_id: item.token_id || '0',
+          amount : item.amount || '0'
+        };
+      });
+
+      dispatch(addNewTokenNfts(newData));
+    }
+  }
+
+//function handle change input  
+  const handleChangeInputAmount = (value, selectedCard,nftAmount) => {
+    if (selectedCard?.contract_type?.toString() === "ERC721") {
+      console.log("is 721");
+      checkIfNFTOwned(value, selectedCard);
+      setValueInput(value);
+      return;
+    }
+    if (selectedCard?.contract_type?.toString() === "ERC1155") {
+      console.log("is 1155");
+      checkIf1155Owned(value, selectedCard,nftAmount);
+      setValueInput(value);
+      return;
+    }
     console.log("val " + value.toString());
     let val = parseFloat(value);
     console.log("parsed val " + val + " " + isOfferReceived + " " + selectedCard.decimals);
@@ -131,7 +197,7 @@ export default function OfferCard({
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: weiVal
+              amount: val
             };
           }
 
@@ -149,7 +215,7 @@ export default function OfferCard({
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: weiVal
+              amount: val
             };
           }
 
@@ -259,6 +325,7 @@ export default function OfferCard({
               {card?.newMetadata
                 ? card.newMetadata?.name
                 : card?.name || card?.metadata?.name}
+              
             </Typography>
 
             {/* {isMarketCard && ( */}
@@ -319,7 +386,7 @@ export default function OfferCard({
               mt: 0.5
             }}
           >
-            {isOfferReceived? 'ok' : cardTokenBalance}
+            {isOfferReceived?(cardTokenBalance!=cardTokenBalance?'':'Available Balance:' + cardTokenBalance) :(card?.contract_type=="ERC721"?'': (cardTokenBalance!='Available Balance:' + cardTokenBalance?'':cardTokenBalance))}
           </Typography>
         </Box>
 
@@ -344,7 +411,7 @@ export default function OfferCard({
                 alignItems: 'center'
               }}
             >
-              <Typography variant='subtitle1'>Amount</Typography>
+              <Typography variant='subtitle1'> {card.contract_type == "ERC721" ? 'NFT ID' : 'Amount'} </Typography>
 
               <Box
                 component='input'
@@ -369,6 +436,37 @@ export default function OfferCard({
                   color: value === 'Amount' ? ' gray' : '#fff'
                 }}
               />
+              {(card.contract_type == "ERC1155" && (
+                <>
+                <Typography variant='subtitle1'> NFT Amount</Typography>
+
+                <Box
+                  component='input'
+                  value={valueInput}
+                  onChange={(e) =>
+                    handleChangeInputAmount(
+                      e.target.value,
+                      card
+                    )
+                  }
+                  sx={{
+                    ml: {
+                      sm: 2
+                    },
+                    background: (theme) => theme.palette.primary.main,
+                    p: 1,
+                    borderRadius: 1,
+                    maxWidth: 200,
+                    width: '100%',
+                    border: 'none',
+                    outline: 'none',
+                    color: value === 'Amount' ? ' gray' : '#fff'
+                  }}
+                  />
+                  </>
+              ) )
+
+              }
             </Box>
           </>
         )}

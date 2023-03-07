@@ -49,7 +49,8 @@ export default function OfferCard({
   isProvideItems,
   tokenBalance,
   handleCounterOffer,
-  isCounterOfferLoading
+  isCounterOfferLoading,
+  allowCounterButton
 }) {
   const dispatch = useDispatch();
   const [passInit, setPassInit] = useState(false);
@@ -57,10 +58,11 @@ export default function OfferCard({
   const [balanceInWallet, setBalanceInWallet] = useState('-');
   const [isCopied, setCopied] = useClipboard(card.token || card.token_address);
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
+
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
- // console.log("kard " + JSON.stringify(card.id));
+  // console.log("kard " + JSON.stringify(card.id));
   const useValue = 2.5;
   const initialValue =
     !isModal && !isDashboard && card?.amount?.toString()
@@ -74,52 +76,116 @@ export default function OfferCard({
       ? card.amount
       : Math.floor(card?.balance / 10 ** card?.decimals);
 
-  
-//function handle format
+  //function handle format
   const handleFormateAmount = (item, decimalsValue, isInit) => {
-    
     let item_ =
-      Number(item.toString()).toLocaleString('fullwide', {  
+      Number(item.toString()).toLocaleString('fullwide', {
         useGrouping: false
       }) || 0;
     if (!isInit) {
-      item_=Number((item).toString()).toLocaleString('fullwide', {  
-        useGrouping: false
-      }) || 0;
+      item_ =
+        Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        }) || 0;
     } else {
-      console.log("call from init");
+      //console.log("call from init");
     }
     //console.log("formatting " + item_);
-    
+
     //console.log("format result " + ethers.utils.formatUnits(item_, decimalsValue))
     return ethers.utils.formatUnits(item_, decimalsValue);
   };
   const [valueInput, setValueInput] = useState(0);
+  const [valueInit, setValueInit] = useState(true);
   useEffect(() => {
-    let initVal = card?.amount ? handleFormateAmount(card.amount,card?.metadata?.decimals,true) : 0;
-    //console.log("render " + card.amount + " " + initVal);
+    let initVal = card?.amount
+      ? handleFormateAmount(card.amount, card?.metadata?.decimals, true)
+      : 0;
+    console.log('render ' + card.amount + ' ' + initVal);
     setValueInput(initVal);
-    
+    //handleChangeInputAmount(initVal, card);
   }, [card?.metadata?.decimals]);
 
-  
+  useEffect(() => {
+    if (card.id == undefined && allowCounterButton) allowCounterButton(true);
+  });
 
   useEffect(() => {
     console.log(tokenBalanceInWallet, '<<<<<< tokenBalanceInWallet');
     if (tokenBalanceInWallet && typeof tokenBalanceInWallet === 'number') {
       setBalanceInWallet(
-        handleFormateAmount(tokenBalanceInWallet, card?.metadata?.decimals,false)
+        handleFormateAmount(
+          tokenBalanceInWallet,
+          card?.metadata?.decimals,
+          false
+        )
       );
     }
   }, [tokenBalanceInWallet]);
   //console.log("exc " + card.amount);
- 
 
+  const checkIfNFTOwned = (id, selectedCard) => {
+    if (!isDashboardR) {
+      const newData = dataFetch.map((item, index) => {
+        if (item?.token_address === selectedCard?.token_address) {
+          return {
+            ...item,
+            token_id: id,
+            amount: 0
+          };
+        }
 
-//function handle change input
+        return {
+          ...item,
+          token_id: item.token_id || '0',
+          amount: 0
+        };
+      });
+
+      dispatch(addNewTokenNfts(newData));
+    }
+  };
+
+  const checkIf1155Owned = (id, selectedCard, nftAmount) => {
+    if (!isDashboardR) {
+      const newData = dataFetch.map((item, index) => {
+        if (item?.token_address === selectedCard?.token_address) {
+          return {
+            ...item,
+            token_id: id,
+            amount: nftAmount
+          };
+        }
+
+        return {
+          ...item,
+          token_id: item.token_id || '0',
+          amount: item.amount || '0'
+        };
+      });
+
+      dispatch(addNewTokenNfts(newData));
+    }
+  };
+
+  //function handle change input==========================================
 
   const handleChangeInputAmount = (value, selectedCard) => {
-    //setPassInit(true);
+    if (valueInit) setValueInit(false);
+    console.log('being input ' + value);
+    if (selectedCard?.contract_type?.toString() === 'ERC721') {
+      console.log('is 721');
+      checkIfNFTOwned(value, selectedCard);
+      setValueInput(value);
+      return;
+    }
+    if (selectedCard?.contract_type?.toString() === 'ERC1155') {
+      console.log('is 1155');
+      checkIf1155Owned(value, selectedCard, nftAmount);
+      setValueInput(value);
+      return;
+    }
+
     if (Number(value) > balanceInWallet) {
       //setValueInput(balanceInWallet);
       //return;
@@ -130,60 +196,23 @@ export default function OfferCard({
       ? selectedCard.decimals
       : selectedCard.metadata.decimals;
     let val = parseFloat(value);
-    
+
     let weiVal = val * 10 ** decs;
     //let weiVal =  val;
-   console.log('processed val ' + val + ' ' + weiVal);
+    //console.log('processed val ' + val + ' ' + weiVal);
     //let weiVal = val;
-    //console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
-    if (!isOfferReceived && val * 10 ** decs > balanceInWallet) weiVal = balanceInWallet / 10 ** decs;
-   
-    setValueInput(handleFormateAmount(weiVal,decs,false));
     console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
+    if (!isOfferReceived && val * 10 ** decs > balanceInWallet)
+      weiVal = balanceInWallet / 10 ** decs;
+
+    setValueInput(handleFormateAmount(weiVal, decs, false));
+    //console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
     if (handleProductDetails) {
       handleProductDetails(idx, val);
     } else if (handleProductAmountA) {
       handleProductAmountA(idx, val);
-    } else {
-      if (!isDashboardR) {
-        const newData = dataFetch.map((item, index) => {
-          if (item?.token_address === selectedCard?.token_address) {
-            return {
-              ...item,
-              amount: weiVal
-            };
-          }
-
-          return {
-            ...item,
-            amount: item.amount || '0'
-          };
-        });
-
-        dispatch(addNewTokenNfts(newData));
-      }
-
-      if (isDashboardR) {
-        const newData = receivedData.map((item, index) => {
-          if (item?.token_address === selectedCard?.token_address) {
-            return {
-              ...item,
-              amount: weiVal
-            };
-          }
-
-          return {
-            ...item,
-            amount: item.amount || '0'
-          };
-        });
-
-        dispatch(addNewTokenNftsReceive(newData));
-      }
     }
   };
-
-  
 
   const handleAddApproveState = (card) => {
     setValueInput(value);
@@ -300,7 +329,7 @@ export default function OfferCard({
 
             {/* )} */}
           </Box>
-{ /*
+          {/*
           {isDashboard && (
             <Box
               onClick={onClick}
@@ -365,27 +394,37 @@ export default function OfferCard({
                 alignItems: 'center'
               }}
             >
-              <Typography variant='subtitle1'>Amount</Typography>
+              <Typography variant='subtitle1'>
+                {card.id == undefined
+                  ? 'Attach this new offer to be able to set amount'
+                  : card.contract_type == 'ERC721'
+                  ? 'NFT ID'
+                  : 'Amount'}
+              </Typography>
 
-              <Box
-                component='input'
-                value={valueInput}
-                onLoad={(e) => console.log("card loading")}
-                onChange={(e) => handleChangeInputAmount(e.target.value, card)}
-                sx={{
-                  ml: {
-                    sm: 2
-                  },
-                  background: (theme) => theme.palette.primary.main,
-                  p: 1,
-                  borderRadius: 1,
-                  maxWidth: 200,
-                  width: '100%',
-                  border: 'none',
-                  outline: 'none',
-                  color: value === 'Amount' ? ' gray' : '#fff'
-                }}
-              />
+              {true && (
+                <Box
+                  component='input'
+                  value={valueInput}
+                  onLoad={(e) => console.log('card loading')}
+                  onChange={(e) =>
+                    handleChangeInputAmount(e.target.value, card)
+                  }
+                  sx={{
+                    ml: {
+                      sm: 2
+                    },
+                    background: (theme) => theme.palette.primary.main,
+                    p: 1,
+                    borderRadius: 1,
+                    maxWidth: 200,
+                    width: '100%',
+                    border: 'none',
+                    outline: 'none',
+                    color: value === 'Amount' ? ' gray' : '#fff'
+                  }}
+                />
+              )}
             </Box>
           </>
         )}
@@ -399,7 +438,7 @@ export default function OfferCard({
           alignItems='center'
           mt={1}
         >
-          {isOfferReceived &&  card.id !=undefined && (
+          {isOfferReceived && card.id != undefined && (
             <MButton
               loading={isSetLoading}
               variant='contained'
@@ -407,15 +446,16 @@ export default function OfferCard({
               sx={{
                 boxShadow: 0,
                 fontSize: 14,
-                backgroundColor: 'orange !important'
+                //backgroundColor: 'orange !important'
+                backgroundColor: '#391a92'
               }}
               onClick={() => {
                 handleSetFun(card);
               }}
-              title='Set' 
+              title='Set'
             />
           )}
-          {isOfferReceived &&  card.id ==undefined && (
+          {isOfferReceived && card.id == undefined && (
             <MButton
               loading={isCounterOfferLoading}
               variant='contained'
@@ -423,18 +463,20 @@ export default function OfferCard({
               sx={{
                 boxShadow: 0,
                 fontSize: 14,
-                backgroundColor: 'orange !important'
+                //backgroundColor: 'orange !important'
+                background:
+                  'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)'
               }}
               onClick={() => {
                 handleCounterOffer(prod);
               }}
-              title='Add Token' 
+              title='Add Token'
             />
           )}
 
           {/*  */}
 
-          {handleApproveClick && (
+          {handleApproveClick && card.id != undefined && (
             <MButton
               loading={
                 (isApprove === card?.token_address && isApproveLoading) ||
@@ -447,6 +489,7 @@ export default function OfferCard({
                 fontSize: 14
               }}
               onClick={() => {
+                handleChangeInputAmount(valueInput, card);
                 handleApproveClick(card);
                 handleAddApproveState(card);
               }}

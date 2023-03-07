@@ -16,7 +16,8 @@ import {
   useERC20_ERC721_ERC1155Approve,
   useMutationSetProduct,
   useMutationSwapAccept,
-  useMutationSwapCounterOffer
+  useMutationSwapCounterOffer,
+  useMutationReject
 } from 'hooks/react-query/mutation';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { getProductDetails } from 'redux/slice/otcTrades';
@@ -44,6 +45,7 @@ export default function OfferReceived({ selectedCard }) {
   useEffect(() => {
     setProductDetails(selectedCard?.productB);
     setProductDetailsA(selectedCard?.productA);
+    //console.log(' list swap offer ' + JSON.stringify(selectedCard));
     /*let pB = selectedCard?.productB;
     let newPB = pB?.map((item) => {
       //console.log("token amt" + item.amount + " " + (item.amount / (10 ** item.metadata.decimals)) ) ;
@@ -59,16 +61,25 @@ export default function OfferReceived({ selectedCard }) {
     //setProductDetailsA(selectedCard?.productA);
     //setProductDetailsA(newPA);*/
   }, [selectedCard]);
-
+  const { mutate: rejectOffer } = useMutationReject();
+  const handleRejectOffer = () => {
+    //console.log('rejecting ' + zeSwapList?.swap_id?.toString());
+    rejectOffer({
+      swap_id,
+      expire: expire
+    });
+  };
   const handleProductDetails = (idx, value) => {
-    console.log("details " + value);
+    setInitB(1);
+    console.log('details ' + value);
     const updatedAmount = [...productDetails];
     updatedAmount[idx].amount = value;
     setProductDetails(updatedAmount);
   };
 
   const handleProductAmountA = (idx, value) => {
-    console.log("detailsA " + value);
+    setInitA(1);
+    console.log('detailsA ' + value);
     const updatedAmount = [...productDetailsA];
     updatedAmount[idx].amount = value;
     setProductDetailsA(updatedAmount);
@@ -100,7 +111,7 @@ export default function OfferReceived({ selectedCard }) {
   const [appStatus, setAppStatus] = useState('');
   const [zeroProductA, setZeroProductA] = useState(0);
   const [zeroProductB, setZeroProductB] = useState(0);
-
+  const [isNewToken, setIsNewToken] = useState(false);
   const ProductA = productDetailsA;
   const ProductB = productDetails;
 
@@ -155,8 +166,11 @@ export default function OfferReceived({ selectedCard }) {
       ProductB: [data]
     });
   };
+  const allowCounterButton = (isAllow) => {
+    setIsNewToken(isAllow);
+  };
   const [initA, setInitA] = useState(0);
-    const [initB, setInitB] = useState(0);
+  const [initB, setInitB] = useState(0);
   const zeroAddress = '0x0000000000000000000000000000000000000000';
   const handleApproveClick = (token) => {
     setSelectedObjForSet(token.id);
@@ -170,10 +184,8 @@ export default function OfferReceived({ selectedCard }) {
     const tokenId = token?.token_id?.toString();
     const decimal = token?.decimals?.toString() || token?.decimals;
     const amount = token?.amount;
-    
-    console.log("to be approved " + amount);
 
-    
+    console.log('to be approved ' + amount);
 
     if (tokenAddress && amount) {
       mutate({
@@ -214,6 +226,7 @@ export default function OfferReceived({ selectedCard }) {
       id: formattedData,
       product
     });
+    allowCounterButton(false);
     // CounterOfferMutate(ProductB);
   };
   const handleSwapAccept = () => {
@@ -226,9 +239,8 @@ export default function OfferReceived({ selectedCard }) {
           useGrouping: false
         })
       : 0;
-    
-      return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
-    
+
+    return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
 
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
@@ -240,22 +252,29 @@ export default function OfferReceived({ selectedCard }) {
   useEffect(() => {
     let totalAmount =
       (ProductB?.length !== 0 &&
-        ProductB?.map((item) => (item?.amount))?.reduce(
+        ProductB?.map((item) => item?.amount)?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
           0
         )) ||
       '0';
+
+    if (zeroProductB == 0 && parseInt(totalAmount) == 0) {
+      ProductB?.map((item, idx) => {
+        //console.log('first loop before ' + item.amount);
+        //handleProductDetails(idx, item.amount / 10 ** item.decimals);
+      });
+      setZeroProductB(1);
+    }
     if (zeroProductB == 0 && parseInt(totalAmount) > 0) {
-        
       setZeroProductB(totalAmount);
     }
     console.log('total amount product B ' + totalAmount);
     if (totalAmount > 0 && initB == 0) {
       totalAmount = handleFormateAmount(totalAmount);
       setInitB(totalAmount);
-  }
+    }
     //console.log('total formatted amount product B ' + totalAmount);
-    
+
     //totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -263,15 +282,14 @@ export default function OfferReceived({ selectedCard }) {
   useEffect(() => {
     let totalAmount =
       (ProductA?.length !== 0 &&
-        ProductA?.map((item) => (item?.amount))?.reduce(
+        ProductA?.map((item) => item?.amount)?.reduce(
           (prev, curr) => Number(prev) + Number(curr),
           0
         )) ||
       '0';
-      if (zeroProductA==0 && parseInt(totalAmount) > 0) {
-        
-        setZeroProductA(totalAmount);
-    } 
+    if (zeroProductA == 0 && parseInt(totalAmount) > 0) {
+      setZeroProductA(totalAmount);
+    }
     console.log('total amount product A ' + totalAmount);
     if (totalAmount > 0 && initA == 0) {
       totalAmount = handleFormateAmount(totalAmount);
@@ -350,7 +368,7 @@ export default function OfferReceived({ selectedCard }) {
             return (
               <OfferCard
                 idx={idx}
-                prod={"productA"}
+                prod={'productA'}
                 key={`productA__${idx}__${card?.id}`}
                 card={card}
                 handleProductAmountA={handleProductAmountA}
@@ -373,6 +391,7 @@ export default function OfferReceived({ selectedCard }) {
                 handleCounterOffer={handleCounterOffer}
                 isProvideItems={supplier === account}
                 isOfferReceived
+                allowCounterButton={allowCounterButton}
               />
             );
           })}
@@ -381,14 +400,14 @@ export default function OfferReceived({ selectedCard }) {
             <Box
               sx={{
                 display: 'grid',
-                width:'100%',
+                width: '100%',
                 gridTemplateColumns: 'min-content 1fr',
                 justifyContent: 'center',
                 gap: 1,
                 alignItems: 'center'
               }}
             >
-             <Box
+              <Box
                 sx={{
                   position: 'relative',
                   zIndex: 1,
@@ -400,39 +419,41 @@ export default function OfferReceived({ selectedCard }) {
                   }
                 }}
               >
-                <MButton
-                  disabled={!account}
-                  Loading={isCounterOfferLoading}
-                  title='Counter Offer'
-                  onClick={() => handleCounterOffer('productA')}
-                  sx={{
-                    width: 'max-content',
-                    background: '#000',
-                    border: '1px solid transparent',
-                    position: 'absolute',
-                    // fontSize: 14,
-                    fontSize: 13,
-                    color: '#fff',
-                    top: 0,
-                    bottom: 0,
-                    borderRadius: '12px',
-
-                    '&:after': {
+                {isNewToken && (
+                  <MButton
+                    disabled={!account && isNewToken}
+                    Loading={isCounterOfferLoading}
+                    title='Attach Offer'
+                    onClick={() => handleCounterOffer('productA')}
+                    sx={{
+                      width: 'max-content',
+                      background: '#000',
+                      border: '1px solid transparent',
                       position: 'absolute',
-                      top: -2,
-                      left: -2,
-                      right: -2,
-                      bottom: -2,
-                      background:
-                        'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
-                      content: '""',
-                      // overflow: 'hidden',
+                      // fontSize: 14,
+                      fontSize: 13,
+                      color: '#fff',
+                      top: 0,
+                      bottom: 0,
+                      borderRadius: '12px',
 
-                      zIndex: -1,
-                      borderRadius: '10.19px'
-                    }
-                  }}
-                />
+                      '&:after': {
+                        position: 'absolute',
+                        top: -2,
+                        left: -2,
+                        right: -2,
+                        bottom: -2,
+                        background:
+                          'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
+                        content: '""',
+                        // overflow: 'hidden',
+
+                        zIndex: -1,
+                        borderRadius: '10.19px'
+                      }
+                    }}
+                  />
+                )}
               </Box>
 
               <Box
@@ -522,6 +543,7 @@ export default function OfferReceived({ selectedCard }) {
                 handleCounterOffer={handleCounterOffer}
                 isProvideItems={supplier !== account}
                 isOfferReceived
+                allowCounterButton={allowCounterButton}
               />
             );
           })}
@@ -549,9 +571,9 @@ export default function OfferReceived({ selectedCard }) {
                 }}
               >
                 <MButton //B
-                  disabled={!account}
+                  disabled={!account && isNewToken}
                   Loading={isCounterOfferLoading}
-                  title='Counter Offer'
+                  title='Attach Offer'
                   onClick={() => handleCounterOffer('productB')}
                   sx={{
                     width: 'max-content',
@@ -740,32 +762,36 @@ export default function OfferReceived({ selectedCard }) {
                 }
               }
             }}
-          >{(demander===zeroAddress) && (
-            <Button
-              disabled={!account}
-              onClick={handleSwapAccept}
-              sx={{
-                width: 150,
-                // width:'100%',
-                background:
-                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
-              }}
-            >
-              Accept Offer
-              </Button>
-            )}
-            {(demander===account) && (
-            <Button
-              disabled={!account}
-              onClick={handleSwapAccept}
-              sx={{
-                width: 200,
-                // width:'100%',
-                background:
-                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
-              }}
-            >
-              Cancel Counter Offer
+          >
+            {
+              //demander === zeroAddress &&
+              true && (
+                <Button
+                  disabled={!account}
+                  onClick={handleSwapAccept}
+                  sx={{
+                    width: 150,
+                    // width:'100%',
+                    background:
+                      ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+                  }}
+                >
+                  Accept Offer
+                </Button>
+              )
+            }
+            {false && demander === account && (
+              <Button
+                disabled={!account}
+                onClick={handleRejectOffer}
+                sx={{
+                  width: 200,
+                  // width:'100%',
+                  background:
+                    ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+                }}
+              >
+                Cancel Counter Offer
               </Button>
             )}
           </Box>

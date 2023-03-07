@@ -20,7 +20,10 @@ const settings = {
   network: Network.ETH_GOERLI
 };
 //a function to get tokenAllowance
-export const useQueryGetERC20TokenAllowance = async (tokenType, tokenAddress)=>{
+export const useQueryGetERC20TokenAllowance = async (
+  tokenType,
+  tokenAddress
+) => {
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
 
   const tokenAddress_ = tokenAddress;
@@ -57,7 +60,7 @@ export const useQueryGetERC20TokenAllowance = async (tokenType, tokenAddress)=>{
 
     return balance;
   }
-}
+};
 //a function to get USD value of a listed token, using CoinGecko API. Will return {} if coin is not listed
 export const useTokenPrice = (tokenAddress) => {
   const queryKey = ['tokenPrice', tokenAddress];
@@ -597,7 +600,14 @@ export const useQueryOfferId = () => {
 };
 
 // function get_counter_offers_id_list(address addr)
-
+export const getCounterOffers = async (userAddress) => {
+  if (!userAddress) return null;
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  const offersList = await zeoTC_Contract.get_counter_offers_id_list(
+    userAddress
+  );
+  return offersList;
+};
 //function to get list of counter offers created by the caller's address
 export const useQueryCounterOfferIdList = () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();

@@ -5,6 +5,7 @@ import { Box, Button, IconButton, Typography, Divider } from '@mui/material';
 import { Border } from 'components/Style';
 import Link from 'next/link';
 
+
 export default function Footer() {
   const [showTips, setShowTips] = useState(false);
   const [inputValue, setInputValue] = useState('');

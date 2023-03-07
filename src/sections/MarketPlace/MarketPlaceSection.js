@@ -102,6 +102,7 @@ export default function MarketPlaceSection({
       }
 
       //if(expire)
+      //onsole.log("the swap " + JSON.stringify(zeSwapList));
     }
 
     if (isOffer) {
@@ -184,9 +185,9 @@ export default function MarketPlaceSection({
   
   const handleQuickSwapAccept = () => {
     if (isSupplier) {
-      console.log("list produk A " + JSON.stringify(ProductA));
+      //console.log("list produk A " + JSON.stringify(ProductA));
     } else {
-      console.log("list produk B " + JSON.stringify(ProductB));
+      //console.log("list produk B " + JSON.stringify(ProductB));
       ProductB?.map((item) => console.log("addr " + 
         item.token + " type " +  item.IERC + " id " +item.token_id + " dec " +
         item.metadata.decimals + " amnt " + item.amount
@@ -460,6 +461,7 @@ export default function MarketPlaceSection({
               sx={{
                 px: 2
               }}
+              
             >
               You Will Provide
             </Typography>

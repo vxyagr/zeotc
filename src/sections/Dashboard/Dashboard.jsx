@@ -109,12 +109,16 @@ export default function DashboardSection() {
   const handleFormateAmount = (item) => {
     const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
     console.log("item value " + item);
-    return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+    return amount;
+    //return ethers.utils.formatUnits(amount, decimal);
   };
 
   useEffect(() => {
+    //const newData = dataFetch.filter(
+      //(item) => item?.isApproved === true && item.amount > 0
+    //);
     const newData = dataFetch.filter(
-      (item) => item?.isApproved === true && item.amount > 0
+      (item) => item?.isApproved === true 
     );
 
     if (

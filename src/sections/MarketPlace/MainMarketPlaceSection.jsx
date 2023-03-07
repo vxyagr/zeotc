@@ -9,7 +9,8 @@ import MarketPlaceHeader from 'components/MarketPlaceHeader';
 import { Border } from 'components/Style';
 import {
   useQueriesFilterMarketPlaceData,
-  useQueryZeSwapIdList
+  useQueryZeSwapIdList,
+  getCounterOffers
 } from 'hooks/react-query/queries';
 
 import MarketPlaceSection from './MarketPlaceSection';
@@ -32,7 +33,7 @@ export default function MainMarketPlaceSection() {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
   //const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
- 
+  //const counterList = getCounterOffers(account);
   //console.log(JSON.stringify(newZeSwapList));
   const [sort, setSort] = useState('ASC');
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
@@ -56,10 +57,22 @@ export default function MainMarketPlaceSection() {
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
-      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList.filter(((item) => (item.swap[2] == account || item.swap[2] == '0x0000000000000000000000000000000000000000')&&item.swap[1]!=account && Number(item.swap.status)<1 )), sort, true));
+      setFilteredZeSwapIdList(
+        normalizeSwapList(
+          newZeSwapList.filter(
+            (item) =>
+              (item.swap[2] == account ||
+                item.swap[2] == '0x0000000000000000000000000000000000000000') &&
+              item.swap[1] != account &&
+              Number(item.swap.status) < 1
+          ),
+          sort,
+          true
+        )
+      );
       //setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
-    
+    //console.log('counter list ' + JSON.stringify(counterList));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);
 
