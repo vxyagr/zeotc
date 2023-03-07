@@ -98,11 +98,12 @@ export default function OfferCard({
   const [valueInput, setValueInput] = useState(0);
   const [valueInit, setValueInit] = useState(true);
   useEffect(() => {
-    let initVal = card?.amount
-      ? handleFormateAmount(card.amount, card?.metadata?.decimals, true)
-      : 0;
+    let initVal = 0;
+    //let initVal = card?.amount
+    //? handleFormateAmount(card.amount, card?.metadata?.decimals, true)
+    // : 0;
     console.log('render ' + card.amount + ' ' + initVal);
-    setValueInput(initVal);
+    setValueInput(card.amount);
     //handleChangeInputAmount(initVal, card);
   }, [card?.metadata?.decimals]);
 
@@ -236,7 +237,9 @@ export default function OfferCard({
     useMutationSetProduct();
 
   const handleSetFun = (data) => {
-    //console.log("list data " + JSON.stringify(data));
+    //handleChangeInputAmount(valueInput, card);
+    console.log('list data ' + JSON.stringify(data.amount));
+    //return;
     mutateSetProduct({
       swap_id,
       offer_id,

@@ -43,22 +43,24 @@ export default function OfferReceived({ selectedCard }) {
   const [productDetailsA, setProductDetailsA] = useState([]);
 
   useEffect(() => {
-    setProductDetails(selectedCard?.productB);
-    setProductDetailsA(selectedCard?.productA);
-    //console.log(' list swap offer ' + JSON.stringify(selectedCard));
-    /*let pB = selectedCard?.productB;
-    let newPB = pB?.map((item) => {
-      //console.log("token amt" + item.amount + " " + (item.amount / (10 ** item.metadata.decimals)) ) ;
-      handleProductDetails(item.idx, (item.amount / (10 ** item.metadata.decimals)));
-    });
-    
-    //setProductDetails(newPB);
-    let pA = selectedCard?.productA;
-    let newPA = pA?.map((item) => {
-      //console.log("token amt" + item.amount);
-      handleProductAmountA(item.idx, (item.amount / (10 ** item.metadata.decimals)))
-    });
+    //setProductDetails(selectedCard?.productB);
     //setProductDetailsA(selectedCard?.productA);
+    console.log(' total swap offer A ' + selectedCard?.productA.length);
+    console.log(' total swap offer B ' + selectedCard?.productB.length);
+    let pB = selectedCard?.productB;
+    let newPB = pB?.map((item, idx) => {
+      console.log('original B ' + selectedCard?.productB[idx].amount);
+      pB[idx].amount = item.amount / 10 ** item.metadata.decimals;
+      //handleProductDetails(item.idx, (item.amount / (10 ** item.metadata.decimals)));
+    });
+    setProductDetails(pB);
+    let pA = selectedCard?.productA;
+    let newPA = pA?.map((item, idx) => {
+      console.log('original A ' + selectedCard?.productA[idx].amount);
+      pA[idx].amount = item.amount / 10 ** item.metadata.decimals;
+      //handleProductDetails(item.idx, (item.amount / (10 ** item.metadata.decimals)));
+    });
+    setProductDetailsA(pA);
     //setProductDetailsA(newPA);*/
   }, [selectedCard]);
   const { mutate: rejectOffer } = useMutationReject();
@@ -269,10 +271,10 @@ export default function OfferReceived({ selectedCard }) {
       setZeroProductB(totalAmount);
     }
     console.log('total amount product B ' + totalAmount);
-    if (totalAmount > 0 && initB == 0) {
-      totalAmount = handleFormateAmount(totalAmount);
-      setInitB(totalAmount);
-    }
+    //if (totalAmount > 0 && initB == 0) {
+    //totalAmount = handleFormateAmount(totalAmount);
+    // setInitB(totalAmount);
+    //}
     //console.log('total formatted amount product B ' + totalAmount);
 
     //totalAmount = `${totalAmount}`.replace('e-18', '');
@@ -291,10 +293,10 @@ export default function OfferReceived({ selectedCard }) {
       setZeroProductA(totalAmount);
     }
     console.log('total amount product A ' + totalAmount);
-    if (totalAmount > 0 && initA == 0) {
-      totalAmount = handleFormateAmount(totalAmount);
-      setInitA(totalAmount);
-    }
+    //if (totalAmount > 0 && initA == 0) {
+    //totalAmount = handleFormateAmount(totalAmount);
+    // setInitA(totalAmount);
+    // }
     //console.log('total formatted amount product A ' + totalAmount);
     //totalAmount = `${totalAmount}`.replace('e-18', '');
 
