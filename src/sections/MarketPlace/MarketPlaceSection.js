@@ -11,7 +11,7 @@ import useClipboard from 'react-use-clipboard';
 import MarketPlaceCard from 'components/card/MarketPlaceCard';
 import CounterOffer from 'components/modal/CounterOffer';
 import { Border } from 'components/Style';
-import { getExpieredTime } from 'helpers/utilities';
+import { getExpieredTime, getTokenPriceInUsd } from 'helpers/utilities';
 import {
   useMutationAccept,
   useMutationReject,
@@ -179,35 +179,43 @@ export default function MarketPlaceSection({
       setIsSetState(true);
     }*/
 
-    
     acceptMutate(swap_id);
   };
-  
+
   const handleQuickSwapAccept = () => {
     if (isSupplier) {
       //console.log("list produk A " + JSON.stringify(ProductA));
     } else {
       //console.log("list produk B " + JSON.stringify(ProductB));
-      ProductB?.map((item) => console.log("addr " + 
-        item.token + " type " +  item.IERC + " id " +item.token_id + " dec " +
-        item.metadata.decimals + " amnt " + item.amount
-      ));
+      ProductB?.map((item) =>
+        console.log(
+          'addr ' +
+            item.token +
+            ' type ' +
+            item.IERC +
+            ' id ' +
+            item.token_id +
+            ' dec ' +
+            item.metadata.decimals +
+            ' amnt ' +
+            item.amount
+        )
+      );
       ProductB?.map((item) => {
         const tokenAddress = item.token;
-        console.log("tk addr " + tokenAddress);
+        console.log('tk addr ' + tokenAddress);
         const tokenType = item.IERC.toString();
         const tokenId = item.token_id;
         const decimal = item.metadata.decimals;
         const amount = item.amount;
         mutateApprove({
           tokenAddress,
-        tokenType,
-        tokenId,
-        decimal,
-        amount
+          tokenType,
+          tokenId,
+          decimal,
+          amount
+        });
       });
-      });
-
     }
     /*if (tokenAddress && amount) {
       mutate({
@@ -219,7 +227,7 @@ export default function MarketPlaceSection({
       });
     }
     acceptMutate(swap_id);*/
-  }
+  };
 
   const handleSwapCancel = () => {
     console.log('cancel swap');
@@ -232,37 +240,75 @@ export default function MarketPlaceSection({
           useGrouping: false
         })
       : 0;
-    //console.log("marketplace value " + item);
+
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+  };
+
+  const handleValueInUSD = async (tokenAddress, tokenAmount) => {
+    const valueInUSD = await getTokenPriceInUsd(tokenAddress);
+
+    return valueInUSD * tokenAmount;
   };
 
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
 
   const [SumOfAmountB, setSumOfAmountB] = useState(0);
-  //console.log(JSON.stringify(zeSwapList));
-  useEffect(() => {
-    let totalAmount =
-      (ProductB?.length !== 0 &&
-        ProductB?.map((item) => handleFormateAmount(item?.amount))?.reduce(
-          (prev, curr) => Number(prev) + Number(curr),  0  )) || '0';
 
-    totalAmount = `${totalAmount}`.replace('e-12', '');
-    setSumOfAmountB(totalAmount);
+  useEffect(() => {
+    if (ProductB?.length !== 0) {
+      const totalAmountPool = [];
+
+      ProductB.forEach((item) => {
+        const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+        totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes(NaN)) {
+          setSumOfAmountB('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfAmountB(allTokenAmountValueInUSD);
+        }
+      });
+    }
+
+    // totalAmount = `${totalAmount}`.replace('e-12', '');
+
+    // setSumOfAmountB(123);
   }, [ProductB, ProductB?.length]);
 
   useEffect(() => {
-    let totalAmount =
-      (ProductA?.length !== 0 &&
-        ProductA?.map((item) => handleFormateAmount(item?.amount))?.reduce(
-          (prev, curr) => Number(prev) + Number(curr),
-          0
-        )) ||
-      '0';
-    totalAmount = `${totalAmount}`.replace('e-12', '');
-    // totalAmount = totalAmoun;
-    setSumOfAmountA(totalAmount);
+    if (ProductA?.length !== 0) {
+      const totalAmountPool = [];
+
+      ProductA.forEach((item) => {
+        const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+        totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes(NaN)) {
+          setSumOfAmountA('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfAmountA(allTokenAmountValueInUSD);
+        }
+      });
+    }
+
+    // totalAmount = `${totalAmount}`.replace('e-12', '');
+
+    // setSumOfAmountB(123);
   }, [ProductA, ProductA?.length]);
-  //cconsole.log("supplier? " + isSupplier);
 
   return (
     <Box>
@@ -374,7 +420,8 @@ export default function MarketPlaceSection({
             }}
           >
             <Typography
-              component={Link} href={{
+              component={Link}
+              href={{
                 pathname: '/marketPlace/swap',
                 query: {
                   id: `${swap_id}` // should be `title` not `id`
@@ -385,7 +432,7 @@ export default function MarketPlaceSection({
               }}
             >
               {/*offr[0]*/}
-              You Will Receive 
+              You Will Receive
             </Typography>
 
             {/* {ProductA.map((token, idx)=>{
@@ -424,14 +471,33 @@ export default function MarketPlaceSection({
                 Total Amount
               </Typography>
 
-              <Typography
-                sx={{
-                  px: 2,
-                  fontSize: 14
-                }}
-              >
-                {SumOfAmountA} USDC
-              </Typography>
+              {SumOfAmountA ? (
+                <Typography
+                  sx={{
+                    px: 2,
+                    fontSize: 14
+                  }}
+                >
+                  {SumOfAmountA} USDC
+                </Typography>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Box
+                    component='img'
+                    src='/assets/svg/small-loading.svg'
+                    sx={{
+                      width: 18,
+                      height: 18
+                    }}
+                  />
+                </Box>
+              )}
             </Box>
           </Box>
 
@@ -461,7 +527,6 @@ export default function MarketPlaceSection({
               sx={{
                 px: 2
               }}
-              
             >
               You Will Provide
             </Typography>
@@ -490,14 +555,33 @@ export default function MarketPlaceSection({
                 Total Amount
               </Typography>
 
-              <Typography
-                sx={{
-                  px: 2,
-                  fontSize: 14
-                }}
-              >
-                {SumOfAmountB} USDC
-              </Typography>
+              {SumOfAmountB ? (
+                <Typography
+                  sx={{
+                    px: 2,
+                    fontSize: 14
+                  }}
+                >
+                  {SumOfAmountB} USDC
+                </Typography>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Box
+                    component='img'
+                    src='/assets/svg/small-loading.svg'
+                    sx={{
+                      width: 18,
+                      height: 18
+                    }}
+                  />
+                </Box>
+              )}
             </Box>
           </Box>
 
@@ -523,7 +607,7 @@ export default function MarketPlaceSection({
               pb: isOffer ? 0 : 5
             }}
           >
-            {!isSupplier && status <2 && (
+            {!isSupplier && status < 2 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -550,7 +634,6 @@ export default function MarketPlaceSection({
             )}
             {counterOfferStatus && !isSupplier && (
               <>
-                
                 <Box
                   sx={{
                     display: 'flex',
@@ -604,7 +687,7 @@ export default function MarketPlaceSection({
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
-                  Cancel Offer 
+                  Cancel Offer
                 </Button>
               </Box>
             )}
