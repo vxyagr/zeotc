@@ -133,7 +133,11 @@ export const handleFormateData = (receivedData, useId = false) => {
     let tokenAddress;
     let tokenId;
     //let amountValue = item?.amount?.toString() || '0.00002';
-    let amountValue = item? Number(item?.amount?.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0 || '0.00002';
+    let amountValue = item
+      ? Number(item?.amount?.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0 || '0.00002';
     // ? IF TYPE DOS'T EXIST ITS MEANS TOKEN TYPE IS ERC20
 
     if (!tokenType || tokenType === '20') {
@@ -252,6 +256,28 @@ export const getUserNFts = async (url, address) => {
 };
 
 // -------------------------------------
+
+export const getTokenPriceInUsd = async (tokenAddress) => {
+  const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}/price?chain=${process.env.NEXT_PUBLIC_CHAIN}&exchange=uniswap-v2`;
+
+  return await axios
+    .request({
+      method: 'GET',
+      url: url,
+      headers: {
+        accept: 'application/json',
+        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
+      }
+    })
+    .then(function (response) {
+      return response.data?.usdPrice?.toFixed(2) || 'conversion not found';
+    })
+    .catch(function (error) {
+      return 'conversion not found';
+    });
+};
+
+// ----------------------------------------------
 
 export const delay = async (ms = 1000) =>
   new Promise((resolve) => setTimeout(resolve, ms));
