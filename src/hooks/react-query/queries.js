@@ -188,11 +188,9 @@ export const useQueriesFilterMarketPlaceData = (
   return results?.map((result) => result.data?.[0]);
 };
 
-export const testFunction = async () => {
+export const testGetSwap = async () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
-  const swap = await zeoTC_Contract.get_swap_by_offer(
-    '0xebf3ecde85f662ccaf6049e5ac83bfae86ead2016b43a4d32a24cc018bdbf5d8'
-  );
+  const swap = await zeoTC_Contract.get_swap_by_offer(account);
 
   return swap;
 };
@@ -210,11 +208,11 @@ export const useQueriesFilterCounterOfferData = (
   //swaplist_ = zeSwapIdList;
   const queryFn = async (offer_id, swaplist_) => {
     const data = [];
-    console.log('looping offer id ' + offer_id);
+    //console.log('looping offer id ' + offer_id);
     let swap_id_ = '0x1';
     const swap = await zeoTC_Contract.get_swap_by_offer(offer_id);
     swap_id_ = swap.swap_id;
-    console.log('swaplist : ' + JSON.stringify(swaplist_));
+    //console.log('swaplist : ' + JSON.stringify(swaplist_));
 
     //console.log('getting swap id ' + swap_id.toString());
     //console.log(JSON.stringify(swap));
@@ -601,6 +599,8 @@ export const useQueryOfferId = () => {
 
 // function get_counter_offers_id_list(address addr)
 export const getCounterOffers = async (userAddress) => {
+  //console.log('getting list of counter offers');
+  return '';
   if (!userAddress) return null;
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   const offersList = await zeoTC_Contract.get_counter_offers_id_list(
@@ -616,11 +616,11 @@ export const useQueryCounterOfferIdList = () => {
 
   const queryFn = async () => {
     const offersList = await zeoTC_Contract.get_counter_offers_id_list(account);
-    console.log('offers : ' + JSON.stringify(offersList));
+    //console.log('offers : ' + JSON.stringify(offersList));
     for (const offer of offersList) {
-      console.log('offer list ' + JSON.stringify(offer));
+      // console.log('offer list ' + JSON.stringify(offer));
       const theoffer = await zeoTC_Contract.get_offers(offer);
-      console.log('theoffer ' + JSON.stringify(theoffer));
+      //console.log('theoffer ' + JSON.stringify(theoffer));
     }
     return offersList;
   };
