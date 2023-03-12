@@ -257,20 +257,25 @@ export const getUserNFts = async (url, address) => {
 
 // -------------------------------------
 
-export const getTokenPriceInUsd = async (tokenAddress) => {
-  const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}/price?chain=${process.env.NEXT_PUBLIC_CHAIN}&exchange=uniswap-v2`;
+export const getTokenPriceInUsd = async (tokenAddress, totalAmount) => {
+  // const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}/price?chain=${process.env.NEXT_PUBLIC_CHAIN}&exchange=uniswap-v2`;
+
+  const url = `http://localhost:3021/getPriceInUSD`;
 
   return await axios
     .request({
       method: 'GET',
-      url: url,
-      headers: {
-        accept: 'application/json',
-        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
-      }
+      url: url
+      // headers: {
+      //   accept: 'application/json',
+      //   'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
+      // }
     })
     .then(function (response) {
-      return response.data?.usdPrice?.toFixed(2) || 'conversion not found';
+      return (
+        response.data?.usdPrice?.toFixed(2) * totalAmount ||
+        'conversion not found'
+      );
     })
     .catch(function (error) {
       return 'conversion not found';

@@ -22,12 +22,16 @@ import {
   getCreateDateTime
 } from 'redux/slice/otcTrades';
 
+import { getTokenPriceInUsd } from 'helpers/utilities';
+
 export default function DashboardSection() {
   const dispatch = useDispatch();
   const [openOffer, setOpenOffer] = useState(false);
   const [openReceive, setOpenReceive] = useState(false);
   const [SumOfAmount, setSumOfAmount] = useState(0);
   const [SumOfReceive, setSumOfReceive] = useState(0);
+  const [SumOfAmountLoading, setSumOfAmountLoding] = useState(false);
+  const [SumOfReceiveLoading, setSumOfReceiveLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isApprove, setIsApprove] = useState('');
@@ -71,7 +75,7 @@ export default function DashboardSection() {
     const tokenId = token.token_id;
     const decimal = token.decimals;
     const amount = token?.amount.toString();
-    console.log("to be approved : " + amount);
+    console.log('to be approved : ' + amount);
 
     if (tokenAddress && amount) {
       mutate({
@@ -107,19 +111,21 @@ export default function DashboardSection() {
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
-    console.log("item value " + item);
+    const amount = item
+      ? Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0;
+    console.log('item value ' + item);
+
     return amount;
-    //return ethers.utils.formatUnits(amount, decimal);
   };
 
   useEffect(() => {
     //const newData = dataFetch.filter(
-      //(item) => item?.isApproved === true && item.amount > 0
+    //(item) => item?.isApproved === true && item.amount > 0
     //);
-    const newData = dataFetch.filter(
-      (item) => item?.isApproved === true 
-    );
+    const newData = dataFetch.filter((item) => item?.isApproved === true);
 
     if (
       newData.length === dataFetch.length &&
@@ -131,27 +137,68 @@ export default function DashboardSection() {
       setIsDisabled(true);
       console.log('Please Approve All tokens and NFTs before create');
     }
-  }, [dataFetch,receivedData, dataFetch.length, receivedData.length]);
+  }, [dataFetch, receivedData, dataFetch.length, receivedData.length]);
 
   useEffect(() => {
-    const totalAmount =
-      (dataFetch?.length !== 0 &&
-        dataFetch
-          ?.map((item) => item?.amount)
-          //?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
-    setSumOfAmount(handleFormateAmount(totalAmount));
+    if (dataFetch?.length !== 0) {
+      setSumOfAmountLoding(true);
+      const totalAmountPool = [];
+
+      dataFetch.forEach((item) => {
+        if (item.amount > 0) {
+          const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+          totalAmountPool.push(
+            getTokenPriceInUsd(item.token, formatedTokenAmount)
+          );
+        }
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes('conversion not found')) {
+          setSumOfAmountLoding(false);
+          setSumOfAmount('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfAmountLoding(false);
+          setSumOfAmount(allTokenAmountValueInUSD.toFixed(2));
+        }
+      });
+    }
   }, [dataFetch, dataFetch?.length]);
 
-
   useEffect(() => {
-    const totalAmount =
-      (receivedData?.length !== 0 &&
-        receivedData
-          ?.map((item) => item?.amount)
-        //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-        ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
-    setSumOfReceive(handleFormateAmount(totalAmount));
+    if (receivedData?.length !== 0) {
+      setSumOfReceiveLoading(true);
+      const totalAmountPool = [];
+
+      receivedData.forEach((item) => {
+        if (item.amount > 0) {
+          const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+          totalAmountPool.push(
+            getTokenPriceInUsd(item.token, formatedTokenAmount)
+          );
+        }
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes('conversion not found')) {
+          setSumOfReceiveLoading(false);
+          setSumOfReceive('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfReceiveLoading(false);
+          setSumOfReceive(allTokenAmountValueInUSD.toFixed(2));
+        }
+      });
+    }
   }, [receivedData, receivedData?.length]);
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
@@ -212,9 +259,37 @@ export default function DashboardSection() {
               my: 1.5
             }}
           >
-            <Typography color='gray'>Total Amount</Typography>
+            <Typography color='gray'>Total Amounta</Typography>
 
-            <Typography>{SumOfAmount} USDC</Typography>
+            {/* <Typography>{SumOfAmount} USDC</Typography> */}
+
+            {!SumOfAmountLoading ? (
+              <Typography
+                sx={{
+                  px: 2,
+                  fontSize: 14
+                }}
+              >
+                {SumOfAmount} USDC
+              </Typography>
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Box
+                  component='img'
+                  src='/assets/svg/small-loading.svg'
+                  sx={{
+                    width: 18,
+                    height: 18
+                  }}
+                />
+              </Box>
+            )}
           </Box>
 
           {dataFetch?.map((card, idx) => {
@@ -285,7 +360,33 @@ export default function DashboardSection() {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{SumOfReceive} USDC</Typography>
+            {!SumOfReceiveLoading ? (
+              <Typography
+                sx={{
+                  px: 2,
+                  fontSize: 14
+                }}
+              >
+                {SumOfReceive} USDC
+              </Typography>
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Box
+                  component='img'
+                  src='/assets/svg/small-loading.svg'
+                  sx={{
+                    width: 18,
+                    height: 18
+                  }}
+                />
+              </Box>
+            )}
           </Box>
 
           {receivedData?.map((card, idx) => {

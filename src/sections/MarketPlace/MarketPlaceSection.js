@@ -244,12 +244,6 @@ export default function MarketPlaceSection({
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
 
-  const handleValueInUSD = async (tokenAddress, tokenAmount) => {
-    const valueInUSD = await getTokenPriceInUsd(tokenAddress);
-
-    return valueInUSD * tokenAmount;
-  };
-
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
 
   const [SumOfAmountB, setSumOfAmountB] = useState(0);
@@ -261,11 +255,16 @@ export default function MarketPlaceSection({
       ProductB.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
 
-        totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
+        totalAmountPool.push(
+          getTokenPriceInUsd(item.token, formatedTokenAmount)
+        );
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
-        if (allValues.includes(NaN)) {
+        console.log(allValues.includes('conversion not found'), '<<<<< nan');
+        console.log(allValues, '<<<< allValues');
+
+        if (allValues.includes('conversion not found')) {
           setSumOfAmountB('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
@@ -289,11 +288,13 @@ export default function MarketPlaceSection({
       ProductA.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
 
-        totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
+        totalAmountPool.push(
+          getTokenPriceInUsd(item.token, formatedTokenAmount)
+        );
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
-        if (allValues.includes(NaN)) {
+        if (allValues.includes('conversion not found')) {
           setSumOfAmountA('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
