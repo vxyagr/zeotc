@@ -39,7 +39,7 @@ export default function MarketPlaceSection({
   const { mutate: rejectOffer } = useMutationReject();
 
   const { mutate: cancelSwap } = useMutationCancelZeSwap();
-
+  const zeroAddress = '0x0000000000000000000000000000000000000000';
   const { mutate } = useMutationAccept();
   const [appStatus, setAppStatus] = useState('');
   const ProductA = zeSwapList?.productA;
@@ -50,6 +50,7 @@ export default function MarketPlaceSection({
   const offer_id = zeSwapList?.swap?.offers?.[0];
   const supplier = zeSwapList?.swap?.supplier;
   const demander = zeSwapList?.swap?.demander;
+  const isDemander = demander === account;
   const isSupplier = supplier === account;
   const Trade = zeSwapList?.swap?.visibility;
   const swap_id = zeSwapList?.swap_id;
@@ -57,7 +58,9 @@ export default function MarketPlaceSection({
   expire = getExpieredTime(expire, 'd', false);
 
   const handleRejectOffer = () => {
-    //console.log('rejecting ' + zeSwapList?.swap_id?.toString());
+    console.log(
+      'rejecting ' + zeSwapList?.swap_id?.toString() + ' offer from ' + demander
+    );
     rejectOffer({
       swap_id,
       expire: zeSwapList?.swap?.expiration?.toString()
@@ -607,7 +610,7 @@ export default function MarketPlaceSection({
               pb: isOffer ? 0 : 5
             }}
           >
-            {!isSupplier && status < 2 && (
+            {!isSupplier && !isOffer && !isDemander && status < 2 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -618,8 +621,10 @@ export default function MarketPlaceSection({
                 }}
               >
                 <Button
-                  disabled={!account}
-                  onClick={handleQuickSwapAccept}
+                  disabled={!account || isDemander}
+                  onClick={
+                    isDemander ? handleRejectOffer : handleQuickSwapAccept
+                  }
                   sx={{
                     width: 150,
                     color: 'white',
@@ -628,11 +633,11 @@ export default function MarketPlaceSection({
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                   }}
                 >
-                  Accept Offer
+                  {isDemander ? 'Cancel Counter' : 'Accept Offer'}
                 </Button>
               </Box>
             )}
-            {counterOfferStatus && !isSupplier && (
+            {counterOfferStatus && !isSupplier && status < 2 && (
               <>
                 <Box
                   sx={{
@@ -666,7 +671,7 @@ export default function MarketPlaceSection({
                 </Box>
               </>
             )}
-            {isSupplier && !isSwapHistory && status < 3 && (
+            {isSupplier && !isSwapHistory && !isOffer && status < 3 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -904,7 +909,7 @@ export default function MarketPlaceSection({
               }
             }}
           >
-            <Button
+            {/*<Button
               onClick={handleCounterOffer}
               sx={{
                 width: 122,
@@ -930,30 +935,48 @@ export default function MarketPlaceSection({
               }}
             >
               Counter Offer
-            </Button>
+            </Button> */}
           </Box>
 
-          <Button
-            onClick={handleRejectOffer}
-            sx={{
-              background: '#FF1E4C !important',
-              width: 122
-            }}
-          >
-            Reject
-          </Button>
+          {isSupplier && (
+            <Button
+              onClick={handleRejectOffer}
+              sx={{
+                background: '#FF1E4C !important',
+                width: 122
+              }}
+            >
+              Reject
+            </Button>
+          )}
 
-          <Button
-            // onClick={() => mutate(swap_id)}
-            onClick={handleQuickSwapAccept}
-            sx={{
-              width: 150,
-              background:
-                ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
-            }}
-          >
-            Accept Offer
-          </Button>
+          {!isDemander && (
+            <Button
+              // onClick={() => mutate(swap_id)}
+              onClick={handleQuickSwapAccept}
+              sx={{
+                width: 150,
+                background:
+                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+              }}
+            >
+              Accept Offer
+            </Button>
+          )}
+
+          {isSupplier && !isSwapHistory && status < 3 && (
+            <Button
+              // onClick={() => mutate(swap_id)}
+              onClick={handleSwapCancel}
+              sx={{
+                width: 150,
+                background:
+                  ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
+              }}
+            >
+              Cancel Offer
+            </Button>
+          )}
         </Box>
         <CounterOffer handleClose={handleCloseModal} open={open} />
       </Box>
