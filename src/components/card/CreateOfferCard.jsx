@@ -20,7 +20,10 @@ import useClipboard from 'react-use-clipboard';
 
 import MButton from 'components/MButton';
 import { useMutationSetProduct } from 'hooks/react-query/mutation';
-import { useQueryGetUserTokenBalance,useTokenPrice } from 'hooks/react-query/queries';
+import {
+  useQueryGetUserTokenBalance,
+  useTokenPrice
+} from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
 export default function OfferCard({
@@ -65,10 +68,6 @@ export default function OfferCard({
   // const useValue = card?.amount?.toString();
   const useValue = 2.5;
 
-  
-
-  
-
   // useEffect(() => {
   //   if (!handleProductAmountA) {
   //     const amount = card?.amount?.toString();
@@ -90,37 +89,36 @@ export default function OfferCard({
       ? card.amount
       : Math.floor(card?.balance / 10 ** card?.decimals);
   //console.log(
-    //'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
+  //'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
   //);
 
-  
   /*card.IERC.toString() == '20'
       ? card.balance / 1000000000000000000
       : card.balance;*/
-  
-      const handleFormateAmount = (item) => {
-        const amount = Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) || 0;
-        //console.log("offer card formatting attempt " + amount);
-        return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
-      };
-      //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
-  const initVal = (card?.amount ? (card.amount) : 0);
+
+  const handleFormateAmount = (item) => {
+    const amount =
+      Number(item.toString()).toLocaleString('fullwide', {
+        useGrouping: false
+      }) || 0;
+    //console.log("offer card formatting attempt " + amount);
+    return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
+  };
+  //const initVal = handleFormateAmount(card?.amount? card.amount : 0);
+  const initVal = card?.amount ? card.amount : 0;
   const initialValue =
     !isModal && !isDashboard && card?.amount?.toString()
       ? ethers.utils
           .formatUnits(useValue, card?.metadata?.decimals)
           ?.split('.')[0]
       : '0';
-      const [valueInput, setValueInput] = useState(0);
+  const [valueInput, setValueInput] = useState(0);
   useEffect(() => {
     setValueInput(initVal);
     handleChangeInputAmount(initVal, card);
-  }, [card.decimals]
+  }, [card.decimals]);
 
-  );
-  
-  
-  const checkIfNFTOwned=(id, selectedCard) => {
+  const checkIfNFTOwned = (id, selectedCard) => {
     if (!isDashboardR) {
       const newData = dataFetch.map((item, index) => {
         if (item?.token_address === selectedCard?.token_address) {
@@ -134,15 +132,15 @@ export default function OfferCard({
         return {
           ...item,
           token_id: item.token_id || '0',
-          amount : 0
+          amount: 0
         };
       });
 
       dispatch(addNewTokenNfts(newData));
     }
-  }
+  };
 
-  const checkIf1155Owned=(id, selectedCard,nftAmount) => {
+  const checkIf1155Owned = (id, selectedCard, nftAmount) => {
     if (!isDashboardR) {
       const newData = dataFetch.map((item, index) => {
         if (item?.token_address === selectedCard?.token_address) {
@@ -156,36 +154,40 @@ export default function OfferCard({
         return {
           ...item,
           token_id: item.token_id || '0',
-          amount : item.amount || '0'
+          amount: item.amount || '0'
         };
       });
 
       dispatch(addNewTokenNfts(newData));
     }
-  }
+  };
 
-//function handle change input  
-  const handleChangeInputAmount = (value, selectedCard,nftAmount) => {
-    if (selectedCard?.contract_type?.toString() === "ERC721") {
-      console.log("is 721");
+  //function handle change input
+  const handleChangeInputAmount = (value, selectedCard, nftAmount) => {
+    if (selectedCard?.contract_type?.toString() === 'ERC721') {
+      console.log('is 721');
       checkIfNFTOwned(value, selectedCard);
       setValueInput(value);
       return;
     }
-    if (selectedCard?.contract_type?.toString() === "ERC1155") {
-      console.log("is 1155");
-      checkIf1155Owned(value, selectedCard,nftAmount);
+    if (selectedCard?.contract_type?.toString() === 'ERC1155') {
+      console.log('is 1155');
+      checkIf1155Owned(value, selectedCard, nftAmount);
       setValueInput(value);
       return;
     }
-    console.log("val " + value.toString());
+    console.log('val ' + value.toString());
     let val = parseFloat(value);
-    console.log("parsed val " + val + " " + isOfferReceived + " " + selectedCard.decimals);
-    let weiVal = val * (10 ** selectedCard.decimals) ;
-    console.log("processed val " + weiVal);
+    console.log(
+      'parsed val ' + val + ' ' + isOfferReceived + ' ' + selectedCard.decimals
+    );
+    let weiVal = val * 10 ** selectedCard.decimals;
+    console.log('processed val ' + weiVal);
     //let weiVal = val;
-    if (val * (10 ** selectedCard.decimals) > card?.balance) weiVal = (card?.balance) ;
-    setValueInput(handleFormateAmount(weiVal));
+    if (val * 10 ** selectedCard.decimals > card?.balance)
+      weiVal = card?.balance;
+    //setValueInput(handleFormateAmount(weiVal));
+    setValueInput(value);
 
     if (handleProductDetails) {
       handleProductDetails(idx, weiVal);
@@ -212,7 +214,14 @@ export default function OfferCard({
 
       if (isDashboardR) {
         const newData = receivedData.map((item, index) => {
-          if (item?.token_address === selectedCard?.token_address) {
+          console.log(
+            'receivable ' +
+              JSON.stringify(item) +
+              ' card ' +
+              JSON.stringify(selectedCard)
+          );
+          if (item?.address === selectedCard?.address && item?.address) {
+            console.log(' similar ');
             return {
               ...item,
               amount: val
@@ -325,7 +334,6 @@ export default function OfferCard({
               {card?.newMetadata
                 ? card.newMetadata?.name
                 : card?.name || card?.metadata?.name}
-              
             </Typography>
 
             {/* {isMarketCard && ( */}
@@ -386,7 +394,15 @@ export default function OfferCard({
               mt: 0.5
             }}
           >
-            {isOfferReceived?(cardTokenBalance!=cardTokenBalance?'':'Available Balance:' + cardTokenBalance) :(card?.contract_type=="ERC721"?'': (cardTokenBalance!='Available Balance:' + cardTokenBalance?'':cardTokenBalance))}
+            {true
+              ? cardTokenBalance != cardTokenBalance
+                ? ''
+                : 'Balance: ' + cardTokenBalance
+              : card?.contract_type == 'ERC721'
+              ? ''
+              : cardTokenBalance != 'Balance: ' + cardTokenBalance
+              ? ''
+              : cardTokenBalance}
           </Typography>
         </Box>
 
@@ -411,17 +427,15 @@ export default function OfferCard({
                 alignItems: 'center'
               }}
             >
-              <Typography variant='subtitle1'> {card.contract_type == "ERC721" ? 'NFT ID' : 'Amount'} </Typography>
+              <Typography variant='subtitle1'>
+                {' '}
+                {card.contract_type == 'ERC721' ? 'NFT ID' : 'Amount'}{' '}
+              </Typography>
 
               <Box
                 component='input'
                 value={valueInput}
-                onChange={(e) =>
-                  handleChangeInputAmount(
-                    e.target.value,
-                    card
-                  )
-                }
+                onChange={(e) => handleChangeInputAmount(e.target.value, card)}
                 sx={{
                   ml: {
                     sm: 2
@@ -436,37 +450,32 @@ export default function OfferCard({
                   color: value === 'Amount' ? ' gray' : '#fff'
                 }}
               />
-              {(card.contract_type == "ERC1155" && (
+              {card.contract_type == 'ERC1155' && (
                 <>
-                <Typography variant='subtitle1'> NFT Amount</Typography>
+                  <Typography variant='subtitle1'> NFT Amount</Typography>
 
-                <Box
-                  component='input'
-                  value={valueInput}
-                  onChange={(e) =>
-                    handleChangeInputAmount(
-                      e.target.value,
-                      card
-                    )
-                  }
-                  sx={{
-                    ml: {
-                      sm: 2
-                    },
-                    background: (theme) => theme.palette.primary.main,
-                    p: 1,
-                    borderRadius: 1,
-                    maxWidth: 200,
-                    width: '100%',
-                    border: 'none',
-                    outline: 'none',
-                    color: value === 'Amount' ? ' gray' : '#fff'
-                  }}
+                  <Box
+                    component='input'
+                    value={valueInput}
+                    onChange={(e) =>
+                      handleChangeInputAmount(e.target.value, card)
+                    }
+                    sx={{
+                      ml: {
+                        sm: 2
+                      },
+                      background: (theme) => theme.palette.primary.main,
+                      p: 1,
+                      borderRadius: 1,
+                      maxWidth: 200,
+                      width: '100%',
+                      border: 'none',
+                      outline: 'none',
+                      color: value === 'Amount' ? ' gray' : '#fff'
+                    }}
                   />
-                  </>
-              ) )
-
-              }
+                </>
+              )}
             </Box>
           </>
         )}

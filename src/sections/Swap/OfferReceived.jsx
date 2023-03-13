@@ -363,7 +363,7 @@ export default function OfferReceived({ selectedCard }) {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{Number(SumOfAmountA).toFixed(0)} USDC</Typography>
+            <Typography>{Number(SumOfAmountA).toFixed(0)} USD</Typography>
           </Box>
 
           {ProductA?.map((card, idx) => {
@@ -519,7 +519,7 @@ export default function OfferReceived({ selectedCard }) {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{Number(SumOfAmountB).toFixed(0)} USDC</Typography>
+            <Typography>{Number(SumOfAmountB).toFixed(0)} USD</Typography>
           </Box>
 
           {ProductB?.map((card, idx) => {

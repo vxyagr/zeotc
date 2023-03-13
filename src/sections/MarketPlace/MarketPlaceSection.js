@@ -248,9 +248,10 @@ export default function MarketPlaceSection({
   };
 
   const handleValueInUSD = async (tokenAddress, tokenAmount) => {
-    const valueInUSD = await getTokenPriceInUsd(tokenAddress);
+    //const valueInUSD = await getTokenPriceInUsd(tokenAddress);
 
-    return valueInUSD * tokenAmount;
+    //return valueInUSD * tokenAmount;
+    return Number(tokenAmount);
   };
 
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
@@ -260,22 +261,23 @@ export default function MarketPlaceSection({
   useEffect(() => {
     if (ProductB?.length !== 0) {
       const totalAmountPool = [];
-
+      const totalAmount = [];
       ProductB.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
-
+        totalAmount.push(formatedTokenAmount);
         totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
         if (allValues.includes(NaN)) {
-          setSumOfAmountB('Failed convert to');
+          //setSumOfAmountB('Failed convert to');
+          setSumOfAmountB(totalAmount);
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
             (acc, curr) => acc + curr,
             0
           );
-          setSumOfAmountB(allTokenAmountValueInUSD);
+          setSumOfAmountB(parseFloat(allTokenAmountValueInUSD.toFixed(4)));
         }
       });
     }
@@ -288,22 +290,23 @@ export default function MarketPlaceSection({
   useEffect(() => {
     if (ProductA?.length !== 0) {
       const totalAmountPool = [];
-
+      const totalAmount = [];
       ProductA.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
-
+        totalAmount.push(formatedTokenAmount);
         totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
         if (allValues.includes(NaN)) {
-          setSumOfAmountA('Failed convert to');
+          //setSumOfAmountB('Failed convert to');
+          setSumOfAmountA(totalAmount);
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
             (acc, curr) => acc + curr,
             0
           );
-          setSumOfAmountA(allTokenAmountValueInUSD);
+          setSumOfAmountA(parseFloat(allTokenAmountValueInUSD.toFixed(4)));
         }
       });
     }
@@ -481,7 +484,7 @@ export default function MarketPlaceSection({
                     fontSize: 14
                   }}
                 >
-                  {SumOfAmountA} USDC
+                  {SumOfAmountA} USD
                 </Typography>
               ) : (
                 <Box
@@ -565,7 +568,7 @@ export default function MarketPlaceSection({
                     fontSize: 14
                   }}
                 >
-                  {SumOfAmountB} USDC
+                  {SumOfAmountB} USD
                 </Typography>
               ) : (
                 <Box
