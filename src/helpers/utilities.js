@@ -257,24 +257,42 @@ export const getUserNFts = async (url, address) => {
 
 // -------------------------------------
 
-export const getTokenPriceInUsd = async (tokenAddress) => {
-  const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}/price?chain=${process.env.NEXT_PUBLIC_CHAIN}&exchange=uniswap-v2`;
+export const getTokenPriceInUsd = async (tokenAddress, totalAmount) => {
+  // mock respons until getting moralis api subscrsubscriptionib
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
 
-  return await axios
-    .request({
-      method: 'GET',
-      url: url,
-      headers: {
-        accept: 'application/json',
-        'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
-      }
-    })
-    .then(function (response) {
-      return response.data?.usdPrice?.toFixed(2) || 'conversion not found';
-    })
-    .catch(function (error) {
-      return 'conversion not found';
-    });
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
+  const sleep = (m) => new Promise((r) => setTimeout(r, m));
+  await sleep(getRandomInt(1, 3) * 1000);
+  return getRandomInt(1, 8);
+
+  // const url = `https://deep-index.moralis.io/api/v2/erc20/${tokenAddress}/price?chain=${process.env.NEXT_PUBLIC_CHAIN}&exchange=uniswap-v2`;
+
+  // return await axios
+  //   .request({
+  //     method: 'GET',
+  //     url: url,
+  //     headers: {
+  //       accept: 'application/json',
+  //       'X-API-Key': `${process.env.NEXT_PUBLIC_MORALIS_KEY}`
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     const conversionResult = response?.data?.usdPrice;
+
+  //     if (conversionResult) {
+  //       return parseFloat(conversionResult).toFixed(2) * totalAmount;
+  //     } else {
+  //       return 'conversion not found';
+  //     }
+  //   })
+  //   .catch(function (error) {
+  //     return 'conversion not found';
+  //   });
 };
 
 // ----------------------------------------------

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import useClipboard from 'react-use-clipboard';
 
 import MarketPlaceCard from 'components/card/MarketPlaceCard';
+import LoadingAmount from 'components/LoadingAmount';
 import CounterOffer from 'components/modal/CounterOffer';
 import { Border } from 'components/Style';
 import { getExpieredTime, getTokenPriceInUsd } from 'helpers/utilities';
@@ -247,13 +248,6 @@ export default function MarketPlaceSection({
     return ethers.utils.formatUnits(amount, item?.metadata?.decimals);
   };
 
-  const handleValueInUSD = async (tokenAddress, tokenAmount) => {
-    //const valueInUSD = await getTokenPriceInUsd(tokenAddress);
-
-    //return valueInUSD * tokenAmount;
-    return Number(tokenAmount);
-  };
-
   const [SumOfAmountA, setSumOfAmountA] = useState(0);
 
   const [SumOfAmountB, setSumOfAmountB] = useState(0);
@@ -261,59 +255,53 @@ export default function MarketPlaceSection({
   useEffect(() => {
     if (ProductB?.length !== 0) {
       const totalAmountPool = [];
-      const totalAmount = [];
+
       ProductB.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
-        totalAmount.push(formatedTokenAmount);
-        totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
+
+        totalAmountPool.push(
+          getTokenPriceInUsd(item.token, formatedTokenAmount)
+        );
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
-        if (allValues.includes(NaN)) {
-          //setSumOfAmountB('Failed convert to');
-          setSumOfAmountB(totalAmount);
+        if (allValues.includes('conversion not found')) {
+          setSumOfAmountB('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
             (acc, curr) => acc + curr,
             0
           );
-          setSumOfAmountB(parseFloat(allTokenAmountValueInUSD.toFixed(4)));
+          setSumOfAmountB(allTokenAmountValueInUSD);
         }
       });
     }
-
-    // totalAmount = `${totalAmount}`.replace('e-12', '');
-
-    // setSumOfAmountB(123);
   }, [ProductB, ProductB?.length]);
 
   useEffect(() => {
     if (ProductA?.length !== 0) {
       const totalAmountPool = [];
-      const totalAmount = [];
+
       ProductA.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
-        totalAmount.push(formatedTokenAmount);
-        totalAmountPool.push(handleValueInUSD(item.token, formatedTokenAmount));
+
+        totalAmountPool.push(
+          getTokenPriceInUsd(item.token, formatedTokenAmount)
+        );
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
-        if (allValues.includes(NaN)) {
-          //setSumOfAmountB('Failed convert to');
-          setSumOfAmountA(totalAmount);
+        if (allValues.includes('conversion not found')) {
+          setSumOfAmountA('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
             (acc, curr) => acc + curr,
             0
           );
-          setSumOfAmountA(parseFloat(allTokenAmountValueInUSD.toFixed(4)));
+          setSumOfAmountA(allTokenAmountValueInUSD);
         }
       });
     }
-
-    // totalAmount = `${totalAmount}`.replace('e-12', '');
-
-    // setSumOfAmountB(123);
   }, [ProductA, ProductA?.length]);
 
   return (
@@ -477,33 +465,10 @@ export default function MarketPlaceSection({
                 Total Amount
               </Typography>
 
-              {SumOfAmountA ? (
-                <Typography
-                  sx={{
-                    px: 2,
-                    fontSize: 14
-                  }}
-                >
-                  {SumOfAmountA}
-                </Typography>
-              ) : (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Box
-                    component='img'
-                    src='/assets/svg/small-loading.svg'
-                    sx={{
-                      width: 18,
-                      height: 18
-                    }}
-                  />
-                </Box>
-              )}
+              <LoadingAmount
+                isLoading={SumOfAmountA === 0}
+                amount={SumOfAmountA}
+              />
             </Box>
           </Box>
 
@@ -561,33 +526,10 @@ export default function MarketPlaceSection({
                 Total Amount
               </Typography>
 
-              {SumOfAmountB ? (
-                <Typography
-                  sx={{
-                    px: 2,
-                    fontSize: 14
-                  }}
-                >
-                  {SumOfAmountB}
-                </Typography>
-              ) : (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Box
-                    component='img'
-                    src='/assets/svg/small-loading.svg'
-                    sx={{
-                      width: 18,
-                      height: 18
-                    }}
-                  />
-                </Box>
-              )}
+              <LoadingAmount
+                isLoading={SumOfAmountB === 0}
+                amount={SumOfAmountB}
+              />
             </Box>
           </Box>
 
