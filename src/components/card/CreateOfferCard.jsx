@@ -165,24 +165,24 @@ export default function OfferCard({
   //function handle change input
   const handleChangeInputAmount = (value, selectedCard, nftAmount) => {
     if (selectedCard?.contract_type?.toString() === 'ERC721') {
-      console.log('is 721');
+      //console.log('is 721');
       checkIfNFTOwned(value, selectedCard);
       setValueInput(value);
       return;
     }
     if (selectedCard?.contract_type?.toString() === 'ERC1155') {
-      console.log('is 1155');
+      //console.log('is 1155');
       checkIf1155Owned(value, selectedCard, nftAmount);
       setValueInput(value);
       return;
     }
-    console.log('val ' + value.toString());
+    //console.log('val ' + value.toString());
     let val = parseFloat(value);
-    console.log(
-      'parsed val ' + val + ' ' + isOfferReceived + ' ' + selectedCard.decimals
-    );
+    // console.log(
+    //'parsed val ' + val + ' ' + isOfferReceived + ' ' + selectedCard.decimals
+    // );
     let weiVal = val * 10 ** selectedCard.decimals;
-    console.log('processed val ' + weiVal);
+    //console.log('processed val ' + weiVal);
     //let weiVal = val;
     if (val * 10 ** selectedCard.decimals > card?.balance)
       weiVal = card?.balance;

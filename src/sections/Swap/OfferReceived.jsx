@@ -41,22 +41,29 @@ export default function OfferReceived({ selectedCard }) {
   const router = useRouter();
   const [productDetails, setProductDetails] = useState([]);
   const [productDetailsA, setProductDetailsA] = useState([]);
+  //const isDemander = account.address === selectedCard?.demander;
+  const [isDemander, setIsDemander] = useState(false);
 
+  useEffect(() => {
+    //console.log('account : ' + JSON.stringify(account));
+    //console.log('card : ' + JSON.stringify(selectedCard?.swap[2]));
+    setIsDemander(account === selectedCard?.swap[2]);
+  }, [account, selectedCard]);
   useEffect(() => {
     //setProductDetails(selectedCard?.productB);
     //setProductDetailsA(selectedCard?.productA);
-    console.log(' total swap offer A ' + selectedCard?.productA.length);
-    console.log(' total swap offer B ' + selectedCard?.productB.length);
+    //console.log(' total swap offer A ' + selectedCard?.productA.length);
+    //console.log(' total swap offer B ' + selectedCard?.productB.length);
     let pB = selectedCard?.productB;
     let newPB = pB?.map((item, idx) => {
-      console.log('original B ' + selectedCard?.productB[idx].amount);
+      //console.log('original B ' + selectedCard?.productB[idx].amount);
       pB[idx].amount = item.amount / 10 ** item.metadata.decimals;
       //handleProductDetails(item.idx, (item.amount / (10 ** item.metadata.decimals)));
     });
     setProductDetails(pB);
     let pA = selectedCard?.productA;
     let newPA = pA?.map((item, idx) => {
-      console.log('original A ' + selectedCard?.productA[idx].amount);
+      //console.log('original A ' + selectedCard?.productA[idx].amount);
       pA[idx].amount = item.amount / 10 ** item.metadata.decimals;
       //handleProductDetails(item.idx, (item.amount / (10 ** item.metadata.decimals)));
     });
@@ -73,7 +80,7 @@ export default function OfferReceived({ selectedCard }) {
   };
   const handleProductDetails = (idx, value) => {
     setInitB(1);
-    console.log('details ' + value);
+    // console.log('details ' + value);
     const updatedAmount = [...productDetails];
     updatedAmount[idx].amount = value;
     setProductDetails(updatedAmount);
@@ -81,7 +88,7 @@ export default function OfferReceived({ selectedCard }) {
 
   const handleProductAmountA = (idx, value) => {
     setInitA(1);
-    console.log('detailsA ' + value);
+    // console.log('detailsA ' + value);
     const updatedAmount = [...productDetailsA];
     updatedAmount[idx].amount = value;
     setProductDetailsA(updatedAmount);
@@ -270,13 +277,13 @@ export default function OfferReceived({ selectedCard }) {
     if (zeroProductB == 0 && parseInt(totalAmount) > 0) {
       setZeroProductB(totalAmount);
     }
-    console.log('total amount product B ' + totalAmount);
+    //console.log('total amount product B ' + totalAmount);
     //if (totalAmount > 0 && initB == 0) {
     //totalAmount = handleFormateAmount(totalAmount);
     // setInitB(totalAmount);
     //}
     //console.log('total formatted amount product B ' + totalAmount);
-
+    totalAmount = parseFloat(totalAmount);
     //totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
@@ -292,7 +299,7 @@ export default function OfferReceived({ selectedCard }) {
     if (zeroProductA == 0 && parseInt(totalAmount) > 0) {
       setZeroProductA(totalAmount);
     }
-    console.log('total amount product A ' + totalAmount);
+    //console.log('total amount product A ' + totalAmount);
     //if (totalAmount > 0 && initA == 0) {
     //totalAmount = handleFormateAmount(totalAmount);
     // setInitA(totalAmount);
@@ -300,7 +307,7 @@ export default function OfferReceived({ selectedCard }) {
     //console.log('total formatted amount product A ' + totalAmount);
     //totalAmount = `${totalAmount}`.replace('e-18', '');
 
-    // totalAmount = totalAmoun;
+    totalAmount = totalAmount.toString();
     setSumOfAmountA(totalAmount);
   }, [ProductA, ProductA?.length]);
 
@@ -767,7 +774,7 @@ export default function OfferReceived({ selectedCard }) {
           >
             {
               //demander === zeroAddress &&
-              true && (
+              !isDemander && (
                 <Button
                   disabled={!account}
                   onClick={handleSwapAccept}

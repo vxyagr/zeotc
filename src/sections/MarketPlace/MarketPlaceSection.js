@@ -484,7 +484,7 @@ export default function MarketPlaceSection({
                     fontSize: 14
                   }}
                 >
-                  {SumOfAmountA} USD
+                  {SumOfAmountA}
                 </Typography>
               ) : (
                 <Box
@@ -568,7 +568,7 @@ export default function MarketPlaceSection({
                     fontSize: 14
                   }}
                 >
-                  {SumOfAmountB} USD
+                  {SumOfAmountB}
                 </Typography>
               ) : (
                 <Box
@@ -613,7 +613,7 @@ export default function MarketPlaceSection({
               pb: isOffer ? 0 : 5
             }}
           >
-            {!isSupplier && !isOffer && !isDemander && status < 2 && (
+            {/*!isSupplier && !isOffer && !isDemander && status < 2 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -639,7 +639,7 @@ export default function MarketPlaceSection({
                   {isDemander ? 'Cancel Counter' : 'Accept Offer'}
                 </Button>
               </Box>
-            )}
+            ) */}
             {counterOfferStatus && !isSupplier && status < 2 && (
               <>
                 <Box
@@ -660,7 +660,11 @@ export default function MarketPlaceSection({
                       background:
                         ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
                     }}
-                    component={isMarketPlace && !isCopy.current ? Link : 'div'}
+                    component={
+                      (isMarketPlace || isOffer) && !isCopy.current
+                        ? Link
+                        : 'div'
+                    }
                     // component={Link}
                     href={{
                       pathname: '/marketPlace/swap',
@@ -669,7 +673,7 @@ export default function MarketPlaceSection({
                       }
                     }}
                   >
-                    Counter Offer
+                    {isDemander ? 'Counter Offer' : 'Accept / Counter'}
                   </Button>
                 </Box>
               </>

@@ -71,7 +71,7 @@ export default function DashboardSection() {
     const tokenId = token.token_id;
     const decimal = token.decimals;
     const amount = token?.amount.toString();
-    console.log("to be approved : " + amount);
+    console.log('to be approved : ' + amount);
 
     if (tokenAddress && amount) {
       mutate({
@@ -107,19 +107,21 @@ export default function DashboardSection() {
   };
 
   const handleFormateAmount = (item) => {
-    const amount = item? Number(item.toString()).toLocaleString('fullwide', {useGrouping:false}) : 0;
-    console.log("item value " + item);
+    const amount = item
+      ? Number(item.toString()).toLocaleString('fullwide', {
+          useGrouping: false
+        })
+      : 0;
+    console.log('item value ' + item);
     return amount;
     //return ethers.utils.formatUnits(amount, decimal);
   };
 
   useEffect(() => {
     //const newData = dataFetch.filter(
-      //(item) => item?.isApproved === true && item.amount > 0
+    //(item) => item?.isApproved === true && item.amount > 0
     //);
-    const newData = dataFetch.filter(
-      (item) => item?.isApproved === true 
-    );
+    const newData = dataFetch.filter((item) => item?.isApproved === true);
 
     if (
       newData.length === dataFetch.length &&
@@ -131,7 +133,7 @@ export default function DashboardSection() {
       setIsDisabled(true);
       console.log('Please Approve All tokens and NFTs before create');
     }
-  }, [dataFetch,receivedData, dataFetch.length, receivedData.length]);
+  }, [dataFetch, receivedData, dataFetch.length, receivedData.length]);
 
   useEffect(() => {
     const totalAmount =
@@ -139,18 +141,19 @@ export default function DashboardSection() {
         dataFetch
           ?.map((item) => item?.amount)
           //?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
+          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) ||
+      0;
     setSumOfAmount(handleFormateAmount(totalAmount));
   }, [dataFetch, dataFetch?.length]);
-
 
   useEffect(() => {
     const totalAmount =
       (receivedData?.length !== 0 &&
         receivedData
           ?.map((item) => item?.amount)
-        //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-        ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) || 0;
+          //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
+          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) ||
+      0;
     setSumOfReceive(handleFormateAmount(totalAmount));
   }, [receivedData, receivedData?.length]);
 
@@ -214,7 +217,7 @@ export default function DashboardSection() {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{SumOfAmount} USDC</Typography>
+            <Typography>{SumOfAmount} </Typography>
           </Box>
 
           {dataFetch?.map((card, idx) => {
@@ -285,7 +288,7 @@ export default function DashboardSection() {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{SumOfReceive} USDC</Typography>
+            <Typography>{SumOfReceive} </Typography>
           </Box>
 
           {receivedData?.map((card, idx) => {

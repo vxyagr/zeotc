@@ -102,7 +102,7 @@ export default function OfferCard({
     //let initVal = card?.amount
     //? handleFormateAmount(card.amount, card?.metadata?.decimals, true)
     // : 0;
-    console.log('render ' + card.amount + ' ' + initVal);
+    //console.log('render ' + card.amount + ' ' + initVal);
     setValueInput(card.amount);
     //handleChangeInputAmount(initVal, card);
   }, [card?.metadata?.decimals]);
@@ -206,7 +206,8 @@ export default function OfferCard({
     if (!isOfferReceived && val * 10 ** decs > balanceInWallet)
       weiVal = balanceInWallet / 10 ** decs;
 
-    setValueInput(handleFormateAmount(weiVal, decs, false));
+    //setValueInput(handleFormateAmount(weiVal, decs, false));
+    setValueInput(value);
     //console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
     if (handleProductDetails) {
       handleProductDetails(idx, val);

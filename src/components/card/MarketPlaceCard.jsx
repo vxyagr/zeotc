@@ -52,9 +52,13 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
   };
   const item = token;
   const handleTokenAmount = (amount, decimals) => {
-    const amount_ = amount ? ethers.utils.formatUnits(Number(amount.toString()).toLocaleString('fullwide', {
-      useGrouping: false
-    }), decimals)
+    const amount_ = amount
+      ? ethers.utils.formatUnits(
+          Number(amount.toString()).toLocaleString('fullwide', {
+            useGrouping: false
+          }),
+          decimals
+        )
       : 0;
     //console.log("marketplace value " + item);
     return amount_;
@@ -70,11 +74,11 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
     >
       <Box
         onClick={() => {
-          if (isOffer) {
-            router.push('/myOtcTrades/swap');
-          } else {
-            token?.length > 1 && handleCustomSelector();
-          }
+          //if (isOffer) {
+          // router.push('/myOtcTrades/swap');
+          //} else {
+          token?.length > 1 && handleCustomSelector();
+          //}
         }}
         sx={{
           display: 'flex',
@@ -181,7 +185,7 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
                     }}
                   >
                     {/* {item.price}*/}
-                    
+
                     {handleTokenAmount(item.amount, item.decimals)}
                   </Typography>
 

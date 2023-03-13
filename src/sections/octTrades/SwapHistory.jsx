@@ -77,14 +77,38 @@ export default function SwapOffer({ searchValues, sort }) {
           }
         }}
       >
-        {filteredZeSwapIdList?.map((swapList, idx) => (
-          <MarketPlaceSection
-            isSwap
-            isSwapHistory
-            key={swapList?.swap_id}
-            zeSwapList={swapList}
-          />
-        ))}
+        {filteredZeSwapIdList ? (
+          filteredZeSwapIdList?.map((swapList, idx) => (
+            <MarketPlaceSection
+              isSwap
+              isSwapHistory
+              key={swapList?.swap_id}
+              zeSwapList={swapList}
+            />
+          ))
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '450px',
+              mt: {
+                xs: 3,
+                sm: 1
+              }
+            }}
+          >
+            <Box
+              component='img'
+              src='/assets/svg/loading-spinner.svg'
+              sx={{
+                width: 75,
+                height: 75
+              }}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );

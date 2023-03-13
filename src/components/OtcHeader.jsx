@@ -29,8 +29,8 @@ const TABS_DATA = [
 
 const MENU_DATA = {
   Swaps: [
-    'pending received swap confirmations',
-    'pending sent swap confirmations'
+    'created swaps'
+    //'pending sent swap confirmations'
   ],
   'Counter Offers': [
     'pending received counter offers',

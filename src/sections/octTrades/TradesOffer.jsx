@@ -43,13 +43,14 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
 
   const normalizeOfferData = (allSwapList, offerIdList, subMenuType) => {
     const filterSwapBasedOnOfferIdList = [];
-    console.log('submenu : ' + subMenuType.toString());
-    console.log('all swaps ' + JSON.stringify(allSwapList));
+    //console.log('submenu : ' + subMenuType.toString());
+    //console.log('all swaps ' + JSON.stringify(allSwapList));
     if (subMenuType === 'pending received counter offers') {
       let receivedSwapCounter = allSwapList.filter(
-        (item) => item.swap[1] === account.address.toString() //&&
-        //item.swap[2] != '0x0000000000000000000000000000000000000000' &&
-        //Number(item.swap.status) < 2
+        (item) =>
+          item.swap[1] === account.address.toString() && //&&
+          //item.swap[2] != '0x0000000000000000000000000000000000000000' &&
+          Number(item.swap.status) < 2
       );
 
       setReceivedCounter(receivedSwapCounter);
@@ -121,16 +122,36 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
       }}
     >
       <Box>
-        {filteredOffer?.map((swapList, idx) =>
-          swapList.swap.status != 4 ? (
+        {allFinished ? (
+          filteredOffer?.map((swapList, idx) => (
             <MarketPlaceSection
               isOffer
               key={swapList?.swap_id}
               zeSwapList={swapList}
             />
-          ) : (
-            ''
-          )
+          ))
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '450px',
+              mt: {
+                xs: 3,
+                sm: 1
+              }
+            }}
+          >
+            <Box
+              component='img'
+              src='/assets/svg/loading-spinner.svg'
+              sx={{
+                width: 75,
+                height: 75
+              }}
+            />
+          </Box>
         )}
       </Box>
     </Box>
