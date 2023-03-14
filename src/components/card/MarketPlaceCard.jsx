@@ -90,7 +90,8 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
             ' linear-gradient(180deg, rgba(54, 54, 54, 0.19) 0%, rgba(54, 54, 54, 0) 100%)',
           p: 3,
           borderRadius: 2,
-          border: '0.3px solid #3b1939'
+          border: '0.3px solid #3b1939',
+          minHeight: '90px'
         }}
       >
         <Box

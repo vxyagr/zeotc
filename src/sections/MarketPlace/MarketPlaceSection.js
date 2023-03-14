@@ -551,7 +551,7 @@ export default function MarketPlaceSection({
                 md: 3,
                 lg: 0
               },
-              pt: 5,
+              pt: 8,
               pb: isOffer ? 0 : 5
             }}
           >
@@ -620,6 +620,7 @@ export default function MarketPlaceSection({
                 </Box>
               </>
             )}
+
             {isSupplier && !isSwapHistory && !isOffer && status < 3 && (
               <Box
                 sx={{
