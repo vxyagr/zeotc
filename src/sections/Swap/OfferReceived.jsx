@@ -267,24 +267,7 @@ export default function OfferReceived({ selectedCard }) {
         )) ||
       '0';
 
-    if (zeroProductB == 0 && parseInt(totalAmount) == 0) {
-      ProductB?.map((item, idx) => {
-        //console.log('first loop before ' + item.amount);
-        //handleProductDetails(idx, item.amount / 10 ** item.decimals);
-      });
-      setZeroProductB(1);
-    }
-    if (zeroProductB == 0 && parseInt(totalAmount) > 0) {
-      setZeroProductB(totalAmount);
-    }
-    //console.log('total amount product B ' + totalAmount);
-    //if (totalAmount > 0 && initB == 0) {
-    //totalAmount = handleFormateAmount(totalAmount);
-    // setInitB(totalAmount);
-    //}
-    //console.log('total formatted amount product B ' + totalAmount);
     totalAmount = parseFloat(totalAmount);
-    //totalAmount = `${totalAmount}`.replace('e-18', '');
     setSumOfAmountB(totalAmount);
   }, [ProductB, ProductB?.length]);
 
@@ -296,16 +279,6 @@ export default function OfferReceived({ selectedCard }) {
           0
         )) ||
       '0';
-    if (zeroProductA == 0 && parseInt(totalAmount) > 0) {
-      setZeroProductA(totalAmount);
-    }
-    //console.log('total amount product A ' + totalAmount);
-    //if (totalAmount > 0 && initA == 0) {
-    //totalAmount = handleFormateAmount(totalAmount);
-    // setInitA(totalAmount);
-    // }
-    //console.log('total formatted amount product A ' + totalAmount);
-    //totalAmount = `${totalAmount}`.replace('e-18', '');
 
     totalAmount = totalAmount.toString();
     setSumOfAmountA(totalAmount);

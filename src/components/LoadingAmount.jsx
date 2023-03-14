@@ -31,7 +31,7 @@ const LoadingAmount = ({ amount, isLoading }) => {
         fontSize: 14
       }}
     >
-      {!isNaN(amount) ? parseInt(amount).toFixed(2) : amount} USDC
+      {!isNaN(amount) ? parseInt(amount).toFixed(2) : amount}
     </Typography>
   );
 };
