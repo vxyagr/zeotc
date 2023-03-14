@@ -291,7 +291,8 @@ export default function OfferCard({
         borderRadius: '6px',
         border: isModal ? 0 : '0.3px solid #4e4e4eb0',
         py: 1.5,
-        px: 2
+        px: 2,
+        minHeight: '170px'
       }}
     >
       <Box
@@ -384,16 +385,10 @@ export default function OfferCard({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            mt: isDashboard || unSelectedItems ? 2 : 0
+            mt: isDashboard || unSelectedItems ? 1 : 0
           }}
         >
-          <Typography
-            variant='subtitle1'
-            color='#AEAEAE'
-            sx={{
-              mt: 0.5
-            }}
-          >
+          <Typography variant='subtitle1' color='#AEAEAE'>
             {true
               ? cardTokenBalance != cardTokenBalance
                 ? ''
@@ -411,12 +406,12 @@ export default function OfferCard({
           (handleProductAmountA && counterOfferStatus) ||
           isOfferReceived) && (
           <>
-            {' '}
             <Divider
               sx={{
                 my: 1
               }}
             />
+
             <Box
               sx={{
                 display: {
@@ -428,7 +423,6 @@ export default function OfferCard({
               }}
             >
               <Typography variant='subtitle1'>
-                {' '}
                 {card.contract_type == 'ERC721' ? 'NFT ID' : 'Amount'}{' '}
               </Typography>
 
@@ -450,6 +444,7 @@ export default function OfferCard({
                   color: value === 'Amount' ? ' gray' : '#fff'
                 }}
               />
+
               {card.contract_type == 'ERC1155' && (
                 <>
                   <Typography variant='subtitle1'> NFT Amount</Typography>

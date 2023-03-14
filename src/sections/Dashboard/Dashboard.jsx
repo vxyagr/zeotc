@@ -2,16 +2,16 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect, useState } from 'react';
 
-import { Box, Button, Checkbox, Divider, Typography } from '@mui/material';
+import { Box, Checkbox, Divider, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 
 import OfferCard from 'components/card/CreateOfferCard';
 import ReactDatePicker from 'components/DateTimePicker';
+import LoadingAmount from 'components/LoadingAmount';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
-import Slider from 'components/Slider';
-import { ethers } from 'ethers';
 import { Border } from 'components/Style';
+import { getTokenPriceInUsd } from 'helpers/utilities';
 import {
   useERC20_ERC721_ERC1155Approve,
   useMutationCreateZeSwap
@@ -28,6 +28,8 @@ export default function DashboardSection() {
   const [openReceive, setOpenReceive] = useState(false);
   const [SumOfAmount, setSumOfAmount] = useState(0);
   const [SumOfReceive, setSumOfReceive] = useState(0);
+  const [SumOfAmountLoading, setSumOfAmountLoading] = useState(false);
+  const [SumOfReceiveLoading, setSumOfReceiveLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isApprove, setIsApprove] = useState('');
@@ -113,8 +115,8 @@ export default function DashboardSection() {
         })
       : 0;
     console.log('item value ' + item);
+
     return amount;
-    //return ethers.utils.formatUnits(amount, decimal);
   };
 
   useEffect(() => {
@@ -136,25 +138,66 @@ export default function DashboardSection() {
   }, [dataFetch, receivedData, dataFetch.length, receivedData.length]);
 
   useEffect(() => {
-    const totalAmount =
-      (dataFetch?.length !== 0 &&
-        dataFetch
-          ?.map((item) => item?.amount)
-          //?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) ||
-      0;
-    setSumOfAmount(handleFormateAmount(totalAmount));
+    if (dataFetch?.length !== 0) {
+      setSumOfAmountLoading(true);
+      const totalAmountPool = [];
+
+      dataFetch.forEach((item) => {
+        if (item.amount > 0) {
+          const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+          totalAmountPool.push(
+            getTokenPriceInUsd(item.token, formatedTokenAmount)
+          );
+        }
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        console.log(allValues, '<<<< allValues');
+        if (allValues.includes('conversion not found')) {
+          setSumOfAmountLoading(false);
+          setSumOfAmount('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfAmountLoading(false);
+          setSumOfAmount(allTokenAmountValueInUSD.toFixed(2));
+        }
+      });
+    }
   }, [dataFetch, dataFetch?.length]);
 
   useEffect(() => {
-    const totalAmount =
-      (receivedData?.length !== 0 &&
-        receivedData
-          ?.map((item) => item?.amount)
-          //  ?.reduce((prev, curr) => Number(handleFormateAmount(Number(prev))) + Number(handleFormateAmount(Number(curr))), 0)) ||
-          ?.reduce((prev, curr) => Number(prev) + Number(curr), 0)) ||
-      0;
-    setSumOfReceive(handleFormateAmount(totalAmount));
+    if (receivedData?.length !== 0) {
+      setSumOfReceiveLoading(true);
+      const totalAmountPool = [];
+
+      receivedData.forEach((item) => {
+        if (item.amount > 0) {
+          const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+          totalAmountPool.push(
+            getTokenPriceInUsd(item.token, formatedTokenAmount)
+          );
+        }
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes('conversion not found')) {
+          setSumOfReceiveLoading(false);
+          setSumOfReceive('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfReceiveLoading(false);
+          setSumOfReceive(allTokenAmountValueInUSD.toFixed(2));
+        }
+      });
+    }
   }, [receivedData, receivedData?.length]);
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
@@ -217,7 +260,10 @@ export default function DashboardSection() {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{SumOfAmount} </Typography>
+            <LoadingAmount
+              isLoading={SumOfAmountLoading}
+              amount={SumOfAmount}
+            />
           </Box>
 
           {dataFetch?.map((card, idx) => {
@@ -288,7 +334,10 @@ export default function DashboardSection() {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{SumOfReceive} </Typography>
+            <LoadingAmount
+              isLoading={SumOfReceiveLoading}
+              amount={SumOfReceive}
+            />
           </Box>
 
           {receivedData?.map((card, idx) => {
