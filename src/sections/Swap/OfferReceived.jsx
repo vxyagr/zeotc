@@ -264,8 +264,8 @@ export default function OfferReceived({ selectedCard }) {
       const totalAmountPool = [];
 
       ProductB?.forEach((item) => {
-        const formatedTokenAmount = handleFormateAmount(item?.amount);
-
+        //const formatedTokenAmount = handleFormateAmount(item?.amount);
+        const formatedTokenAmount = item?.amount;
         totalAmountPool.push(
           getTokenPriceInUsd(item.token, formatedTokenAmount)
         );
@@ -290,8 +290,8 @@ export default function OfferReceived({ selectedCard }) {
       const totalAmountPool = [];
 
       ProductA?.forEach((item) => {
-        const formatedTokenAmount = handleFormateAmount(item?.amount);
-
+        //const formatedTokenAmount = handleFormateAmount(item?.amount);
+        const formatedTokenAmount = item?.amount;
         totalAmountPool.push(
           getTokenPriceInUsd(item.token, formatedTokenAmount)
         );
