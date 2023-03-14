@@ -8,10 +8,11 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
+import LoadingAmount from 'components/LoadingAmount';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
 import CreateTokenSwap from 'components/modal/CreateTokenSwap';
-import { getExpieredTime } from 'helpers/utilities';
+import { getExpieredTime, getTokenPriceInUsd } from 'helpers/utilities';
 import {
   useERC20_ERC721_ERC1155Approve,
   useMutationSetProduct,
@@ -259,29 +260,55 @@ export default function OfferReceived({ selectedCard }) {
   const expireDateString = getExpieredTime(expire, 'd:h:m:s', true);
 
   useEffect(() => {
-    let totalAmount =
-      (ProductB?.length !== 0 &&
-        ProductB?.map((item) => item?.amount)?.reduce(
-          (prev, curr) => Number(prev) + Number(curr),
-          0
-        )) ||
-      '0';
+    if (ProductB?.length !== 0) {
+      const totalAmountPool = [];
 
-    totalAmount = parseFloat(totalAmount);
-    setSumOfAmountB(totalAmount);
+      ProductB?.forEach((item) => {
+        const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+        totalAmountPool.push(
+          getTokenPriceInUsd(item.token, formatedTokenAmount)
+        );
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes('conversion not found')) {
+          setSumOfAmountB('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfAmountB(allTokenAmountValueInUSD);
+        }
+      });
+    }
   }, [ProductB, ProductB?.length]);
 
   useEffect(() => {
-    let totalAmount =
-      (ProductA?.length !== 0 &&
-        ProductA?.map((item) => item?.amount)?.reduce(
-          (prev, curr) => Number(prev) + Number(curr),
-          0
-        )) ||
-      '0';
+    if (ProductA?.length !== 0) {
+      const totalAmountPool = [];
 
-    totalAmount = totalAmount.toString();
-    setSumOfAmountA(totalAmount);
+      ProductA?.forEach((item) => {
+        const formatedTokenAmount = handleFormateAmount(item?.amount);
+
+        totalAmountPool.push(
+          getTokenPriceInUsd(item.token, formatedTokenAmount)
+        );
+      });
+
+      Promise.all(totalAmountPool).then((allValues) => {
+        if (allValues.includes('conversion not found')) {
+          setSumOfAmountA('Failed convert to');
+        } else {
+          const allTokenAmountValueInUSD = allValues.reduce(
+            (acc, curr) => acc + curr,
+            0
+          );
+          setSumOfAmountA(allTokenAmountValueInUSD);
+        }
+      });
+    }
   }, [ProductA, ProductA?.length]);
 
   return (
@@ -343,7 +370,10 @@ export default function OfferReceived({ selectedCard }) {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{Number(SumOfAmountA).toFixed(0)} USD</Typography>
+            <LoadingAmount
+              isLoading={SumOfAmountA === 0}
+              amount={SumOfAmountA}
+            />
           </Box>
 
           {ProductA?.map((card, idx) => {
@@ -499,7 +529,10 @@ export default function OfferReceived({ selectedCard }) {
           >
             <Typography color='gray'>Total Amount</Typography>
 
-            <Typography>{Number(SumOfAmountB).toFixed(0)} USD</Typography>
+            <LoadingAmount
+              isLoading={SumOfAmountB === 0}
+              amount={SumOfAmountB}
+            />
           </Box>
 
           {ProductB?.map((card, idx) => {
