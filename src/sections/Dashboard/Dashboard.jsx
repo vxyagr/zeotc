@@ -2,7 +2,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect, useState } from 'react';
 
-import { Box, Checkbox, Divider, Typography } from '@mui/material';
+import { Box, Checkbox, Divider, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 
 import OfferCard from 'components/card/CreateOfferCard';
@@ -22,7 +22,7 @@ import {
   getCreateDateTime
 } from 'redux/slice/otcTrades';
 
-export default function DashboardSection() {
+export default function DashboardSection({ swapType }) {
   const dispatch = useDispatch();
   const [openOffer, setOpenOffer] = useState(false);
   const [openReceive, setOpenReceive] = useState(false);
@@ -35,6 +35,13 @@ export default function DashboardSection() {
   const [isApprove, setIsApprove] = useState('');
 
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
+
+  const privateInput = useSelector(
+    (state) => state.web3Slice.privateInputValue
+  );
+
+  const isPrivateInputEmpty =
+    swapType === 'Private' && (privateInput === null || privateInput === '');
 
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
@@ -153,7 +160,6 @@ export default function DashboardSection() {
       });
 
       Promise.all(totalAmountPool).then((allValues) => {
-        console.log(allValues, '<<<< allValues');
         if (allValues.includes('conversion not found')) {
           setSumOfAmountLoading(false);
           setSumOfAmount('Failed convert to');
@@ -352,19 +358,25 @@ export default function DashboardSection() {
             );
           })}
 
-          <Box
+          <Button
             onClick={() => setOpenReceive(true)}
+            disabled={isPrivateInputEmpty}
             sx={{
-              border: '0.3px dashed #FFFFFF',
+              border: `0.3px dashed ${
+                isPrivateInputEmpty ? 'gray' : '#FFFFFF'
+              }`,
               borderRadius: '17px',
               background: (theme) => theme.palette.primary.main,
               py: 2,
               textAlign: 'center',
-              cursor: 'pointer'
+              width: '100%',
+              '& h6': {
+                color: isPrivateInputEmpty ? 'gray' : 'white'
+              }
             }}
           >
             <Typography variant='subtitle1'>+ Add new Token or NFT</Typography>
-          </Box>
+          </Button>
 
           <CreateToken
             handleClose={() => setOpenReceive(false)}

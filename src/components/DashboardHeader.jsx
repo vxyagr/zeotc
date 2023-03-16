@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Box, Button, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 
 import { privateInput } from 'redux/slice/web3';
 
-export default function DashboardHeader() {
+export default function DashboardHeader({ swapType, setSwapType }) {
   const dispatch = useDispatch();
-  const [activeButton, setActiveButton] = useState('Public');
   const [age, setAge] = React.useState('');
 
   const handleChange = (event) => {
@@ -64,7 +63,7 @@ export default function DashboardHeader() {
             }}
           >
             <Button
-              onClick={() => setActiveButton('Public')}
+              onClick={() => setSwapType('Public')}
               sx={{
                 px: 2,
                 py: 1,
@@ -74,7 +73,7 @@ export default function DashboardHeader() {
                 gap: 1,
                 alignItems: 'center',
                 // background: 'linear-gradient(180deg, #0F0F0F 0%, rgba(15, 15, 15, 0) 100%)',
-                background: activeButton === 'Public' && '#000',
+                background: swapType === 'Public' && '#000',
                 border: '2px solid transparent',
                 position: 'relative',
                 color: '#fff',
@@ -91,7 +90,7 @@ export default function DashboardHeader() {
                   right: -3,
                   bottom: -3,
                   background:
-                    activeButton === 'Public' &&
+                    swapType === 'Public' &&
                     'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                   content: '""',
                   zIndex: -1,
@@ -116,7 +115,7 @@ export default function DashboardHeader() {
             }}
           >
             <Button
-              onClick={() => setActiveButton('Private')}
+              onClick={() => setSwapType('Private')}
               sx={{
                 px: 2,
                 py: 1,
@@ -126,7 +125,7 @@ export default function DashboardHeader() {
                 gap: 1,
                 alignItems: 'center',
                 // background: 'linear-gradient(180deg, #0F0F0F 0%, rgba(15, 15, 15, 0) 100%)',
-                background: activeButton === 'Private' && '#000',
+                background: swapType === 'Private' && '#000',
                 border: '2px solid transparent',
                 position: 'relative',
                 color: '#fff',
@@ -143,7 +142,7 @@ export default function DashboardHeader() {
                   right: -3,
                   bottom: -3,
                   background:
-                    activeButton === 'Private' &&
+                    swapType === 'Private' &&
                     'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
                   content: '""',
                   zIndex: -1,
@@ -157,7 +156,7 @@ export default function DashboardHeader() {
           </Box>
         </Box>
 
-        {activeButton === 'Private' && (
+        {swapType === 'Private' && (
           <Box
             component='input'
             type='text'
