@@ -17,14 +17,22 @@ import {
 import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
 import useClipboard from 'react-use-clipboard';
-
+import { useSelectWeb3 } from 'hooks/useSelectWeb3';
+//const { account, signer } = useSelectWeb3();
 import MButton from 'components/MButton';
-import { useMutationSetProduct } from 'hooks/react-query/mutation';
+import {
+  useERC20_ERC721_ERC1155Approve,
+  useMutationSetProduct
+} from 'hooks/react-query/mutation';
 import {
   useQueryGetUserTokenBalance,
-  useTokenPrice
+  useTokenPrice,
+  getAllowanceERC20,
+  getAllowanceERC721,
+  getAllowanceERC1155
 } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
+import { zeoTC_Contract_Address } from 'contract';
 
 export default function OfferCard({
   idx,
@@ -34,9 +42,9 @@ export default function OfferCard({
   onClick,
   isModal,
   card,
-  isApprove,
-  handleApproveClick,
-  isApproveLoading,
+  //isApprove,
+  //handleApproveClick,
+  //isApproveLoading,
   isMarketCard,
   isDashboardR,
   isSetState,
@@ -50,7 +58,9 @@ export default function OfferCard({
   isOfferReceived,
   swap_id,
   offer_id,
-  tokenBalance
+  tokenBalance,
+  account,
+  signer
 }) {
   const dispatch = useDispatch();
   // const initialValue = card?.newMetadata
@@ -59,7 +69,8 @@ export default function OfferCard({
   const [isCopied, setCopied] = useClipboard(card.token || card.token_address);
 
   const [updateProductB, setUpdateProductB] = useState([]);
-
+  const [isApprove, setIsApprove] = useState('');
+  const [tokenAllowance, setTokenAllowance] = useState(0);
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
@@ -67,20 +78,150 @@ export default function OfferCard({
 
   // const useValue = card?.amount?.toString();
   const useValue = 2.5;
+  const {
+    isLoading: isApproveLoading,
+    mutate,
+    data: approvedData
+  } = useERC20_ERC721_ERC1155Approve();
 
-  // useEffect(() => {
-  //   if (!handleProductAmountA) {
-  //     const amount = card?.amount?.toString();
-  //     const decimals = card?.metadata?.decimals;
-  //     const initialValue =
-  //       amount && decimals
-  //         ? ethers.utils
-  //             .formatUnits(amount, card?.metadata?.decimals)
-  //             ?.split('.')[0]
-  //         : amount;
-  //     // setValueInput(amount);
-  //   }
-  // }, [card?.amount, card?.metadata?.decimals, handleProductAmountA]);
+  /*let balance = getAllowanceERC20(card?.token_address, account, signer)
+    .then((result) => {
+      setTokenAllowance(Number(result / 10 ** card.decimals));
+    })
+    .catch((error) => {
+      console.error(error);
+    }); */
+
+  const handleApproveClick = (token) => {
+    const tokenAddress = token.token_address;
+
+    const tokenType = token.contract_type;
+    console.log('token type ' + tokenType + ' ' + tokenAddress);
+    const tokenId = token.token_id;
+    const decimal = token.decimals;
+    console.log('already approved : ' + Number(tokenAllowance.toString()));
+    const amount =
+      Number(token?.amount?.toString()) + Number(tokenAllowance.toString());
+    console.log('to be approved : ' + amount);
+
+    if (tokenAddress) {
+      mutate({
+        tokenAddress,
+        tokenType,
+        tokenId,
+        decimal,
+        amount
+      });
+    }
+  };
+
+  const handleAddApproveState = (card) => {
+    setValueInput(value);
+    //console.log('card is ' + JSON.stringify(card));
+    const newData = dataFetch.map((item, index) => {
+      if (item?.token_address === card?.token_address) {
+        if (card.contract_type === undefined) {
+          let balance = getAllowanceERC20(item?.token_address, account, signer)
+            .then((result) => {
+              let currentTotal =
+                Number(item.amount) * 10 ** card.decimals +
+                Number(tokenAllowance) * 10 ** card.decimals;
+              if (Number(result) >= currentTotal) {
+                let tots =
+                  Number(item.amount) +
+                  Number(tokenAllowance) * 10 ** card.decimals;
+
+                setIsApprove(true);
+                return {
+                  ...item,
+                  isApproved: isApprove
+                };
+              } else {
+                setIsApprove(false);
+                console.log('not enough approved');
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+        if (card.contract_type === 'ERC721') {
+          //console.log('approving NFT ');
+          let balance = getAllowanceERC721(
+            item?.token_address,
+            item?.token_id,
+            account,
+            signer
+          )
+            .then((result) => {
+              if (result) {
+                setIsApprove(true);
+                return {
+                  ...item,
+                  isApproved: isApprove
+                };
+              } else {
+                setIsApprove(false);
+                console.log('not enough approved');
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+        if (card.contract_type === 'ERC1155') {
+          let balance = getAllowanceERC1155(
+            item?.token_address,
+            item?.token_id,
+            account,
+            signer
+          )
+            .then((result) => {
+              if (result) {
+                setIsApprove(true);
+                return {
+                  ...item,
+                  isApproved: isApprove
+                };
+              } else {
+                setIsApprove(false);
+                console.log('not approved');
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+        // let balance = getAllowanceERC20(item?.token_address, account, signer);
+        //console.log('balance ' + balance);
+
+        //check if NFT or ERC20
+        //call check approved
+        //const approvalCheck = call check approved
+        return {
+          ...item,
+          isApproved: true
+        };
+        setIsApprove(tokenAddress);
+      }
+
+      return {
+        ...item
+      };
+    });
+
+    dispatch(addNewTokenNfts(newData));
+  };
+  const [initialLoad, setInitialLoad] = useState(true);
+  useEffect(() => {
+    if (!isApproveLoading && !initialLoad) {
+      handleAddApproveState(card);
+    }
+    if (isApproveLoading) setInitialLoad(false);
+    if (!isApproveLoading && initialLoad) {
+    }
+  }, [isApproveLoading]);
+  useEffect(() => {}, [isApprove]);
 
   const productB = useSelector((state) => state.otcTrades.productDetails);
   const tokenPrice = useTokenPrice(card?.token_address);
@@ -88,13 +229,6 @@ export default function OfferCard({
     card?.contract_type == 'ERC721'
       ? card.amount
       : Math.floor(card?.balance / 10 ** card?.decimals);
-  //console.log(
-  //'kard ' + JSON.stringify(card) + ' type ' + cardTokenBalance.toString()
-  //);
-
-  /*card.IERC.toString() == '20'
-      ? card.balance / 1000000000000000000
-      : card.balance;*/
 
   const handleFormateAmount = (item) => {
     const amount =
@@ -116,10 +250,19 @@ export default function OfferCard({
   useEffect(() => {
     setValueInput(initVal);
     handleChangeInputAmount(initVal, card);
+    getAllowanceERC20(card?.token_address, account, signer)
+      .then((result) => {
+        setTokenAllowance(Number(result / 10 ** card.decimals));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    //setTokenAllowance(0)
   }, [card.decimals]);
 
   const checkIfNFTOwned = (id, selectedCard) => {
     if (!isDashboardR) {
+      setIsApprove(false);
       const newData = dataFetch.map((item, index) => {
         if (item?.token_address === selectedCard?.token_address) {
           return {
@@ -132,7 +275,7 @@ export default function OfferCard({
         return {
           ...item,
           token_id: item.token_id || '0',
-          amount: 0
+          amount: item.amount
         };
       });
 
@@ -142,6 +285,7 @@ export default function OfferCard({
 
   const checkIf1155Owned = (id, selectedCard, nftAmount) => {
     if (!isDashboardR) {
+      setIsApprove(false);
       const newData = dataFetch.map((item, index) => {
         if (item?.token_address === selectedCard?.token_address) {
           return {
@@ -176,6 +320,7 @@ export default function OfferCard({
       setValueInput(value);
       return;
     }
+    setIsApprove(false);
     //console.log('val ' + value.toString());
     let val = parseFloat(value);
     // console.log(
@@ -239,28 +384,11 @@ export default function OfferCard({
     }
   };
 
-  const handleAddApproveState = (card) => {
-    setValueInput(value);
-    const newData = dataFetch.map((item, index) => {
-      if (item?.token_address === card?.token_address) {
-        return {
-          ...item,
-          isApproved: true
-        };
-      }
-
-      return {
-        ...item
-      };
-    });
-
-    dispatch(addNewTokenNfts(newData));
-  };
-
   const { mutate: mutateSetProduct, isLoading: isSetLoading } =
     useMutationSetProduct();
 
   const handleSetFun = (data) => {
+    console.log('handle set ' + JSON.stringify(data));
     mutateSetProduct({
       swap_id,
       offer_id,
@@ -484,7 +612,7 @@ export default function OfferCard({
           alignItems='center'
           mt={1}
         >
-          {isOfferReceived && (
+          {/* isDashboardR && (
             <MButton
               loading={isSetLoading}
               variant='contained'
@@ -499,18 +627,18 @@ export default function OfferCard({
               }}
               title='Set'
             />
-          )}
+          )*/}
 
           {/*  */}
 
-          {handleApproveClick && (
+          {handleApproveClick && !isDashboardR && (
             <MButton
               loading={
                 (isApprove === card?.token_address && isApproveLoading) ||
                 (isSetState === card?.token && isApproveLoading)
               }
               variant='contained'
-              disabled={card?.isApproved || valueInput <= '0'}
+              disabled={(card?.isApproved && isApprove) || valueInput <= '0'}
               sx={{
                 boxShadow: 0,
                 fontSize: 14
@@ -519,7 +647,7 @@ export default function OfferCard({
                 handleApproveClick(card);
                 handleAddApproveState(card);
               }}
-              title={card?.isApproved ? 'Approved' : 'Approve'}
+              title={card?.isApproved && isApprove ? 'Approved' : 'Approve'}
             />
           )}
         </Stack>

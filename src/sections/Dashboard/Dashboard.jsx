@@ -1,7 +1,7 @@
 /* eslint-disable react-redux/useSelector-prefer-selectors */
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect, useState } from 'react';
-
+import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { Box, Checkbox, Divider, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -16,12 +16,13 @@ import {
   useERC20_ERC721_ERC1155Approve,
   useMutationCreateZeSwap
 } from 'hooks/react-query/mutation';
+import { getAllowanceERC20 } from 'hooks/react-query/queries';
 import {
   addNewTokenNfts,
   addNewTokenNftsReceive,
   getCreateDateTime
 } from 'redux/slice/otcTrades';
-
+import { useQueryGetERC20TokenAllowance } from 'hooks/react-query/queries';
 export default function DashboardSection({ swapType }) {
   const dispatch = useDispatch();
   const [openOffer, setOpenOffer] = useState(false);
@@ -33,7 +34,8 @@ export default function DashboardSection({ swapType }) {
   const [isChecked, setIsChecked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isApprove, setIsApprove] = useState('');
-
+  //const { account } = useSelectWeb3();
+  const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
 
   const privateInput = useSelector(
@@ -80,7 +82,7 @@ export default function DashboardSection({ swapType }) {
     const tokenId = token.token_id;
     const decimal = token.decimals;
     const amount = token?.amount.toString();
-    console.log('to be approved : ' + amount);
+    //console.log('to be approved : ' + amount);
 
     if (tokenAddress && amount) {
       mutate({
@@ -121,9 +123,26 @@ export default function DashboardSection({ swapType }) {
           useGrouping: false
         })
       : 0;
-    console.log('item value ' + item);
+    // console.log('item value ' + item);
 
     return amount;
+  };
+  const [isAllApprovd, setIsAllApprovd] = useState(false);
+  const confirmAllowance = async () => {
+    let isAllApproved = true;
+    dataFetch.forEach(async (item) => {
+      console.log('item approved? ' + item.isApproved);
+
+      if (!item.isApproved) {
+        console.log('not approved');
+        isAllApproved = false;
+        setIsAllApprovd(false);
+        return false;
+      }
+    });
+    //console.log('done ' + isAllApproved);
+    setIsAllApprovd(isAllApproved);
+    return isAllApproved;
   };
 
   useEffect(() => {
@@ -140,7 +159,7 @@ export default function DashboardSection({ swapType }) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
-      console.log('Please Approve All tokens and NFTs before create');
+      //console.log('Please Approve All tokens and NFTs before create');
     }
   }, [dataFetch, receivedData, dataFetch.length, receivedData.length]);
 
@@ -150,11 +169,16 @@ export default function DashboardSection({ swapType }) {
       const totalAmountPool = [];
 
       dataFetch.forEach((item) => {
-        if (item.amount > 0) {
-          const formatedTokenAmount = handleFormateAmount(item?.amount);
+        console.log('item type ' + JSON.stringify(item));
+        if (item.amount > 0 || item?.contract_type) {
+          let vl = item?.amount;
+          if (item?.contract_type) vl = 0;
+          console.log('pushing value ' + vl);
+          const formatedTokenAmount = handleFormateAmount(vl);
 
           totalAmountPool.push(
-            getTokenPriceInUsd(item.token, formatedTokenAmount)
+            //getTokenPriceInUsd(item.token, formatedTokenAmount)
+            Number(formatedTokenAmount)
           );
         }
       });
@@ -164,12 +188,14 @@ export default function DashboardSection({ swapType }) {
           setSumOfAmountLoading(false);
           setSumOfAmount('Failed convert to');
         } else {
+          console.log('total allValues ' + allValues);
           const allTokenAmountValueInUSD = allValues.reduce(
-            (acc, curr) => acc + curr,
+            (acc, curr) => Number(acc) + Number(curr),
             0
           );
           setSumOfAmountLoading(false);
-          setSumOfAmount(allTokenAmountValueInUSD.toFixed(2));
+          console.log('total ' + allTokenAmountValueInUSD);
+          setSumOfAmount(Number(allTokenAmountValueInUSD).toFixed(2));
         }
       });
     }
@@ -185,7 +211,8 @@ export default function DashboardSection({ swapType }) {
           const formatedTokenAmount = handleFormateAmount(item?.amount);
 
           totalAmountPool.push(
-            getTokenPriceInUsd(item.token, formatedTokenAmount)
+            //getTokenPriceInUsd(item.token, formatedTokenAmount)
+            formatedTokenAmount
           );
         }
       });
@@ -200,7 +227,7 @@ export default function DashboardSection({ swapType }) {
             0
           );
           setSumOfReceiveLoading(false);
-          setSumOfReceive(allTokenAmountValueInUSD.toFixed(2));
+          setSumOfReceive(Number(allTokenAmountValueInUSD).toFixed(2));
         }
       });
     }
@@ -281,7 +308,10 @@ export default function DashboardSection({ swapType }) {
                 isDashboard
                 isApprove={isApprove}
                 isApproveLoading={isApproveLoading}
-                handleApproveClick={handleApproveClick}
+                //handleApproveClick={handleApproveClick}
+                getAllowanceERC20={getAllowanceERC20}
+                account={account}
+                signer={signer}
               />
             );
           })}
@@ -462,14 +492,18 @@ export default function DashboardSection({ swapType }) {
           <MButton
             loading={createIsLoading}
             title='CREATE'
-            disabled={isDisabled}
+            disabled={isDisabled || !isAllApprovd}
             onClick={() => {
-              createMutate({
-                productB: receivedData,
-                productA: dataFetch,
-                isChecked,
-                newDate: date
-              });
+              if (confirmAllowance()) {
+                createMutate({
+                  productB: receivedData,
+                  productA: dataFetch,
+                  isChecked,
+                  newDate: date
+                });
+              } else {
+                console.log('need to approve');
+              }
             }}
             sx={{
               width: 114,

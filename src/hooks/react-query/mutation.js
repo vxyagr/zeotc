@@ -90,10 +90,9 @@ export const useERC20_ERC721_ERC1155Approve = () => {
     //   decimal,
     //   amount,
     // });
-    
+    console.log('token Type ' + tokenType);
     // ? ERC20
     if (!tokenType || tokenType === '20') {
-      
       const abi = erc20_Contact_Abi;
       const contract = new ethers.Contract(tokenAddress, abi, signer);
 
@@ -103,14 +102,18 @@ export const useERC20_ERC721_ERC1155Approve = () => {
       const amounts = amount.toString();
 
       const amount1 = ethers.utils.parseUnits(amounts, decimals);
-      console.log("approving ERC 20 " + amount1); 
+      console.log('approving ERC 20 ' + amount1);
       tx = await contract?.approve(zeoTC_Contract.address, amount1);
     }
 
     //? ERC721
-    if (tokenType === TOKEN_TYPE.erc721 || tokenType === '721') {
+    if (
+      tokenType === TOKEN_TYPE.erc721 ||
+      tokenType === '721' ||
+      tokenType === 'ERC721'
+    ) {
       const abi = erc721_Contact_Abi;
-
+      console.log('approving ERC721 ' + tokenId);
       const contract = new ethers.Contract(tokenAddress, abi, signer);
       tx = await contract?.approve(zeoTC_Contract.address, tokenId); //9964=token_id
     }
@@ -165,7 +168,7 @@ export const useMutationCreateZeSwap = () => {
     // const zSwap_id = data?.events?.[0]?.['args']?.[0];
 
     // await zeoTC_Contract.set_allow_counter_offer(zSwap_id, isChecked);
-    console.log("creating OTC");
+    console.log('creating OTC');
     return await zeoTC_Contract.create_zeSwap(
       productAs,
       productBs,
@@ -222,7 +225,7 @@ export const useMutationAddProductAToCounterOffer = () => {
   const queryKey = [queryKeys.getZeSwapIdList];
   const mutationFn = async ({ id: data, product }) => {
     //console.log(JSON.stringify(data));
-      //return;
+    //return;
     const offer_id = data?.swap?.offers?.[0];
     const productA = data?.productA;
     const productB = data?.productB;
@@ -270,8 +273,6 @@ export const useMutationAddProductAToCounterOffer = () => {
     }
   });
 };
-
-
 
 //function to counter an offer
 export const useMutationSwapCounterOffer = () => {
@@ -364,7 +365,7 @@ export const useMutationSetProduct = () => {
 
   const mutationFn = async ({ swap_id, offer_id, ProductB }) => {
     const productBs = handleFormateData(ProductB, true);
-
+    //console.log('setting ' + swap_id + ' ' + offer_id + ' ' + productBs);
     // return true
     const tx = await zeoTC_Contract.set_product(swap_id, offer_id, productBs);
 

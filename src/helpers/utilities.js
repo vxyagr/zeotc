@@ -10,6 +10,7 @@ import Fuse from 'fuse.js';
 import { NETWORK } from 'config';
 
 import { supportedChains } from './chains';
+import { zeoTC_Contract_Address } from 'contract';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);

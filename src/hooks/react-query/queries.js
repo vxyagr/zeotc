@@ -20,6 +20,51 @@ const settings = {
   network: Network.ETH_GOERLI
 };
 //a function to get tokenAllowance
+
+export const getAllowanceERC20 = async (tokenAddress, account, signer) => {
+  const abi = erc20_Contact_Abi;
+  //console.log('getting balance');
+  //const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
+
+  const contract = new ethers.Contract(tokenAddress, abi, signer);
+  // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
+
+  let balance = await contract.allowance(account, zeoTC_Contract_Address);
+  //console.log('balance ' + balance);
+  //let finalBalance = Number(balance?.toString(account, zeoTC_Contract_Address));
+  //let balance = 0;
+  return balance;
+};
+
+export const getAllowanceERC721 = async (
+  tokenAddress,
+  tokenId,
+  account,
+  signer
+) => {
+  const abi = erc721_Contact_Abi;
+  const contract = new ethers.Contract(tokenAddress, abi, signer);
+
+  let address = await contract.getApproved(tokenId);
+  return address.toString() === zeoTC_Contract_Address;
+};
+
+export const getAllowanceERC1155 = async (
+  tokenAddress,
+  tokenId,
+  account,
+  signer
+) => {
+  const abi = erc1155_Contact_Abi;
+  const contract = new ethers.Contract(tokenAddress, abi, signer);
+
+  let address = await contract.isApprovedForAll(
+    account,
+    zeoTC_Contract_Address
+  );
+  return address.toString() === zeoTC_Contract_Address;
+};
+
 export const useQueryGetERC20TokenAllowance = async (
   tokenType,
   tokenAddress
@@ -29,11 +74,11 @@ export const useQueryGetERC20TokenAllowance = async (
   const tokenAddress_ = tokenAddress;
   if (!tokenType || tokenType === '20') {
     const abi = erc20_Contact_Abi;
-
+    console.log('getting balance');
     const contract = new ethers.Contract(tokenAddress_, abi, signer);
     // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
 
-    let balance = await contract.allow;
+    let balance = await contract.allowance(account, zeoTC_Contract_Address);
     balance = Number(balance?.toString(account, zeoTC_Contract_Address));
 
     return balance;
@@ -49,7 +94,7 @@ export const useQueryGetERC20TokenAllowance = async (
 
     return balance;
   }
-  if (!tokenType || tokenType === '20') {
+  if (!tokenType || tokenType === '1155') {
     const abi = erc721_Contact_Abi;
 
     const contract = new ethers.Contract(tokenAddress_, abi, signer);
@@ -609,6 +654,7 @@ export const getCounterOffers = async (userAddress) => {
   return offersList;
 };
 //function to get list of counter offers created by the caller's address
+
 export const useQueryCounterOfferIdList = () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
 
