@@ -18,7 +18,8 @@ import {
   useMutationSetProduct,
   useMutationSwapAccept,
   useMutationSwapCounterOffer,
-  useMutationReject
+  useMutationReject,
+  useMutationRemoveProduct
 } from 'hooks/react-query/mutation';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { getProductDetails } from 'redux/slice/otcTrades';
@@ -168,6 +169,34 @@ export default function OfferReceived({ selectedCard }) {
 
   const { mutate: mutateSetProduct, isLoading: isSetLoading } =
     useMutationSetProduct();
+  const { mutate: mutateRemoveOffer, isLoading: isRemoveLoading } =
+    useMutationRemoveProduct();
+
+  const removeOffer = (card, isReceived) => {
+    console.log(
+      'removing ' +
+        JSON.stringify(card[0]) +
+        ' from ' +
+        JSON.stringify(
+          selectedCard.swap[0] + ' ' + JSON.stringify(selectedCard.swap.offers)
+        )
+    );
+    return;
+    /*useMutationRemoveProduct(swap_id, offer_id, card[0]);
+    if (isReceived) {
+      const newValue = receivedData.includes(card)
+        ? receivedData.filter((el) => el !== card)
+        : [...receivedData, card];
+
+      dispatch(addNewTokenNftsReceive(newValue));
+    } else {
+      const newValue = dataFetch.includes(card)
+        ? dataFetch.filter((el) => el !== card)
+        : [...dataFetch, card];
+
+      dispatch(addNewTokenNfts(newValue));
+    } */
+  };
 
   const handleSetFun = (data) => {
     mutateSetProduct({
@@ -267,7 +296,8 @@ export default function OfferReceived({ selectedCard }) {
         //const formatedTokenAmount = handleFormateAmount(item?.amount);
         const formatedTokenAmount = item?.amount;
         totalAmountPool.push(
-          getTokenPriceInUsd(item.token, formatedTokenAmount)
+          //getTokenPriceInUsd(item.token, formatedTokenAmount)
+          Number(formatedTokenAmount)
         );
       });
 
@@ -276,7 +306,7 @@ export default function OfferReceived({ selectedCard }) {
           setSumOfAmountB('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
-            (acc, curr) => acc + curr,
+            (acc, curr) => Number(acc) + Number(curr),
             0
           );
           setSumOfAmountB(allTokenAmountValueInUSD);
@@ -293,7 +323,8 @@ export default function OfferReceived({ selectedCard }) {
         //const formatedTokenAmount = handleFormateAmount(item?.amount);
         const formatedTokenAmount = item?.amount;
         totalAmountPool.push(
-          getTokenPriceInUsd(item.token, formatedTokenAmount)
+          //getTokenPriceInUsd(item.token, formatedTokenAmount)
+          Number(formatedTokenAmount)
         );
       });
 
@@ -302,7 +333,7 @@ export default function OfferReceived({ selectedCard }) {
           setSumOfAmountA('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
-            (acc, curr) => acc + curr,
+            (acc, curr) => Number(acc) + Number(curr),
             0
           );
           setSumOfAmountA(allTokenAmountValueInUSD);
@@ -404,6 +435,7 @@ export default function OfferReceived({ selectedCard }) {
                 isProvideItems={supplier === account}
                 isOfferReceived
                 allowCounterButton={allowCounterButton}
+                //onClick={() => removeOffer(card)}
               />
             );
           })}

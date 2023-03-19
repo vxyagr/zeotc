@@ -16,6 +16,7 @@ import {
   normalizeSwapList,
   sortSwapByExpireDate
 } from '../../helpers/utilities';
+import { compose } from '@reduxjs/toolkit';
 
 export default function Swaps({ searchValues, sort }) {
   const { data: zeSwapIdsList } = useQueryMyZeSwapId();
@@ -40,14 +41,24 @@ export default function Swaps({ searchValues, sort }) {
 
   useEffect(() => {
     if (allFinished && searchValues !== null) {
-      setFilteredZeSwapIdList(swapLocalSearch(searchValues, newZeSwapList));
+      setFilteredZeSwapIdList(
+        swapLocalSearch(
+          searchValues,
+          newZeSwapList.filter((item) => item.swap.status < 2)
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValues]);
 
   useEffect(() => {
     if (allFinished) {
-      setFilteredZeSwapIdList(sortSwapByExpireDate(sort, newZeSwapList));
+      setFilteredZeSwapIdList(
+        sortSwapByExpireDate(
+          sort,
+          newZeSwapList.filter((item) => item.swap.status < 2)
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort]);
@@ -55,7 +66,12 @@ export default function Swaps({ searchValues, sort }) {
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
-      setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort));
+      setFilteredZeSwapIdList(
+        normalizeSwapList(
+          newZeSwapList.filter((item) => item.swap.status < 2),
+          sort
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);

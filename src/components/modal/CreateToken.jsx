@@ -124,7 +124,7 @@ export default function CreateToken({
 
   useEffect(() => {
     if (newSearchInput?.length === 42 && isReceived) {
-      console.log('searchInput');
+      //console.log('searchInput');
 
       if (activeButton === 'NFTs') {
         nftRefetch();
@@ -152,7 +152,7 @@ export default function CreateToken({
     nftRefetch,
     tokensRefetch
   ]);
-
+  console.log('tokensData' + JSON.stringify(tokensData));
   return (
     <div>
       <Modal
@@ -290,11 +290,11 @@ export default function CreateToken({
                   {TAB_OPTIONS.map((item, idx) => {
                     if (item?.label === activeButton) {
                       const currentItem = item?.component;
-                      console.log(item?.label);
 
                       // !isReceived &&
                       if (item.label !== 'Custom') {
                         return currentItem?.map((card, idx) => {
+                          //console.log('card ' + card.name);
                           if (card.name !== '') {
                             return (
                               <OfferCard

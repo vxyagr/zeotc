@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
@@ -19,15 +19,48 @@ export default function MarketPlaceSwaping(context) {
   pathName = pathName[2].split('=');
   pathName = pathName[1];
 
-  const { data: zeSwapIdList, error, } = useQueryZeSwapIdList();
+  const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
 
   const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
 
+  const allFinished = useMemo(() => {
+    if (newZeSwapList.length !== 0) {
+      let flag = true;
+
+      newZeSwapList.forEach((e) => {
+        if (e === undefined) {
+          flag = false;
+        }
+      });
+
+      return flag;
+    }
+
+    return false;
+  }, [newZeSwapList]);
+
   useEffect(() => {
+    if (allFinished) {
+      // all the queries have executed successfully
+      console.log('id of swap ' + pathName);
+      const selectData = newZeSwapList?.filter(
+        (item) => item?.swap_id === pathName
+      );
+      setSelectedCard(selectData);
+      console.log('swap ' + JSON.stringify(selectData));
+      //setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
+    }
+    //console.log('counter list ' + JSON.stringify(counterList));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFinished]);
+  //console.log('fetchin// ' + JSON.stringify(newZeSwapList));
+  useEffect(() => {
+    /*console.log('id of swap ' + pathName);
     const selectData = newZeSwapList?.filter(
       (item) => item?.swap_id === pathName
     );
     setSelectedCard(selectData);
+    console.log('swap ' + JSON.stringify(selectData)); */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newZeSwapList?.[0]?.swap_id, pathName]);
 
@@ -38,12 +71,12 @@ export default function MarketPlaceSwaping(context) {
           maxWidth: 1300,
           width: {
             xs: '100%',
-            lg: '90%',
+            lg: '90%'
           },
           mt: {
             xs: 10,
-            md: 0,
-          },
+            md: 0
+          }
         }}
       >
         <Typography>Swap</Typography>

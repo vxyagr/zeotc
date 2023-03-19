@@ -140,7 +140,7 @@ export default function DashboardSection({ swapType }) {
         return false;
       }
     });
-    //console.log('done ' + isAllApproved);
+    console.log('done ' + isAllApproved);
     setIsAllApprovd(isAllApproved);
     return isAllApproved;
   };
@@ -173,7 +173,7 @@ export default function DashboardSection({ swapType }) {
         if (item.amount > 0 || item?.contract_type) {
           let vl = item?.amount;
           if (item?.contract_type) vl = 0;
-          console.log('pushing value ' + vl);
+          //console.log('pushing value ' + vl);
           const formatedTokenAmount = handleFormateAmount(vl);
 
           totalAmountPool.push(
@@ -312,6 +312,7 @@ export default function DashboardSection({ swapType }) {
                 getAllowanceERC20={getAllowanceERC20}
                 account={account}
                 signer={signer}
+                confirmAllowance={confirmAllowance}
               />
             );
           })}
@@ -492,7 +493,7 @@ export default function DashboardSection({ swapType }) {
           <MButton
             loading={createIsLoading}
             title='CREATE'
-            disabled={isDisabled || !isAllApprovd}
+            disabled={!isAllApprovd}
             onClick={() => {
               if (confirmAllowance()) {
                 createMutate({

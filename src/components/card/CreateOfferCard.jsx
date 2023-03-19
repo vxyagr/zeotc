@@ -60,7 +60,8 @@ export default function OfferCard({
   offer_id,
   tokenBalance,
   account,
-  signer
+  signer,
+  confirmAllowance
 }) {
   const dispatch = useDispatch();
   // const initialValue = card?.newMetadata
@@ -132,6 +133,7 @@ export default function OfferCard({
                   Number(tokenAllowance) * 10 ** card.decimals;
 
                 setIsApprove(true);
+                confirmAllowance();
                 return {
                   ...item,
                   isApproved: isApprove

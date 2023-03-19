@@ -139,6 +139,31 @@ export const useERC20_ERC721_ERC1155Approve = () => {
 
 // ===============================================
 
+export const useMutationRemoveProduct = () => {
+  const { account, zeoTC_Contract, signer } = useSelectWeb3();
+
+  const mutationFn = async ({ swap_id, offer_id, product_id }) => {
+    let tx;
+    console.log(
+      'function removing ' + swap_id + ' ' + offer_id + ' ' + product_id
+    );
+    let result = await zeoTC_Contract.remove_product(
+      swap_id,
+      offer_id,
+      product_id
+    );
+    let res = result.wait();
+    console.log('result : ' + JSON.stringify(res));
+    return res;
+  };
+
+  return useMutation(mutationFn, {
+    onError: (error) => {
+      console.log(error);
+      // notify('error', 'Error while fetching useIsApprovedForAll');
+    }
+  });
+};
 // * Nft Address
 // 0xf4910c763ed4e47a585e2d34baa9a4b611ae448c
 

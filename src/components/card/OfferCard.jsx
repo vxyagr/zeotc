@@ -19,8 +19,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import useClipboard from 'react-use-clipboard';
 
 import MButton from 'components/MButton';
-import { useMutationSetProduct } from 'hooks/react-query/mutation';
-import { useTokenPrice, useQueryTokenBalance } from 'hooks/react-query/queries';
+import {
+  useMutationSetProduct,
+  useMutationRemoveProduct
+} from 'hooks/react-query/mutation';
+import {
+  useTokenPrice,
+  useQueryTokenBalance,
+  useQueriesGetProduct
+} from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
 export default function OfferCard({
@@ -95,6 +102,49 @@ export default function OfferCard({
     //console.log("format result " + ethers.utils.formatUnits(item_, decimalsValue))
     return ethers.utils.formatUnits(item_, decimalsValue);
   };
+
+  const { mutate: mutateRemoveOffer, isLoading: isRemoveLoading } =
+    useMutationRemoveProduct();
+  const [removing, setRemoving] = useState(false);
+  const removeOffer = async (card, isReceived) => {
+    console.log(
+      'removing offer ' +
+        JSON.stringify(card[0]) +
+        ' from ' +
+        JSON.stringify(swap_id + ' ' + offer_id)
+    );
+    let result = await mutateRemoveOffer({
+      swap_id,
+      offer_id,
+      product_id: card[0]
+    });
+    //console.log("result " + )
+    return;
+    /*
+    if (isReceived) {
+      const newValue = receivedData.includes(card)
+        ? receivedData.filter((el) => el !== card)
+        : [...receivedData, card];
+
+      dispatch(addNewTokenNftsReceive(newValue));
+    } else {
+      const newValue = dataFetch.includes(card)
+        ? dataFetch.filter((el) => el !== card)
+        : [...dataFetch, card];
+
+      dispatch(addNewTokenNfts(newValue));
+    } */
+  };
+
+  useEffect(() => {
+    if (removing && !isRemoveLoading) {
+      setRemoving(false);
+      let exist = useQueriesGetProduct(card[0]);
+      console.log('product ' + JSON.stringify(exist));
+      //check if product still exist
+      //if not exist, route to parent
+    }
+  }, [isRemoveLoading]);
   const [valueInput, setValueInput] = useState(0);
   const [valueInit, setValueInit] = useState(true);
   useEffect(() => {
@@ -333,17 +383,20 @@ export default function OfferCard({
 
             {/* )} */}
           </Box>
-          {/*
           {isDashboard && (
             <Box
-              onClick={onClick}
+              onClick={isRemoveLoading ? '' : () => removeOffer(card)}
               component='img'
-              src='/assets/svg/removeIcon.png'
+              src={
+                isRemoveLoading
+                  ? '/assets/svg/small-loading.svg'
+                  : '/assets/svg/removeIcon.png'
+              }
               sx={{
                 cursor: 'pointer'
               }}
             />
-            )} */}
+          )}
 
           {unSelectedItems && (
             <Box

@@ -6,7 +6,8 @@ import { isEqual } from 'lodash';
 import { Border } from 'components/Style';
 import {
   useQueriesGetSwapHistory,
-  useQueryMyZeSwapId
+  useQueryMyZeSwapId,
+  useQueriesGetSwap
 } from 'hooks/react-query/queries';
 
 import { swapLocalSearch, sortSwapByExpireDate } from '../../helpers/utilities';
@@ -14,7 +15,8 @@ import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 
 export default function SwapOffer({ searchValues, sort }) {
   const { data: zeSwapIdsList } = useQueryMyZeSwapId();
-  const newZeSwapList = useQueriesGetSwapHistory(zeSwapIdsList);
+  const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
+  ///useQueriesGetSwapHistory(zeSwapIdsList);
 
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
 
@@ -24,21 +26,33 @@ export default function SwapOffer({ searchValues, sort }) {
 
   useEffect(() => {
     if (filteredZeSwapIdList && searchValues !== null) {
-      setFilteredZeSwapIdList(swapLocalSearch(searchValues, newZeSwapList));
+      setFilteredZeSwapIdList(
+        swapLocalSearch(
+          searchValues,
+          newZeSwapList.filter((item) => item.swap.status > 1)
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValues]);
 
   useEffect(() => {
     if (filteredZeSwapIdList) {
-      setFilteredZeSwapIdList(sortSwapByExpireDate(sort, newZeSwapList));
+      setFilteredZeSwapIdList(
+        sortSwapByExpireDate(
+          sort,
+          newZeSwapList.filter((item) => item.swap.status > 1)
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort]);
 
   useEffect(() => {
     if (searchValues === null && !swapListChange) {
-      setFilteredZeSwapIdList(newZeSwapList);
+      setFilteredZeSwapIdList(
+        newZeSwapList.filter((item) => item.swap.status > 1)
+      );
     }
   }, [swapListChange]);
 
@@ -60,9 +74,7 @@ export default function SwapOffer({ searchValues, sort }) {
           fontSize: 13,
           color: '#A3A3A3'
         }}
-      >
-        You have successfuly completed the swap for a total 2,131 USDC value.
-      </Typography>
+      ></Typography>
 
       <Box
         sx={{

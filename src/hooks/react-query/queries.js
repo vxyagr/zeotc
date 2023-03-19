@@ -338,7 +338,7 @@ export const useQueryGetUserNFTs = () => {
 
   const queryFn = async () => {
     const tokensData = await getUserNFts(tokensApi);
-    console.log('axios ' + tokensData.toString());
+    console.log('getting tokens in wallet ' + JSON.stringify(tokensData));
     let nftsData = await getUserNFts(nftApi);
     nftsData = nftsData.result;
     // nftsData = nftsData.slice(0, 2);
@@ -472,7 +472,7 @@ export const useQueryGetCustomERC20 = (tokenAddress_) => {
 
   const queryFn = async () => {
     const tokensData = await getUserNFts(url);
-    console.log('axios ' + tokensData.toString());
+    console.log('axios 2 ' + tokensData.toString());
 
     return {
       tokensData
@@ -841,4 +841,38 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
   return swapData.filter((item) => item);
 };
 
+export const useQueriesGetProduct = () => {
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+
+  const queryFn = async (product_id) => {
+    const data = [];
+
+    const prod = await zeoTC_Contract.get_product(product_id);
+
+    if (prod.length > 0) {
+      return {
+        product: true
+      };
+    } else {
+      return {
+        product: false
+      };
+    }
+
+    return null;
+  };
+
+  const queries = zeSwapIdList?.map((swap_id, idx) => ({
+    queryKey: [queryKeys.getQueriesSwapDetails, swap_id],
+    queryFn: () => queryFn(swap_id),
+    enabled: !!zeoTC_Contract && !!zeSwapIdList
+  }));
+  const results = useQueries({
+    queries
+  });
+
+  const swapData = results.map((result) => result?.data?.[0]);
+
+  return swapData.filter((item) => item);
+};
 // ============================================================
