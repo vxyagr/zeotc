@@ -67,8 +67,10 @@ export default function OfferCard({
   // const initialValue = card?.newMetadata
   //   ? card?.amount
   //   : Math.floor(card?.balance / 10 ** 18) || '0';
-  const [isCopied, setCopied] = useClipboard(card.token || card.token_address);
-
+  const [isCopied, setCopied] = useClipboard(
+    card.token || card.token_address || card.address
+  );
+  //console.log('card token ' + JSON.stringify(card));
   const [updateProductB, setUpdateProductB] = useState([]);
   const [isApprove, setIsApprove] = useState('');
   const [tokenAllowance, setTokenAllowance] = useState(0);

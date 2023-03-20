@@ -58,7 +58,9 @@ export default function MyAssetsCard({ card, isNFTs }) {
         }}
       >
         <Typography variant='subtitle1' sx={{}}>
-          {isNFTs ? card.amount : Math.floor(card?.balance / 10 ** 18)}
+          {isNFTs
+            ? card.amount
+            : parseFloat(Number(card?.balance / 10 ** 18).toFixed(5))}
 
           {/* {card.price} */}
         </Typography>
