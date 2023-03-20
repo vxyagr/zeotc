@@ -139,16 +139,16 @@ export default function DashboardSection({ swapType }) {
   const confirmAllowance = async () => {
     let isAllApproved = true;
     dataFetch.forEach(async (item) => {
-      console.log('item approved? ' + item.isApproved);
+      //console.log('item approved? ' + item.isApproved);
 
       if (!item.isApproved) {
-        console.log('not approved');
+        //console.log('not approved');
         isAllApproved = false;
         setIsAllApprovd(false);
         return false;
       }
     });
-    console.log('done ' + isAllApproved);
+    //console.log('done ' + isAllApproved);
     setIsAllApprovd(isAllApproved);
     return isAllApproved;
   };
@@ -177,7 +177,7 @@ export default function DashboardSection({ swapType }) {
       const totalAmountPool = [];
 
       dataFetch.forEach((item) => {
-        console.log('item type ' + JSON.stringify(item));
+        //console.log('item type ' + JSON.stringify(item));
         if (item.amount > 0 || item?.contract_type) {
           let vl = item?.amount;
           if (item?.contract_type) vl = 0;
@@ -196,13 +196,13 @@ export default function DashboardSection({ swapType }) {
           setSumOfAmountLoading(false);
           setSumOfAmount('Failed convert to');
         } else {
-          console.log('total allValues ' + allValues);
+          //console.log('total allValues ' + allValues);
           const allTokenAmountValueInUSD = allValues.reduce(
             (acc, curr) => Number(acc) + Number(curr),
             0
           );
           setSumOfAmountLoading(false);
-          console.log('total ' + allTokenAmountValueInUSD);
+          //console.log('total ' + allTokenAmountValueInUSD);
           setSumOfAmount(Number(allTokenAmountValueInUSD).toFixed(2));
         }
       });
@@ -511,7 +511,7 @@ export default function DashboardSection({ swapType }) {
                   newDate: date
                 });
               } else {
-                console.log('need to approve');
+                //console.log('need to approve');
               }
             }}
             sx={{
