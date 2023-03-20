@@ -483,6 +483,15 @@ export default function MarketPlaceSection({
                 }}
               >
                 Total Value
+                <br />
+                <span
+                  sx={{
+                    px: 0,
+                    fontSize: 12
+                  }}
+                >
+                  {'(No USD value on Testnet)'}
+                </span>
               </Typography>
 
               <LoadingAmount

@@ -220,7 +220,7 @@ export default function DashboardSection({ swapType }) {
 
           totalAmountPool.push(
             //getTokenPriceInUsd(item.token, formatedTokenAmount)
-            formatedTokenAmount
+            Number(formatedTokenAmount)
           );
         }
       });
@@ -231,7 +231,7 @@ export default function DashboardSection({ swapType }) {
           setSumOfReceive('Failed convert to');
         } else {
           const allTokenAmountValueInUSD = allValues.reduce(
-            (acc, curr) => acc + curr,
+            (acc, curr) => Number(acc) + Number(curr),
             0
           );
           setSumOfReceiveLoading(false);
@@ -299,7 +299,7 @@ export default function DashboardSection({ swapType }) {
               my: 1.5
             }}
           >
-            <Typography color='gray'>Total Amount</Typography>
+            <Typography color='gray'>Total Value</Typography>
 
             <LoadingAmount
               isLoading={SumOfAmountLoading}
@@ -377,7 +377,7 @@ export default function DashboardSection({ swapType }) {
               my: 1.5
             }}
           >
-            <Typography color='gray'>Total Amount</Typography>
+            <Typography color='gray'>Total Value</Typography>
 
             <LoadingAmount
               isLoading={SumOfReceiveLoading}

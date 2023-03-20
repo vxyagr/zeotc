@@ -968,6 +968,7 @@ export default function MarketPlaceSection({
               onClick={handleQuickSwapAccept}
               sx={{
                 width: 150,
+                fontSize: 14,
                 background:
                   ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
               }}

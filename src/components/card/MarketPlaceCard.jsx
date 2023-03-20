@@ -2,7 +2,13 @@
 /* eslint-disable sonarjs/no-use-of-empty-return-value */
 import React, { useEffect, useState } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  Typography,
+  CopyAllOutlined
+} from '@mui/material';
 import { Network, Alchemy } from 'alchemy-sdk';
 import { useRouter } from 'next/router';
 import { ethers } from 'ethers';
@@ -105,15 +111,13 @@ export default function MarketPlaceCard({ Image, title, isOffer, token }) {
         <Box>
           <Typography variant='subtitle1'>
             {/* {title}{' '} */}
-
-            {token?.[0]?.metadata?.name}
-
+            {token?.[0]?.metadata?.name}{' '}
             <span
               style={{
                 color: '#69A5E6'
               }}
             >
-              {' '}
+              <br />
               {token?.length > 1 && `${token?.length - 1} more`}
             </span>
           </Typography>

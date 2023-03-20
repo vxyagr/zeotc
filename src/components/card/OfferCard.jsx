@@ -158,25 +158,28 @@ export default function OfferCard({
     if (card.id == undefined && allowCounterButton) allowCounterButton(true);
   });
   const [addingNewToken, setAddingNewToken] = useState(false);
+  const [addTokenButton, setAddTokenButton] = useState('Add Token');
   useEffect(() => {
     if (!isCounterOfferLoading && addingNewToken) {
+      setAddTokenButton('Please wait..');
       refreshPage();
     }
   }, [isCounterOfferLoading]);
 
   useEffect(() => {
-    console.log(tokenBalanceInWallet, '<<<<<< tokenBalanceInWallet');
-    if (tokenBalanceInWallet && typeof tokenBalanceInWallet === 'number') {
+    if (
+      tokenBalanceInWallet //&& typeof tokenBalanceInWallet === 'number'
+    ) {
       setBalanceInWallet(
         handleFormateAmount(
           tokenBalanceInWallet,
           card?.metadata?.decimals,
           false
-        )
+        ).toString()
       );
     }
   }, [tokenBalanceInWallet]);
-  //console.log("exc " + card.amount);
+  //console.log('exc ' + balanceInWallet);
 
   const checkIfNFTOwned = (id, selectedCard) => {
     if (!isDashboardR) {
@@ -536,7 +539,7 @@ export default function OfferCard({
                 setAddingNewToken(true);
                 handleCounterOffer(prod);
               }}
-              title='Add Token'
+              title={addTokenButton.toString()}
             />
           )}
 
