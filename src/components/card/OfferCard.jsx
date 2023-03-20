@@ -112,7 +112,7 @@ export default function OfferCard({
   const [removing, setRemoving] = useState(false);
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   const removeOffer = async (card, isReceived) => {
-    console.log('removing ' + card?.id != undefined);
+    //console.log('removing ' + card?.id != undefined);
     if (card?.id != undefined) {
       setRemoving(true);
       let result = await mutateRemoveOffer({
@@ -127,7 +127,7 @@ export default function OfferCard({
        */
     } else {
       //allowCounterButton(false);
-      console.log('removing non-chain card');
+      //console.log('removing non-chain card');
       removeCard(card, isOfferReceived);
     }
   };
@@ -229,15 +229,15 @@ export default function OfferCard({
 
   const handleChangeInputAmount = (value, selectedCard) => {
     if (valueInit) setValueInit(false);
-    console.log('being input ' + value);
+    //console.log('being input ' + value);
     if (selectedCard?.contract_type?.toString() === 'ERC721') {
-      console.log('is 721');
+      //console.log('is 721');
       checkIfNFTOwned(value, selectedCard);
       setValueInput(value);
       return;
     }
     if (selectedCard?.contract_type?.toString() === 'ERC1155') {
-      console.log('is 1155');
+      //console.log('is 1155');
       checkIf1155Owned(value, selectedCard, nftAmount);
       setValueInput(value);
       return;
@@ -258,7 +258,7 @@ export default function OfferCard({
     //let weiVal =  val;
     //console.log('processed val ' + val + ' ' + weiVal);
     //let weiVal = val;
-    console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
+    //console.log('parsed val ' + weiVal + ' ' + isOfferReceived + ' ' + decs);
     if (!isOfferReceived && val * 10 ** decs > balanceInWallet)
       weiVal = balanceInWallet / 10 ** decs;
 

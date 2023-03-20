@@ -136,7 +136,7 @@ export default function CreateToken({
         setTokensData(searchTokens);
       }
     } else if (newSearchInput?.length !== 42 && !isReceived) {
-      console.log('ON searchInput');
+      //console.log('ON searchInput');
 
       const { nftsData, tokensData } = getUserNfts || {};
       setTokensData(tokensData);

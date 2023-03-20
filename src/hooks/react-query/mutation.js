@@ -34,7 +34,7 @@ export const useMutationAddOffer = () => {
       //   queryClient.invalidateQueries(queryKey);
     },
     onError: (error) => {
-      console.log(error);
+      //console.log(error);
       //   notify('error', 'Error in Farm.');
     }
   });
@@ -62,7 +62,7 @@ export const useMutationAcceptOffer = () => {
       queryClient.invalidateQueries(queryKey);
     },
     onError: (error) => {
-      console.log(error);
+      //console.log(error);
       //   notify('error', 'Error in Farm.');
     }
   });
@@ -90,7 +90,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
     //   decimal,
     //   amount,
     // });
-    console.log('token Type ' + tokenType);
+    //console.log('token Type ' + tokenType);
     // ? ERC20
     if (!tokenType || tokenType === '20') {
       const abi = erc20_Contact_Abi;
@@ -102,7 +102,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
       const amounts = amount.toString();
 
       const amount1 = ethers.utils.parseUnits(amounts, decimals);
-      console.log('approving ERC 20 ' + amount1);
+      //console.log('approving ERC 20 ' + amount1);
       tx = await contract?.approve(zeoTC_Contract.address, amount1);
     }
 
@@ -113,7 +113,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
       tokenType === 'ERC721'
     ) {
       const abi = erc721_Contact_Abi;
-      console.log('approving ERC721 ' + tokenId);
+      //console.log('approving ERC721 ' + tokenId);
       const contract = new ethers.Contract(tokenAddress, abi, signer);
       tx = await contract?.approve(zeoTC_Contract.address, tokenId); //9964=token_id
     }
@@ -144,16 +144,16 @@ export const useMutationRemoveProduct = () => {
 
   const mutationFn = async ({ swap_id, offer_id, product_id }) => {
     let tx;
-    console.log(
-      'function removing ' + swap_id + ' ' + offer_id + ' ' + product_id
-    );
+    //console.log(
+    //'function removing ' + swap_id + ' ' + offer_id + ' ' + product_id
+    //);
     let result = await zeoTC_Contract.remove_product(
       swap_id,
       offer_id,
       product_id
     );
     let res = result.wait();
-    console.log('result : ' + JSON.stringify(res));
+    //console.log('result : ' + JSON.stringify(res));
     return res;
   };
 
@@ -194,7 +194,7 @@ export const useMutationCreateZeSwap = () => {
 
     // await zeoTC_Contract.set_allow_counter_offer(zSwap_id, isChecked);
     console.log('creating OTC');
-    console.log('prod A ' + JSON.stringify(productAs));
+    // console.log('prod A ' + JSON.stringify(productAs));
     return await zeoTC_Contract.create_zeSwap(
       productAs,
       productBs,
@@ -262,7 +262,7 @@ export const useMutationAddProductAToCounterOffer = () => {
 
     if (product === 'productA') {
       const productAs = handleFormateData(productA, true);
-      console.log('prod A ' + JSON.stringify(productA));
+      //console.log('prod A ' + JSON.stringify(productA));
       const filteredProducts = productAs.filter(
         (product) => !oldIds.includes(product.id)
       );
@@ -310,8 +310,8 @@ export const useMutationSwapCounterOffer = () => {
     //console.log(JSON.stringify(data));
     const supplier = data?.swap?.supplier;
     const demander = data?.swap[2];
-    console.log('swap creator ' + supplier);
-    console.log('counter : ' + demander);
+    //console.log('swap creator ' + supplier);
+    //console.log('counter : ' + demander);
     //return;
     const offer_id = data?.swap?.offers?.[0];
     const productA = data?.productA;
@@ -419,8 +419,8 @@ export const useMutationReject = () => {
   const queryKey = [queryKeys.getZeSwapIdList];
   const mutationFn = async ({ swap_id, expire }) => {
     // console.log( swap_id, expire);
-    console.log('rejecting ' + swap_id.toString());
-    console.log('reject expiry ' + expire);
+    //console.log('rejecting ' + swap_id.toString());
+    //console.log('reject expiry ' + expire);
     const tx = await zeoTC_Contract.reset_zeSwap(swap_id, expire);
 
     return tx.wait();

@@ -97,13 +97,13 @@ export default function OfferCard({
     const tokenAddress = token.token_address;
 
     const tokenType = token.contract_type;
-    console.log('token type ' + tokenType + ' ' + tokenAddress);
+    //console.log('token type ' + tokenType + ' ' + tokenAddress);
     const tokenId = token.token_id;
     const decimal = token.decimals;
-    console.log('already approved : ' + Number(tokenAllowance.toString()));
+    //console.log('already approved : ' + Number(tokenAllowance.toString()));
     const amount =
       Number(token?.amount?.toString()) + Number(tokenAllowance.toString());
-    console.log('to be approved : ' + amount);
+    //console.log('to be approved : ' + amount);
 
     if (tokenAddress) {
       mutate({
@@ -140,7 +140,7 @@ export default function OfferCard({
                 };
               } else {
                 setIsApprove(false);
-                console.log('not enough approved');
+                //console.log('not enough approved');
               }
             })
             .catch((error) => {
@@ -164,7 +164,7 @@ export default function OfferCard({
                 };
               } else {
                 setIsApprove(false);
-                console.log('not enough approved');
+                //console.log('not enough approved');
               }
             })
             .catch((error) => {
@@ -187,7 +187,7 @@ export default function OfferCard({
                 };
               } else {
                 setIsApprove(false);
-                console.log('not approved');
+                //console.log('not approved');
               }
             })
             .catch((error) => {
@@ -362,7 +362,7 @@ export default function OfferCard({
       if (isDashboardR) {
         const newData = receivedData.map((item, index) => {
           if (item?.address === selectedCard?.address && item?.address) {
-            console.log(' similar ');
+            //console.log(' similar ');
             return {
               ...item,
               amount: val
@@ -384,7 +384,7 @@ export default function OfferCard({
     useMutationSetProduct();
 
   const handleSetFun = (data) => {
-    console.log('handle set ' + JSON.stringify(data));
+    //console.log('handle set ' + JSON.stringify(data));
     mutateSetProduct({
       swap_id,
       offer_id,

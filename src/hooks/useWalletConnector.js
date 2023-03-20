@@ -26,11 +26,11 @@ import useWeb3SubscribeProvider from './web3SubscribeProvider';
 
 const useWalletConnector = () => {
   const dispatch = useDispatch();
-  const { chainId, } = useSelectWeb3();
-  const { subscribeProvider, resetAll, } = useWeb3SubscribeProvider();
+  const { chainId } = useSelectWeb3();
+  const { subscribeProvider, resetAll } = useWeb3SubscribeProvider();
 
   const { connector, address: account, ...rest } = useAccount();
-  const { data: signer, isError, isLoading, } = useSigner();
+  const { data: signer, isError, isLoading } = useSigner();
   const provider = useProvider();
 
   const onConnect = useCallback(async () => {
@@ -59,17 +59,17 @@ const useWalletConnector = () => {
         dispatch(
           changeContract({
             zeoTC_Contract,
-            uniSwap_Contract,
+            uniSwap_Contract
           })
         );
         // switchNetwork(provider);
       } else {
         // notify('error', 'network is not connected');
-        console.log('network is not connected');
+        //console.log('network is not connected');
       }
     } catch (error) {
       // notify('error', error?.message);
-      console.log(error);
+      //console.log(error);
     }
   }, [account, dispatch, provider, signer]);
 
@@ -81,7 +81,7 @@ const useWalletConnector = () => {
 
   return {
     onConnect,
-    onDisconnect,
+    onDisconnect
   };
 };
 

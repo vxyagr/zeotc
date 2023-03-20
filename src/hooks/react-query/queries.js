@@ -898,9 +898,9 @@ export const useQueriesGetOffer = async (offer_id) => {
   if (prod.length > 0) {
     console.log('offer id : ' + offer_id_);
     //console.log()
-    console.log('offer data : ' + JSON.stringify(prod));
-    console.log('product A ids : ' + JSON.stringify(prod.product_A_ids));
-    console.log('product B ids : ' + JSON.stringify(prod.product_B_ids));
+    //console.log('offer data : ' + JSON.stringify(prod));
+    //console.log('product A ids : ' + JSON.stringify(prod.product_A_ids));
+    //console.log('product B ids : ' + JSON.stringify(prod.product_B_ids));
     return {
       product: true
     };
@@ -931,7 +931,7 @@ export const getSwap = async (swap_id, signer) => {
   const abi = zeoTC_Contract_Abi;
   const data = [];
   const contract = new ethers.Contract(zeoTC_Contract_Address, abi, signer);
-  console.log('refetching ' + swap_id);
+  //console.log('refetching ' + swap_id);
   const swap = await contract.get_zeSwap(swap_id);
 
   // Swap
