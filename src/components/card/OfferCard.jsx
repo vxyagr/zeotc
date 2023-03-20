@@ -59,7 +59,9 @@ export default function OfferCard({
   isCounterOfferLoading,
   allowCounterButton,
   removeCard,
-  refreshPage
+  refreshPage,
+  removableA,
+  removableB
 }) {
   const dispatch = useDispatch();
   const [passInit, setPassInit] = useState(false);

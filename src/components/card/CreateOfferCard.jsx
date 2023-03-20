@@ -361,12 +361,6 @@ export default function OfferCard({
 
       if (isDashboardR) {
         const newData = receivedData.map((item, index) => {
-          console.log(
-            'receivable ' +
-              JSON.stringify(item) +
-              ' card ' +
-              JSON.stringify(selectedCard)
-          );
           if (item?.address === selectedCard?.address && item?.address) {
             console.log(' similar ');
             return {

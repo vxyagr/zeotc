@@ -152,7 +152,7 @@ export default function CreateToken({
     nftRefetch,
     tokensRefetch
   ]);
-  console.log('tokensData' + JSON.stringify(tokensData));
+  //console.log('tokensData' + JSON.stringify(tokensData));
   return (
     <div>
       <Modal

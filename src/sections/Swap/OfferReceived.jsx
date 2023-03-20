@@ -34,6 +34,8 @@ import { Border } from '../../components/Style';
 
 export default function OfferReceived({ selectedCard_, refetchData }) {
   const { data: signer } = useSigner();
+  const [removableA, setRemovableA] = useState(true);
+  const [removableB, setRemovableB] = useState(true);
   const [selectedCard, setSelectedCard] = useState(selectedCard_);
   useEffect(() => {
     if (selectedCard_ == undefined || signer == undefined) return;
@@ -134,6 +136,19 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
       });
     //router.reload();
   };
+
+  useEffect(() => {
+    /*if (productDetails.length() < 2) {
+      setRemovableB(false);
+    } else {
+      setRemovableB(true);
+    }
+    if (productDetailsA.length() < 2) {
+      setRemovableA(false);
+    } else {
+      setRemovableA(true);
+    } */
+  }, [productDetails, productDetailsA]);
 
   const handleProducts = (card, isProvider) => {
     if (isProvider) {
@@ -510,6 +525,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
                 allowCounterButton={allowCounterButton}
                 removeCard={removeCard}
                 refreshPage={refreshPage}
+                removableA={removableA}
                 //onClick={() => removeOffer(card)}
               />
             );
@@ -669,6 +685,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
                 //refreshPage
                 removeCard={removeCard}
                 refreshPage={refreshPage}
+                removableB={removableB}
               />
             );
           })}
