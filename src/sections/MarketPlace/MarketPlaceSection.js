@@ -49,7 +49,8 @@ export default function MarketPlaceSection({
   const [appStatus, setAppStatus] = useState('');
   const ProductA = zeSwapList?.productA;
   const ProductB = zeSwapList?.productB;
-  const counterOfferStatus = zeSwapList?.swap?.allow_counter_offer;
+  //const counterOfferStatus = zeSwapList?.swap?.allow_counter_offer;
+  const counterOfferStatus = true;
   const status = zeSwapList?.swap?.status;
   const offr = zeSwapList?.swap?.offers;
   const offer_id = zeSwapList?.swap?.offers?.[0];
@@ -59,6 +60,9 @@ export default function MarketPlaceSection({
   const isSupplier = supplier === account;
   const Trade = zeSwapList?.swap?.visibility;
   const swap_id = zeSwapList?.swap_id;
+  console.log(
+    'parties ' + swap_id + ' ' + supplier + ' ' + demander + ' ' + status
+  );
   let expire = zeSwapList?.swap?.expiration;
   expire = getExpieredTime(expire, 'd', false);
   const [rejecting, setRejecting] = useState(false);
