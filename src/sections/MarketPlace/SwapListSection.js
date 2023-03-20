@@ -690,6 +690,7 @@ export default function MarketPlaceSection({
                   sx={{
                     width: 150,
                     color: 'white',
+                    fontSize: 14,
                     // width:'100%',
                     background:
                       ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'

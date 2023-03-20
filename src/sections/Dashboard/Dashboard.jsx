@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { Box, Checkbox, Divider, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
 
 import OfferCard from 'components/card/CreateOfferCard';
 import ReactDatePicker from 'components/DateTimePicker';
@@ -37,6 +38,7 @@ export default function DashboardSection({ swapType }) {
   //const { account } = useSelectWeb3();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
+  const router = useRouter();
 
   const privateInput = useSelector(
     (state) => state.web3Slice.privateInputValue
@@ -53,6 +55,12 @@ export default function DashboardSection({ swapType }) {
     isLoading: createIsLoading,
     mutate: createMutate
   } = useMutationCreateZeSwap();
+  const [creating, setCreating] = useState(false);
+  useEffect(() => {
+    if (!createIsLoading && creating) {
+      router.push('/myOtcTrades');
+    }
+  }, [createIsLoading]);
 
   useEffect(() => {
     if (mutateData?.hash) {

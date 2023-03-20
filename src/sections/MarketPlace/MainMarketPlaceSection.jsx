@@ -91,7 +91,10 @@ export default function MainMarketPlaceSection() {
     console.log(isLoading, '<<<<<<< isLoading');
   }, [isLoading]);
 
-  if (!isLoading && newZeSwapList.length === 0) {
+  if (
+    !isLoading &&
+    (newZeSwapList.length === 0 || filteredZeSwapIdList?.length === 0)
+  ) {
     return (
       <Box
         sx={{

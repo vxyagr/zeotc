@@ -963,7 +963,7 @@ export default function MarketPlaceSection({
           )}
 
           {!isDemander && isCountered && (
-            <Button
+            <MButton
               // onClick={() => mutate(swap_id)}
               onClick={handleQuickSwapAccept}
               sx={{
@@ -971,9 +971,8 @@ export default function MarketPlaceSection({
                 background:
                   ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #C732A6 100%)'
               }}
-            >
-              Accept Offer
-            </Button>
+              title='Accept Offer'
+            />
           )}
 
           {isSupplier && !isSwapHistory && status < 3 && (
