@@ -61,7 +61,8 @@ export default function OfferCard({
   removeCard,
   refreshPage,
   removableA,
-  removableB
+  removableB,
+  allowCounter
 }) {
   const dispatch = useDispatch();
   const [passInit, setPassInit] = useState(false);
@@ -476,6 +477,7 @@ export default function OfferCard({
               {true && (
                 <Box
                   component='input'
+                  disabled={!allowCounter}
                   value={valueInput}
                   onLoad={(e) => console.log('card loading')}
                   onChange={(e) =>
@@ -509,7 +511,7 @@ export default function OfferCard({
           alignItems='center'
           mt={1}
         >
-          {isOfferReceived && card.id != undefined && (
+          {isOfferReceived && card.id != undefined && allowCounter && (
             <MButton
               loading={isSetLoading}
               variant='contained'

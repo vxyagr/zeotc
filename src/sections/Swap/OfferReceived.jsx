@@ -591,27 +591,29 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
                 )}
               </Box>
 
-              <Box
-                onClick={
-                  // supplier === account ?
-                  handleOpenOffer
-                  // :
-                  //  handleOpenOffer
-                }
-                sx={{
-                  border: '0.3px dashed #FFFFFF',
-                  borderRadius: '17px',
-                  background: (theme) => theme.palette.primary.main,
-                  py: 2,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  px: 2
-                }}
-              >
-                <Typography variant='subtitle1'>
-                  + Search new Token or NFT
-                </Typography>
-              </Box>
+              {counterOfferStatus && (
+                <Box
+                  onClick={
+                    // supplier === account ?
+                    handleOpenOffer
+                    // :
+                    //  handleOpenOffer
+                  }
+                  sx={{
+                    border: '0.3px dashed #FFFFFF',
+                    borderRadius: '17px',
+                    background: (theme) => theme.palette.primary.main,
+                    py: 2,
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    px: 2
+                  }}
+                >
+                  <Typography variant='subtitle1'>
+                    + Search new Token or NFT
+                  </Typography>
+                </Box>
+              )}
             </Box>
           )}
         </Box>
@@ -686,6 +688,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
                 removeCard={removeCard}
                 refreshPage={refreshPage}
                 removableB={removableB}
+                allowCounter={counterOfferStatus}
               />
             );
           })}

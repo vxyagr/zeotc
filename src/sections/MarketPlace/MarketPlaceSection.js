@@ -51,6 +51,7 @@ export default function MarketPlaceSection({
   const ProductB = zeSwapList?.productB;
   //const counterOfferStatus = zeSwapList?.swap?.allow_counter_offer;
   const counterOfferStatus = true;
+  const counterOfferAllow = zeSwapList?.swap?.allow_counter_offer;
   const status = zeSwapList?.swap?.status;
   const offr = zeSwapList?.swap?.offers;
   const offer_id = zeSwapList?.swap?.offers?.[0];
@@ -60,9 +61,9 @@ export default function MarketPlaceSection({
   const isSupplier = supplier === account;
   const Trade = zeSwapList?.swap?.visibility;
   const swap_id = zeSwapList?.swap_id;
-  console.log(
-    'parties ' + swap_id + ' ' + supplier + ' ' + demander + ' ' + status
-  );
+  //console.log(
+  //'parties ' + swap_id + ' ' + supplier + ' ' + demander + ' ' + status
+  //);
   let expire = zeSwapList?.swap?.expiration;
   expire = getExpieredTime(expire, 'd', false);
   const [rejecting, setRejecting] = useState(false);
@@ -641,7 +642,11 @@ export default function MarketPlaceSection({
                       }
                     }}
                   >
-                    {isDemander ? 'Counter Offer' : 'Accept / Counter'}
+                    {isDemander
+                      ? 'Counter Offer'
+                      : counterOfferAllow
+                      ? 'Accept / Counter'
+                      : 'Accept Offer'}
                   </Button>
                 </Box>
               </>
