@@ -10,7 +10,8 @@ import Fuse from 'fuse.js';
 import { NETWORK } from 'config';
 
 import { supportedChains } from './chains';
-import { zeoTC_Contract_Address } from 'contract';
+import { zeoTC_Contract_Address, zeoTC_Contract_Abi } from 'contract';
+import { useAccount, useSigner } from 'wagmi';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);

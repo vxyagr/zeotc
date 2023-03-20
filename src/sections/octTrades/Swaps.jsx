@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
 import { Box } from '@mui/material';
-
+import { useRouter } from 'next/router';
+import { useAccount, useSigner } from 'wagmi';
 import {
   useQueriesFilterMarketPlaceData,
   useQueriesGetSwap,
@@ -9,7 +10,7 @@ import {
   useQueryMyZeSwapId,
   useQueryOfferId
 } from 'hooks/react-query/queries';
-import MarketPlaceSection from 'sections/MarketPlace/MarketPlaceSection';
+import MarketPlaceSection from 'sections/MarketPlace/SwapListSection';
 
 import {
   swapLocalSearch,
@@ -19,6 +20,7 @@ import {
 import { compose } from '@reduxjs/toolkit';
 
 export default function Swaps({ searchValues, sort }) {
+  const router = useRouter();
   const { data: zeSwapIdsList } = useQueryMyZeSwapId();
   const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
@@ -50,7 +52,10 @@ export default function Swaps({ searchValues, sort }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValues]);
-
+  function refreshPage() {
+    // refetchData();
+    router.reload();
+  }
   useEffect(() => {
     if (allFinished) {
       setFilteredZeSwapIdList(
@@ -76,6 +81,8 @@ export default function Swaps({ searchValues, sort }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFinished]);
 
+  const refetchSwaps = () => {};
+
   // Number 1
   return (
     <Box>
@@ -83,7 +90,8 @@ export default function Swaps({ searchValues, sort }) {
         <MarketPlaceSection
           isSwap
           key={swapList?.swap_id}
-          zeSwapList={swapList}
+          zeSwapList_={swapList}
+          refreshPage={refreshPage}
           // handleClicked={handleClicked}
         />
       ))}

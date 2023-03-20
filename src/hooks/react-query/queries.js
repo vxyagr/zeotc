@@ -2,6 +2,7 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { Alchemy, Network } from 'alchemy-sdk';
+import { useAccount, useWagmi, useSigner } from 'wagmi';
 import { ethers } from 'ethers';
 import axios from 'axios';
 import {
@@ -927,26 +928,23 @@ export const useQueriesGetOffer = async (offer_id) => {
 };
 // ============================================================
 export const getSwap = async (swap_id, signer) => {
-  //const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   const abi = zeoTC_Contract_Abi;
-  //console.log('getting balance');
-  //const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
-
+  const data = [];
   const contract = new ethers.Contract(zeoTC_Contract_Address, abi, signer);
-  // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
-
-  //let balance = await contract.allowance(account, zeoTC_Contract_Address);
+  console.log('refetching ' + swap_id);
   const swap = await contract.get_zeSwap(swap_id);
 
   // Swap
   if (swap?.status === 0 || swap?.status === 1) {
+    //console.log('loop');
     data[swap_id] = {
       swap: swap,
       swap_id
     };
 
     for (const offer_id of swap.offers) {
-      const offer = await zeoTC_Contract.get_offers(offer_id);
+      //console.log('loop 2');
+      const offer = await contract.get_offers(offer_id);
 
       data[swap_id] = {
         ...data[swap_id],
@@ -956,7 +954,7 @@ export const getSwap = async (swap_id, signer) => {
       };
 
       for (const productA_id of offer.product_A_ids) {
-        const product = await zeoTC_Contract.get_product(productA_id);
+        const product = await contract.get_product(productA_id);
 
         let amount = product.amount.toString();
         amount = Number(amount);
@@ -970,7 +968,7 @@ export const getSwap = async (swap_id, signer) => {
       }
 
       for (const productB_id of offer.product_B_ids) {
-        const product = await zeoTC_Contract.get_product(productB_id);
+        const product = await contract.get_product(productB_id);
         const metadata = await getMetaData(product.token);
 
         data[swap_id].productB.push({
@@ -979,7 +977,10 @@ export const getSwap = async (swap_id, signer) => {
         });
       }
     }
-
-    return Object.values(data);
+    //console.log(
+    // 'fetch result ' + JSON.stringify(data[swap_id]) + ' from ' + swap
+    //);
+    //return Object.values(data[swap_id]);
+    return data[swap_id];
   }
 };

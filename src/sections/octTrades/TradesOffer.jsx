@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 
 import { Box } from '@mui/material';
 import { useAccount } from 'wagmi';
-
+import { useRouter } from 'next/router';
 import {
   useQueriesFilterMarketPlaceData,
   useQueryCounterOfferIdList,
@@ -11,9 +11,10 @@ import {
   getCounterOffers
 } from 'hooks/react-query/queries';
 
-import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
+import MarketPlaceSection from '../MarketPlace/TradeOfferSection';
 
 export default function TradesOffer({ searchValues, sort, subMenu }) {
+  const router = useRouter();
   const account = useAccount();
 
   const counterList = getCounterOffers(account.toString());
@@ -48,8 +49,8 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
     if (subMenuType === 'pending received counter offers') {
       let receivedSwapCounter = allSwapList.filter(
         (item) =>
-          item.swap[1] === account.address.toString() && //&&
-          //item.swap[2] != '0x0000000000000000000000000000000000000000' &&
+          item.swap[1] === account.address.toString() &&
+          item.swap[2] != '0x0000000000000000000000000000000000000000' &&
           Number(item.swap.status) < 2
       );
 
@@ -95,6 +96,11 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
     return filterSwapBasedOnOfferIdList;
   };
 
+  function refreshPage() {
+    // refetchData();
+    router.reload();
+  }
+
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
@@ -127,7 +133,8 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
             <MarketPlaceSection
               isOffer
               key={swapList?.swap_id}
-              zeSwapList={swapList}
+              zeSwapList_={swapList}
+              refreshPage={refreshPage}
             />
           ))
         ) : (

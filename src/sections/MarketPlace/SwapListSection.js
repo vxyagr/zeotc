@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect, useRef, useState } from 'react';
-
+import { useSigner, useAccout } from 'wagmi';
 import { CopyAllOutlined } from '@mui/icons-material';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import { ethers } from 'ethers';
@@ -12,6 +12,13 @@ import MarketPlaceCard from 'components/card/MarketPlaceCard';
 import LoadingAmount from 'components/LoadingAmount';
 import CounterOffer from 'components/modal/CounterOffer';
 import { Border } from 'components/Style';
+import {
+  erc1155_Contact_Abi,
+  erc721_Contact_Abi,
+  erc20_Contact_Abi,
+  zeoTC_Contract_Address,
+  zeoTC_Contract_Abi
+} from 'contract';
 import { getExpieredTime, getTokenPriceInUsd } from 'helpers/utilities';
 import {
   useMutationAccept,
@@ -21,6 +28,7 @@ import {
   useMutationCancelZeSwap,
   useERC20_ERC721_ERC1155Approve
 } from 'hooks/react-query/mutation';
+import { getSwap } from 'hooks/react-query/queries';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { isCancel } from 'axios';
 
@@ -29,10 +37,22 @@ export default function MarketPlaceSection({
   isOffer,
   isSwapDetails,
   isMarketPlace,
-  zeSwapList,
+  zeSwapList_,
   isSwapHistory,
   refreshPage
 }) {
+  const [zeSwapList, setZeSwapList] = useState(zeSwapList_);
+  const { data: signer } = useSigner();
+  // console.log('init swap ' + JSON.stringify(zeSwapList));
+  //const { data: signer } = useSigner();
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  useEffect(() => {
+    if (!isRejectLoading && rejecting) {
+      refreshPage();
+    }
+  }, zeSwapList);
+
   const { account } = useSelectWeb3();
   const { mutate: CounterOfferMutate, isLoading: isCounterOfferLoading } =
     useMutationSwapCounterOffer();
@@ -75,7 +95,9 @@ export default function MarketPlaceSection({
 
   useEffect(() => {
     if (!isRejectLoading && rejecting) {
-      refreshPage();
+      //refreshPage();
+      let r = getSwap(swap_id, signer);
+      console.log('fetched ' + JSON.stringify(r));
     }
   }, isRejectLoading);
 
@@ -86,7 +108,7 @@ export default function MarketPlaceSection({
   } = useERC20_ERC721_ERC1155Approve();
 
   const handleApproveClick = (token) => {};
-
+  const refetchSwaps = () => {};
   // Moralis end
   useEffect(() => {
     if (isSwap && !isSwapHistory) {
@@ -252,7 +274,17 @@ export default function MarketPlaceSection({
 
   useEffect(() => {
     if (cancelling && !isCancelLoading) {
-      refreshPage();
+      //refreshPage();
+
+      let r = getSwap(swap_id, signer)
+        .then((result) => {
+          //console.log('before cancel ' + JSON.stringify(zeSwapList));
+          //console.log('fetched after cancel ' + JSON.stringify(result));
+          setZeSwapList(result);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [isCancelLoading]);
 

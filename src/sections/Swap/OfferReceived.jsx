@@ -99,7 +99,7 @@ export default function OfferReceived({ selectedCard, refetchData }) {
 
   function refreshPage() {
     // refetchData();
-    //router.reload();
+    router.reload();
   }
 
   const handleProducts = (card, isProvider) => {
@@ -437,7 +437,7 @@ export default function OfferReceived({ selectedCard, refetchData }) {
               my: 1.5
             }}
           >
-            <Typography color='gray'>Total Amount</Typography>
+            <Typography color='gray'>Total Value</Typography>
 
             <LoadingAmount
               isLoading={SumOfAmountA === 0}
@@ -601,7 +601,7 @@ export default function OfferReceived({ selectedCard, refetchData }) {
               my: 1.5
             }}
           >
-            <Typography color='gray'>Total Amount</Typography>
+            <Typography color='gray'>Total Value</Typography>
 
             <LoadingAmount
               isLoading={SumOfAmountB === 0}
