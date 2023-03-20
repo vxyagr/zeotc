@@ -342,7 +342,7 @@ export const useQueryGetUserNFTs = () => {
 
   const queryFn = async () => {
     const tokensData = await getUserNFts(tokensApi);
-    console.log('getting tokens in wallet ' + JSON.stringify(tokensData));
+    //console.log('getting tokens in wallet ' + JSON.stringify(tokensData));
     let nftsData = await getUserNFts(nftApi);
     nftsData = nftsData.result;
     // nftsData = nftsData.slice(0, 2);
@@ -374,7 +374,7 @@ export const useQueryGetUserNFTs = () => {
 
         //? ERC1155
         if (item?.contract_type === 'ERC1155') {
-          console.log('ERC1155');
+          // /console.log('ERC1155');
           const abi = erc1155_Contact_Abi;
 
           const contract = new ethers.Contract(

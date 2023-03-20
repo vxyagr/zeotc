@@ -7,7 +7,7 @@ import { Box, Button, Divider, Typography } from '@mui/material';
 import { ethers } from 'ethers';
 //import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useSigner } from 'wagmi';
 import LoadingAmount from 'components/LoadingAmount';
 import MButton from 'components/MButton';
 import CreateToken from 'components/modal/CreateToken';
@@ -21,14 +21,38 @@ import {
   useMutationReject,
   useMutationRemoveProduct
 } from 'hooks/react-query/mutation';
-import { useQueriesGetOffer, testGetSwap } from 'hooks/react-query/queries';
+import {
+  useQueriesGetOffer,
+  testGetSwap,
+  getSwap
+} from 'hooks/react-query/queries';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { getProductDetails } from 'redux/slice/otcTrades';
 
 import OfferCard from '../../components/card/OfferCard';
 import { Border } from '../../components/Style';
 
-export default function OfferReceived({ selectedCard, refetchData }) {
+export default function OfferReceived({ selectedCard_, refetchData }) {
+  const { data: signer } = useSigner();
+  const [selectedCard, setSelectedCard] = useState(selectedCard_);
+  useEffect(() => {
+    if (selectedCard_ == undefined || signer == undefined) return;
+    setSelectedCard(selectedCard_);
+    /*console.log('initial selected card ' + JSON.stringify(selectedCard_));
+    // if (selectedCard_ != undefined) {
+    let r = getSwap(selectedCard_.swap[0], signer)
+      .then((result) => {
+        //console.log('before cancel ' + JSON.stringify(zeSwapList));
+        console.log('fetched swap ' + JSON.stringify(result));
+        console.log('initial selected card ' + JSON.stringify(selectedCard_));
+        setSelectedCard(result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    //} */
+  }, [selectedCard_, signer]);
+  //
   const [openReceive, setOpenReceive] = useState(false);
   const handleOpenReceive = () => setOpenReceive(true);
   const handleCloseReceive = () => setOpenReceive(false);
@@ -97,10 +121,19 @@ export default function OfferReceived({ selectedCard, refetchData }) {
     setProductDetailsA(updatedAmount);
   };
 
-  function refreshPage() {
+  const refreshPage = () => {
     // refetchData();
-    router.reload();
-  }
+    let r = getSwap(swap_id, signer)
+      .then((result) => {
+        //console.log('before cancel ' + JSON.stringify(zeSwapList));
+        //console.log('fetched after cancel ' + JSON.stringify(result));
+        setSelectedCard(result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    //router.reload();
+  };
 
   const handleProducts = (card, isProvider) => {
     if (isProvider) {

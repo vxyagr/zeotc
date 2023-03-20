@@ -48,7 +48,7 @@ export default function MarketPlaceSwaping(context) {
         (item) => item?.swap_id === pathName
       );
       setSelectedCard(selectData);
-      console.log('swap to be shown ' + JSON.stringify(selectData[0].offer[0]));
+      //console.log('swap to be shown ' + JSON.stringify(selectData[0].offer[0]));
 
       //setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
@@ -83,7 +83,7 @@ export default function MarketPlaceSwaping(context) {
       >
         <Typography>Swap</Typography>
 
-        <OfferReceived selectedCard={selectedCard?.[0]} />
+        <OfferReceived selectedCard_={selectedCard?.[0]} />
       </Box>
     </Layout>
   );
