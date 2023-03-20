@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 
 import { Box } from '@mui/material';
 import { useAccount } from 'wagmi';
+import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { useRouter } from 'next/router';
 import {
   useQueriesFilterMarketPlaceData,
@@ -15,7 +16,7 @@ import MarketPlaceSection from '../MarketPlace/TradeOfferSection';
 
 export default function TradesOffer({ searchValues, sort, subMenu }) {
   const router = useRouter();
-  const account = useAccount();
+  const { account } = useSelectWeb3();
 
   const counterList = getCounterOffers(account.toString());
   const { data: counterOfferIdList } = useQueryCounterOfferIdList();
@@ -110,7 +111,7 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allFinished]);
+  }, [allFinished, account]);
 
   useEffect(() => {
     if (filteredOffer) {

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-
+import { useAccount } from 'wagmi';
 import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -35,6 +35,12 @@ export default function MainMarketPlaceSection() {
   //const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
   //const counterList = getCounterOffers(account);
   //console.log(JSON.stringify(newZeSwapList));
+  const { address, isConnecting, isDisconnected } = useAccount();
+
+  useEffect(() => {
+    if (address != undefined) {
+    }
+  }, [address, isDisconnected]);
   const [sort, setSort] = useState('ASC');
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
 
@@ -74,7 +80,7 @@ export default function MainMarketPlaceSection() {
     }
     //console.log('counter list ' + JSON.stringify(counterList));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allFinished]);
+  }, [allFinished, account]);
 
   useEffect(() => {
     if (filteredZeSwapIdList) {
@@ -92,6 +98,7 @@ export default function MainMarketPlaceSection() {
   }, [isLoading]);
 
   if (
+    account &&
     !isLoading &&
     (newZeSwapList.length === 0 || filteredZeSwapIdList?.length === 0)
   ) {
@@ -148,6 +155,7 @@ export default function MainMarketPlaceSection() {
     <Box>
       <Box>
         <MarketPlaceHeader
+          key={account}
           sortType={sort}
           setSortType={() => {
             setSort((curr) => {

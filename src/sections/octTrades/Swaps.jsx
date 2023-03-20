@@ -18,13 +18,15 @@ import {
   sortSwapByExpireDate
 } from '../../helpers/utilities';
 import { compose } from '@reduxjs/toolkit';
+import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 
 export default function Swaps({ searchValues, sort }) {
   const router = useRouter();
-  const { data: zeSwapIdsList } = useQueryMyZeSwapId();
+  const { data: zeSwapIdsList, refetch: refetchSwapId } = useQueryMyZeSwapId();
   const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
-
+  const { account } = useSelectWeb3();
+  //console.log('account ' + account);
   const allFinished = useMemo(() => {
     if (newZeSwapList.length !== 0) {
       let flag = true;
@@ -41,6 +43,10 @@ export default function Swaps({ searchValues, sort }) {
     return false;
   }, [newZeSwapList]);
 
+  useEffect(() => {
+    console.log('refetching by changed account');
+    refetchSwapId();
+  }, [account]);
   useEffect(() => {
     if (allFinished && searchValues !== null) {
       setFilteredZeSwapIdList(
@@ -79,7 +85,7 @@ export default function Swaps({ searchValues, sort }) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allFinished]);
+  }, [allFinished, account]);
 
   const refetchSwaps = () => {};
 

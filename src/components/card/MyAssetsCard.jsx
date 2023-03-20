@@ -47,9 +47,7 @@ export default function MyAssetsCard({ card, isNFTs }) {
             sx={{
               color: 'gray'
             }}
-          >
-            $1,212 USD
-          </Typography>
+          ></Typography>
         </Box>
       </Box>
 
@@ -70,9 +68,7 @@ export default function MyAssetsCard({ card, isNFTs }) {
           sx={{
             color: 'gray'
           }}
-        >
-          $212 USD
-        </Typography>
+        ></Typography>
       </Box>
     </Box>
   );

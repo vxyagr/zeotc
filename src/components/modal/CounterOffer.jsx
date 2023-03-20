@@ -184,7 +184,7 @@ export default function CounterOffer({ handleClose, open, isReceived }) {
 
                 <OfferCard
                   title='Ethereum'
-                  price='$1,212 USD'
+                  price=''
                   value='Amount'
                   img='/assets/images/ethereum.png'
                   isDashboard
