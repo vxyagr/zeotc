@@ -194,6 +194,7 @@ export const useMutationCreateZeSwap = () => {
 
     // await zeoTC_Contract.set_allow_counter_offer(zSwap_id, isChecked);
     console.log('creating OTC');
+    console.log('prod A ' + JSON.stringify(productAs));
     return await zeoTC_Contract.create_zeSwap(
       productAs,
       productBs,
@@ -261,7 +262,7 @@ export const useMutationAddProductAToCounterOffer = () => {
 
     if (product === 'productA') {
       const productAs = handleFormateData(productA, true);
-
+      console.log('prod A ' + JSON.stringify(productA));
       const filteredProducts = productAs.filter(
         (product) => !oldIds.includes(product.id)
       );

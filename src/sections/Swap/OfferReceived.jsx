@@ -2,10 +2,10 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 
 import { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/router';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { ethers } from 'ethers';
-import { useRouter } from 'next/router';
+//import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import LoadingAmount from 'components/LoadingAmount';
@@ -21,13 +21,14 @@ import {
   useMutationReject,
   useMutationRemoveProduct
 } from 'hooks/react-query/mutation';
+import { useQueriesGetOffer, testGetSwap } from 'hooks/react-query/queries';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { getProductDetails } from 'redux/slice/otcTrades';
 
 import OfferCard from '../../components/card/OfferCard';
 import { Border } from '../../components/Style';
 
-export default function OfferReceived({ selectedCard }) {
+export default function OfferReceived({ selectedCard, refetchData }) {
   const [openReceive, setOpenReceive] = useState(false);
   const handleOpenReceive = () => setOpenReceive(true);
   const handleCloseReceive = () => setOpenReceive(false);
@@ -96,6 +97,11 @@ export default function OfferReceived({ selectedCard }) {
     setProductDetailsA(updatedAmount);
   };
 
+  function refreshPage() {
+    // refetchData();
+    //router.reload();
+  }
+
   const handleProducts = (card, isProvider) => {
     if (isProvider) {
       const updateCounterArrayB = productDetails?.includes(card)
@@ -123,6 +129,8 @@ export default function OfferReceived({ selectedCard }) {
   const [zeroProductA, setZeroProductA] = useState(0);
   const [zeroProductB, setZeroProductB] = useState(0);
   const [isNewToken, setIsNewToken] = useState(false);
+  //const [ProductA, setProductA] = useState(productDetailsA);
+  //const [ProductB, setProductB] = useState(productDetails);
   const ProductA = productDetailsA;
   const ProductB = productDetails;
 
@@ -137,6 +145,11 @@ export default function OfferReceived({ selectedCard }) {
   const offer_id = selectedCard?.swap?.offers?.[0];
   let expire = selectedCard?.swap?.expiration;
   expire = expire?.toString();
+  const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
+
+  const receivedData = useSelector(
+    (state) => state.otcTrades.selectTokenNftsReceive
+  );
 
   const {
     isLoading: isApproveLoading,
@@ -171,7 +184,8 @@ export default function OfferReceived({ selectedCard }) {
     useMutationSetProduct();
   const { mutate: mutateRemoveOffer, isLoading: isRemoveLoading } =
     useMutationRemoveProduct();
-
+  //const datas = useQueriesGetOffer(offer_id);
+  //const someswap = testGetSwap();
   const removeOffer = (card, isReceived) => {
     console.log(
       'removing ' +
@@ -198,6 +212,39 @@ export default function OfferReceived({ selectedCard }) {
     } */
   };
 
+  const removeCard = (card, isReceived) => {
+    console.log('unchain card being removed ' + JSON.stringify(card));
+    if (productDetailsA.includes(card)) {
+      //console.log('it is in prodcut A');
+      const newValue = productDetailsA.includes(card)
+        ? productDetailsA.filter((el) => el !== card)
+        : [...productDetailsA, card];
+      setProductDetailsA(newValue);
+    }
+    if (productDetails.includes(card)) {
+      //console.log('it is in prodcut A');
+      const newValue = productDetails.includes(card)
+        ? productDetails.filter((el) => el !== card)
+        : [...productDetails, card];
+      setProductDetails(newValue);
+    }
+
+    return;
+    if (isReceived) {
+      const newValue = receivedData.includes(card)
+        ? receivedData.filter((el) => el !== card)
+        : [...receivedData, card];
+
+      dispatch(addNewTokenNftsReceive(newValue));
+    } else {
+      const newValue = dataFetch.includes(card)
+        ? dataFetch.filter((el) => el !== card)
+        : [...dataFetch, card];
+
+      dispatch(addNewTokenNfts(newValue));
+    }
+  };
+
   const handleSetFun = (data) => {
     mutateSetProduct({
       swap_id,
@@ -206,6 +253,7 @@ export default function OfferReceived({ selectedCard }) {
     });
   };
   const allowCounterButton = (isAllow) => {
+    //console.log('setting to ' + isAllow);
     setIsNewToken(isAllow);
   };
   const [initA, setInitA] = useState(0);
@@ -242,18 +290,6 @@ export default function OfferReceived({ selectedCard }) {
   };
 
   const handleCounterOffer = (product) => {
-    // const newProductB = ProductB.map((item) => {
-    //   return {
-    //     ...item,
-    //     amount: ethers.utils
-    //       .formatUnits(
-    //         item?.amount?.toString(),
-    //         ProductB?.[0]?.metadata?.decimals
-    //       )
-    //       ?.split('.')[0],
-    //   };
-    // });
-
     const formattedData = {
       ...selectedCard,
       productB: ProductB,
@@ -268,6 +304,7 @@ export default function OfferReceived({ selectedCard }) {
     allowCounterButton(false);
     // CounterOfferMutate(ProductB);
   };
+
   const handleSwapAccept = () => {
     acceptMutate(swap_id);
   };
@@ -314,8 +351,9 @@ export default function OfferReceived({ selectedCard }) {
       });
     }
   }, [ProductB, ProductB?.length]);
-
+  //const {query:} = useQueriesGetOffer()
   useEffect(() => {
+    //let datas = useQueriesGetOffer(offer_id);
     if (ProductA?.length !== 0) {
       const totalAmountPool = [];
 
@@ -408,6 +446,8 @@ export default function OfferReceived({ selectedCard }) {
           </Box>
 
           {ProductA?.map((card, idx) => {
+            //console.log('A datas ' + JSON.stringify(card));
+
             return (
               <OfferCard
                 idx={idx}
@@ -435,6 +475,8 @@ export default function OfferReceived({ selectedCard }) {
                 isProvideItems={supplier === account}
                 isOfferReceived
                 allowCounterButton={allowCounterButton}
+                removeCard={removeCard}
+                refreshPage={refreshPage}
                 //onClick={() => removeOffer(card)}
               />
             );
@@ -463,11 +505,11 @@ export default function OfferReceived({ selectedCard }) {
                   }
                 }}
               >
-                {isNewToken && (
+                {false && isNewToken && (
                   <MButton
                     disabled={!account && isNewToken}
                     Loading={isCounterOfferLoading}
-                    title='Attach Offer'
+                    title='Add Token'
                     onClick={() => handleCounterOffer('productA')}
                     sx={{
                       width: 'max-content',
@@ -518,7 +560,7 @@ export default function OfferReceived({ selectedCard }) {
                 }}
               >
                 <Typography variant='subtitle1'>
-                  + Add new Token or NFT
+                  + Search new Token or NFT
                 </Typography>
               </Box>
             </Box>
@@ -591,6 +633,9 @@ export default function OfferReceived({ selectedCard }) {
                 isProvideItems={supplier !== account}
                 isOfferReceived
                 allowCounterButton={allowCounterButton}
+                //refreshPage
+                removeCard={removeCard}
+                refreshPage={refreshPage}
               />
             );
           })}
@@ -617,39 +662,41 @@ export default function OfferReceived({ selectedCard }) {
                   }
                 }}
               >
-                <MButton //B
-                  disabled={!account && isNewToken}
-                  Loading={isCounterOfferLoading}
-                  title='Attach Offer'
-                  onClick={() => handleCounterOffer('productB')}
-                  sx={{
-                    width: 'max-content',
-                    background: '#000',
-                    border: '1px solid transparent',
-                    position: 'absolute',
-                    // fontSize: 14,
-                    fontSize: 13,
-                    color: '#fff',
-                    top: 0,
-                    bottom: 0,
-                    borderRadius: '12px',
-
-                    '&:after': {
+                {false && (
+                  <MButton //B
+                    disabled={!account && isNewToken}
+                    Loading={isCounterOfferLoading}
+                    title='Attach Offer'
+                    onClick={() => handleCounterOffer('productB')}
+                    sx={{
+                      width: 'max-content',
+                      background: '#000',
+                      border: '1px solid transparent',
                       position: 'absolute',
-                      top: -2,
-                      left: -2,
-                      right: -2,
-                      bottom: -2,
-                      background:
-                        'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
-                      content: '""',
-                      // overflow: 'hidden',
+                      // fontSize: 14,
+                      fontSize: 13,
+                      color: '#fff',
+                      top: 0,
+                      bottom: 0,
+                      borderRadius: '12px',
 
-                      zIndex: -1,
-                      borderRadius: '10.19px'
-                    }
-                  }}
-                />
+                      '&:after': {
+                        position: 'absolute',
+                        top: -2,
+                        left: -2,
+                        right: -2,
+                        bottom: -2,
+                        background:
+                          'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
+                        content: '""',
+                        // overflow: 'hidden',
+
+                        zIndex: -1,
+                        borderRadius: '10.19px'
+                      }
+                    }}
+                  />
+                )}
               </Box>
 
               <Box
@@ -670,7 +717,7 @@ export default function OfferReceived({ selectedCard }) {
                 }}
               >
                 <Typography variant='subtitle1'>
-                  + Add new Token or NFT
+                  + Search new Token or NFT
                 </Typography>
               </Box>
             </Box>

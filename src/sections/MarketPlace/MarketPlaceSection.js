@@ -260,7 +260,8 @@ export default function MarketPlaceSection({
         const formatedTokenAmount = handleFormateAmount(item?.amount);
 
         totalAmountPool.push(
-          getTokenPriceInUsd(item.token, formatedTokenAmount)
+          //getTokenPriceInUsd(item.token, formatedTokenAmount)
+          Number(formatedTokenAmount)
         );
       });
 
@@ -286,7 +287,8 @@ export default function MarketPlaceSection({
         const formatedTokenAmount = handleFormateAmount(item?.amount);
 
         totalAmountPool.push(
-          getTokenPriceInUsd(item.token, formatedTokenAmount)
+          //getTokenPriceInUsd(item.token, formatedTokenAmount)
+          Number(formatedTokenAmount)
         );
       });
 

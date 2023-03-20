@@ -57,7 +57,9 @@ export default function OfferCard({
   tokenBalance,
   handleCounterOffer,
   isCounterOfferLoading,
-  allowCounterButton
+  allowCounterButton,
+  removeCard,
+  refreshPage
 }) {
   const dispatch = useDispatch();
   const [passInit, setPassInit] = useState(false);
@@ -106,41 +108,34 @@ export default function OfferCard({
   const { mutate: mutateRemoveOffer, isLoading: isRemoveLoading } =
     useMutationRemoveProduct();
   const [removing, setRemoving] = useState(false);
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
   const removeOffer = async (card, isReceived) => {
-    console.log(
-      'removing offer ' +
-        JSON.stringify(card[0]) +
-        ' from ' +
-        JSON.stringify(swap_id + ' ' + offer_id)
-    );
-    let result = await mutateRemoveOffer({
-      swap_id,
-      offer_id,
-      product_id: card[0]
-    });
-    //console.log("result " + )
-    return;
-    /*
-    if (isReceived) {
-      const newValue = receivedData.includes(card)
-        ? receivedData.filter((el) => el !== card)
-        : [...receivedData, card];
+    console.log('removing ' + card?.id != undefined);
+    if (card?.id != undefined) {
+      setRemoving(true);
+      let result = await mutateRemoveOffer({
+        swap_id,
+        offer_id,
+        product_id: card[0]
+      });
+      //console.log("result " + )
 
-      dispatch(addNewTokenNftsReceive(newValue));
+      return;
+      /*
+       */
     } else {
-      const newValue = dataFetch.includes(card)
-        ? dataFetch.filter((el) => el !== card)
-        : [...dataFetch, card];
-
-      dispatch(addNewTokenNfts(newValue));
-    } */
+      //allowCounterButton(false);
+      console.log('removing non-chain card');
+      removeCard(card, isOfferReceived);
+    }
   };
 
   useEffect(() => {
     if (removing && !isRemoveLoading) {
       setRemoving(false);
-      let exist = useQueriesGetProduct(card[0]);
-      console.log('product ' + JSON.stringify(exist));
+      //let exist = useQueriesGetProduct(card[0]);
+      //console.log('product ' + JSON.stringify(exist));
+      refreshPage();
       //check if product still exist
       //if not exist, route to parent
     }
@@ -160,6 +155,12 @@ export default function OfferCard({
   useEffect(() => {
     if (card.id == undefined && allowCounterButton) allowCounterButton(true);
   });
+  const [addingNewToken, setAddingNewToken] = useState(false);
+  useEffect(() => {
+    if (!isCounterOfferLoading && addingNewToken) {
+      refreshPage();
+    }
+  }, [isCounterOfferLoading]);
 
   useEffect(() => {
     console.log(tokenBalanceInWallet, '<<<<<< tokenBalanceInWallet');
@@ -361,7 +362,10 @@ export default function OfferCard({
             <Typography variant='subtitle1'>
               {card?.newMetadata
                 ? card.newMetadata?.name
-                : card?.name || card?.metadata?.name}
+                : card?.name || card?.metadata?.name}{' '}
+              {
+                //card?.id == undefined ? '(New)' : ''
+              }
             </Typography>
 
             {/* {isMarketCard && ( */}
@@ -383,7 +387,7 @@ export default function OfferCard({
 
             {/* )} */}
           </Box>
-          {isDashboard && (
+          {isDashboard && !isModal && (
             <Box
               onClick={isRemoveLoading ? '' : () => removeOffer(card)}
               component='img'
@@ -426,7 +430,9 @@ export default function OfferCard({
               fontSize: '12px'
             }}
           >
-            {isProvideItems && `Available Balance: ${balanceInWallet}`}
+            {isProvideItems &&
+              //!isOfferReceived &&
+              `Available Balance: ${balanceInWallet}`}
           </Typography>
         </Box>
 
@@ -453,7 +459,7 @@ export default function OfferCard({
             >
               <Typography variant='subtitle1'>
                 {card.id == undefined
-                  ? 'Attach this new offer to be able to set amount'
+                  ? 'Amount'
                   : card.contract_type == 'ERC721'
                   ? 'NFT ID'
                   : 'Amount'}
@@ -525,6 +531,7 @@ export default function OfferCard({
                   'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)'
               }}
               onClick={() => {
+                setAddingNewToken(true);
                 handleCounterOffer(prod);
               }}
               title='Add Token'

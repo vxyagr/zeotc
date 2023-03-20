@@ -5,7 +5,9 @@ import { useRouter } from 'next/router';
 
 import {
   useQueriesFilterMarketPlaceData,
-  useQueryZeSwapIdList
+  useQueryZeSwapIdList,
+  useQueriesGetOffer,
+  getSwap
 } from 'hooks/react-query/queries';
 import Layout from 'layout';
 import OfferReceived from 'sections/Swap/OfferReceived';
@@ -21,7 +23,9 @@ export default function MarketPlaceSwaping(context) {
 
   const { data: zeSwapIdList, error } = useQueryZeSwapIdList();
 
-  const newZeSwapList = useQueriesFilterMarketPlaceData(zeSwapIdList);
+  const [newZeSwapList, setNewZeSwapList] = useState(
+    useQueriesFilterMarketPlaceData(zeSwapIdList)
+  );
 
   const allFinished = useMemo(() => {
     if (newZeSwapList.length !== 0) {
@@ -38,6 +42,12 @@ export default function MarketPlaceSwaping(context) {
 
     return false;
   }, [newZeSwapList]);
+  //const [counter,setCounter]
+  const [selectedSwap, setSelectedSwap] = useState([]);
+  const refetchData = () => {
+    setNewZeSwapList(useQueriesFilterMarketPlaceData(zeSwapIdList));
+    setSelectedSwap(getSwap(selectedCard[0]));
+  };
 
   useEffect(() => {
     if (allFinished) {
@@ -47,7 +57,8 @@ export default function MarketPlaceSwaping(context) {
         (item) => item?.swap_id === pathName
       );
       setSelectedCard(selectData);
-      console.log('swap ' + JSON.stringify(selectData));
+      console.log('swap to be shown ' + JSON.stringify(selectData[0].offer[0]));
+
       //setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
     //console.log('counter list ' + JSON.stringify(counterList));
@@ -81,7 +92,10 @@ export default function MarketPlaceSwaping(context) {
       >
         <Typography>Swap</Typography>
 
-        <OfferReceived selectedCard={selectedCard?.[0]} />
+        <OfferReceived
+          selectedCard={selectedCard?.[0]}
+          refetchData={refetchData}
+        />
       </Box>
     </Layout>
   );
