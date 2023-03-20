@@ -392,20 +392,23 @@ export default function OfferCard({
 
             {/* )} */}
           </Box>
-          {isDashboard && !isModal && (
-            <Box
-              onClick={isRemoveLoading ? '' : () => removeOffer(card)}
-              component='img'
-              src={
-                isRemoveLoading
-                  ? '/assets/svg/small-loading.svg'
-                  : '/assets/svg/removeIcon.png'
-              }
-              sx={{
-                cursor: 'pointer'
-              }}
-            />
-          )}
+          {isDashboard &&
+            !isModal &&
+            ((isOfferReceived && removableB) ||
+              (!isOfferReceived && removableA > 1)) > 1 && (
+              <Box
+                onClick={isRemoveLoading ? '' : () => removeOffer(card)}
+                component='img'
+                src={
+                  isRemoveLoading
+                    ? '/assets/svg/small-loading.svg'
+                    : '/assets/svg/removeIcon.png'
+                }
+                sx={{
+                  cursor: 'pointer'
+                }}
+              />
+            )}
 
           {unSelectedItems && (
             <Box

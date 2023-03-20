@@ -434,13 +434,6 @@ export default function MarketPlaceSection({
             }}
           >
             <Typography
-              component={Link}
-              href={{
-                pathname: '/marketPlace/swap',
-                query: {
-                  id: `${swap_id}` // should be `title` not `id`
-                }
-              }}
               sx={{
                 px: 2
               }}
