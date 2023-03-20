@@ -43,10 +43,12 @@ export default function DashboardSection({ swapType }) {
   const privateInput = useSelector(
     (state) => state.web3Slice.privateInputValue
   );
-
+  const zeroAddress = '0x0000000000000000000000000000000000000000';
   const isPrivateInputEmpty =
     swapType === 'Private' && (privateInput === null || privateInput === '');
-
+  useEffect(() => {
+    console.log('private input ' + privateInput + ' ' + isPrivateInputEmpty);
+  }, [privateInput, isPrivateInputEmpty]);
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
@@ -504,10 +506,13 @@ export default function DashboardSection({ swapType }) {
             disabled={!isAllApprovd}
             onClick={() => {
               if (confirmAllowance()) {
+                let demanderAddress = zeroAddress;
+                if (!isPrivateInputEmpty) demanderAddress = privateInput;
                 createMutate({
                   productB: receivedData,
                   productA: dataFetch,
                   isChecked,
+                  demander: demanderAddress,
                   newDate: date
                 });
               } else {

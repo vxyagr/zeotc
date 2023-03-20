@@ -61,9 +61,13 @@ export default function MarketPlaceSection({
   const isSupplier = supplier === account;
   const Trade = zeSwapList?.swap?.visibility;
   const swap_id = zeSwapList?.swap_id;
-  //console.log(
-  //'parties ' + swap_id + ' ' + supplier + ' ' + demander + ' ' + status
-  //);
+  if (
+    swap_id.toString() ===
+    '0x42aa628e4467e66ea6548a60eb55db497aefeb7b8a1416392d5537ee0fa52447'
+  )
+    console.log(
+      'parties ' + swap_id + ' ' + supplier + ' ' + demander + ' ' + status
+    );
   let expire = zeSwapList?.swap?.expiration;
   expire = getExpieredTime(expire, 'd', false);
   const [rejecting, setRejecting] = useState(false);

@@ -177,7 +177,13 @@ export const useMutationCreateZeSwap = () => {
 
   const queryKey = [queryKeys.getZeSwapIdList, account];
 
-  const mutationFn = async ({ productA, productB, isChecked, newDate }) => {
+  const mutationFn = async ({
+    productA,
+    productB,
+    isChecked,
+    demander,
+    newDate
+  }) => {
     const productAs = handleFormateData(productA);
     const productBs = handleFormateData(productB);
 
@@ -199,7 +205,7 @@ export const useMutationCreateZeSwap = () => {
       productAs,
       productBs,
       expiration_in_UTC,
-      zeroAddress,
+      demander,
       isChecked
     );
   };
