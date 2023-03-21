@@ -28,7 +28,9 @@ export default function Swaps({ searchValues, sort }) {
   const { account } = useSelectWeb3();
   //console.log('account ' + account);
   const allFinished = useMemo(() => {
+    console.log('send memo ');
     if (newZeSwapList.length !== 0) {
+      console.log('send memo ' + newZeSwapList.length);
       let flag = true;
 
       newZeSwapList.forEach((e) => {
@@ -107,7 +109,7 @@ export default function Swaps({ searchValues, sort }) {
           <MarketPlaceSection
             isSwap
             key={swapList?.swap_id}
-            zeSwapList={swapList}
+            zeSwapList_={swapList}
             refreshPage={refreshPage}
           />
         ))

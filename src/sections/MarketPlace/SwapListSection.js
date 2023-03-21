@@ -43,7 +43,7 @@ export default function MarketPlaceSection({
 }) {
   const [zeSwapList, setZeSwapList] = useState(zeSwapList_);
   const { data: signer } = useSigner();
-  // console.log('init swap ' + JSON.stringify(zeSwapList));
+  //console.log('init swap ' + JSON.stringify(zeSwapList));
   //const { data: signer } = useSigner();
   ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -331,9 +331,10 @@ export default function MarketPlaceSection({
 
   useEffect(() => {
     if (ProductA?.length !== 0) {
+      console.log('len ' + ProductA.length);
       const totalAmountPool = [];
 
-      ProductA.forEach((item) => {
+      ProductA?.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
 
         totalAmountPool.push(
