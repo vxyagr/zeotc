@@ -44,7 +44,7 @@ export default function Swaps({ searchValues, sort }) {
   }, [newZeSwapList]);
 
   useEffect(() => {
-    console.log('refetching by changed account');
+    console.log('refetching swaps');
     refetchSwapId();
   }, [account]);
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function Swaps({ searchValues, sort }) {
   // Number 1
   return (
     <Box>
-      {filteredZeSwapIdList?.map((swapList, idx) => (
+      {/*filteredZeSwapIdList?.map((swapList, idx) => (
         <MarketPlaceSection
           isSwap
           key={swapList?.swap_id}
@@ -100,7 +100,40 @@ export default function Swaps({ searchValues, sort }) {
           refreshPage={refreshPage}
           // handleClicked={handleClicked}
         />
-      ))}
+      ))*/}
+
+      {filteredZeSwapIdList || allFinished ? (
+        filteredZeSwapIdList?.map((swapList, idx) => (
+          <MarketPlaceSection
+            isSwap
+            key={swapList?.swap_id}
+            zeSwapList={swapList}
+            refreshPage={refreshPage}
+          />
+        ))
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '450px',
+            mt: {
+              xs: 3,
+              sm: 1
+            }
+          }}
+        >
+          <Box
+            component='img'
+            src='/assets/svg/loading-spinner.svg'
+            sx={{
+              width: 75,
+              height: 75
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 }

@@ -489,7 +489,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
 
             <LoadingAmount
               isLoading={SumOfAmountA === 0}
-              amount={SumOfAmountA}
+              amount={SumOfAmountA + ' USD'}
             />
           </Box>
 
@@ -656,7 +656,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
 
             <LoadingAmount
               isLoading={SumOfAmountB === 0}
-              amount={SumOfAmountB}
+              amount={SumOfAmountB + ' USD'}
             />
           </Box>
 

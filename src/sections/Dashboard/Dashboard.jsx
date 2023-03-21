@@ -309,7 +309,7 @@ export default function DashboardSection({ swapType }) {
 
             <LoadingAmount
               isLoading={SumOfAmountLoading}
-              amount={SumOfAmount}
+              amount={SumOfAmount + ' USD'}
             />
           </Box>
 
@@ -387,7 +387,7 @@ export default function DashboardSection({ swapType }) {
 
             <LoadingAmount
               isLoading={SumOfReceiveLoading}
-              amount={SumOfReceive}
+              amount={SumOfReceive + ' USD'}
             />
           </Box>
 

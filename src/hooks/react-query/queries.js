@@ -827,7 +827,7 @@ export const useQueriesGetSwap = (zeSwapIdList = []) => {
           });
         }
       }
-
+      //console.log('returning swaps ');
       return Object.values(data);
     }
 

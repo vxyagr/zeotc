@@ -2,46 +2,71 @@ import React, { useEffect, useState, useMemo } from 'react';
 
 import { Box, Typography } from '@mui/material';
 import { isEqual } from 'lodash';
-
+import { useRouter } from 'next/router';
 import { Border } from 'components/Style';
+import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import {
   useQueriesGetSwapHistory,
   useQueryMyZeSwapId,
   useQueriesGetSwap
 } from 'hooks/react-query/queries';
 
-import { swapLocalSearch, sortSwapByExpireDate } from '../../helpers/utilities';
+import {
+  swapLocalSearch,
+  sortSwapByExpireDate,
+  normalizeSwapList
+} from '../../helpers/utilities';
 import MarketPlaceSection from '../MarketPlace/MarketPlaceSection';
 
 export default function SwapOffer({ searchValues, sort }) {
-  const { data: zeSwapIdsList } = useQueryMyZeSwapId();
+  const router = useRouter();
+  const { data: zeSwapIdsList, refetch: refetchSwapId } = useQueryMyZeSwapId();
   const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
-  ///useQueriesGetSwapHistory(zeSwapIdsList);
-
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
+  const { account } = useSelectWeb3();
+  //console.log('account ' + account);
+  const allFinished = useMemo(() => {
+    console.log('send memo ');
+    if (newZeSwapList.length !== 0) {
+      let flag = true;
 
-  const swapListChange = useMemo(() => {
-    return isEqual(newZeSwapList, filteredZeSwapIdList);
+      newZeSwapList.forEach((e) => {
+        if (e === undefined) {
+          flag = false;
+        }
+      });
+
+      return flag;
+    }
+
+    return false;
   }, [newZeSwapList]);
 
   useEffect(() => {
-    if (filteredZeSwapIdList && searchValues !== null) {
+    console.log('refetching swaps history');
+    refetchSwapId();
+  }, [account]);
+  useEffect(() => {
+    if (allFinished && searchValues !== null) {
       setFilteredZeSwapIdList(
         swapLocalSearch(
           searchValues,
-          newZeSwapList.filter((item) => item.swap.status > 1)
+          newZeSwapList.filter((item) => item.swap.status > 2)
         )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValues]);
-
+  function refreshPage() {
+    // refetchData();
+    router.reload();
+  }
   useEffect(() => {
-    if (filteredZeSwapIdList) {
+    if (allFinished) {
       setFilteredZeSwapIdList(
         sortSwapByExpireDate(
           sort,
-          newZeSwapList.filter((item) => item.swap.status > 1)
+          newZeSwapList.filter((item) => item.swap.status > 2)
         )
       );
     }
@@ -49,14 +74,19 @@ export default function SwapOffer({ searchValues, sort }) {
   }, [sort]);
 
   useEffect(() => {
-    if (searchValues === null && !swapListChange) {
+    if (allFinished) {
+      // all the queries have executed successfully
       setFilteredZeSwapIdList(
-        newZeSwapList.filter((item) => item.swap.status > 1)
+        normalizeSwapList(
+          newZeSwapList.filter((item) => item.swap.status > 2),
+          sort
+        )
       );
     }
-  }, [swapListChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFinished, account]);
 
-  // Number 3
+  const refetchSwaps = () => {};
   return (
     <Box
       sx={{
@@ -67,7 +97,7 @@ export default function SwapOffer({ searchValues, sort }) {
         mt: 3
       }}
     >
-      <Typography>Swap Completed</Typography>
+      <Typography>Swap Completed </Typography>
 
       <Typography
         sx={{
