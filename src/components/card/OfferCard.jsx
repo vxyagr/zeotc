@@ -172,11 +172,16 @@ export default function OfferCard({
       tokenBalanceInWallet //&& typeof tokenBalanceInWallet === 'number'
     ) {
       setBalanceInWallet(
-        handleFormateAmount(
+        parseFloat(
+          Number(tokenBalanceInWallet / 10 ** card?.metadata?.decimals).toFixed(
+            6
+          )
+        )
+        /* handleFormateAmount(
           tokenBalanceInWallet,
           card?.metadata?.decimals,
           false
-        ).toString()
+        ).toString() */
       );
     }
   }, [tokenBalanceInWallet]);

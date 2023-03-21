@@ -205,7 +205,9 @@ export default function DashboardSection({ swapType }) {
           );
           setSumOfAmountLoading(false);
           //console.log('total ' + allTokenAmountValueInUSD);
-          setSumOfAmount(Number(allTokenAmountValueInUSD).toFixed(2));
+          setSumOfAmount(
+            parseFloat(Number(allTokenAmountValueInUSD).toFixed(6))
+          );
         }
       });
     }
@@ -237,7 +239,9 @@ export default function DashboardSection({ swapType }) {
             0
           );
           setSumOfReceiveLoading(false);
-          setSumOfReceive(Number(allTokenAmountValueInUSD).toFixed(2));
+          setSumOfReceive(
+            parseFloat(Number(allTokenAmountValueInUSD).toFixed(6))
+          );
         }
       });
     }

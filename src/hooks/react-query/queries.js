@@ -453,7 +453,9 @@ export const useQueryTokenBalance = (tokenAddress) => {
     // console.log('🚀 ~ file: queries.js:174 ~ queryFn ~ balance', contract);
 
     let balance = await contract.balanceOf(account);
-    balance = Number(balance?.toString());
+    balance = Number(balance.toString()).toLocaleString('fullwide', {
+      useGrouping: false
+    });
 
     return balance;
   };
