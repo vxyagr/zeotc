@@ -61,7 +61,7 @@ const SearchAssets = ({ assetType, onSearchAssetAddress }) => {
 
   const handleSearch = (data) => {
     const { value } = data.target;
-
+    //console.log('ressearch ' + JSON.stringify(result));
     if (value) {
       const options = {
         threshold: 0.1,
@@ -70,6 +70,7 @@ const SearchAssets = ({ assetType, onSearchAssetAddress }) => {
       const fuse = new Fuse(mappingListAssets[assetType].allList, options);
 
       const result = fuse.search(value).map((asset) => asset.item);
+      //console.log('ressearch ' + JSON.stringify(result));
 
       if (result.length === 0) {
         onSearchAssetAddress(value);

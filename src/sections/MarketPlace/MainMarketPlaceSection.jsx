@@ -97,11 +97,7 @@ export default function MainMarketPlaceSection() {
     console.log(isLoading, '<<<<<<< isLoading');
   }, [isLoading]);
 
-  if (
-    account &&
-    !isLoading &&
-    (newZeSwapList.length === 0 || filteredZeSwapIdList?.length === 0)
-  ) {
+  if (account && !isLoading && newZeSwapList.length === 0) {
     return (
       <Box
         sx={{
@@ -173,7 +169,17 @@ export default function MainMarketPlaceSection() {
               sort,
               true
             );
-            setFilteredZeSwapIdList(searchResult);
+            console.log('ressss ' + JSON.stringify(searchResult));
+            setFilteredZeSwapIdList(
+              searchResult.filter(
+                (item) =>
+                  (item.swap[2] == account ||
+                    item.swap[2] ==
+                      '0x0000000000000000000000000000000000000000') &&
+                  item.swap[1] != account &&
+                  Number(item.swap.status) < 1
+              )
+            );
           }}
         />
 

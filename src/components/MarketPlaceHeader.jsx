@@ -100,7 +100,7 @@ export default function MarketPlaceHeader({
           <Box
             component='input'
             type='text'
-            placeholder='Search by asset name or swap id'
+            placeholder='aSearch by asset name or swap ida'
             onChange={(e) => handleSearch(e.target.value)}
             sx={{
               px: 3,
