@@ -232,7 +232,7 @@ export default function OfferCard({
   const cardTokenBalance =
     card?.contract_type == 'ERC721'
       ? card.amount
-      : Math.floor(card?.balance / 10 ** card?.decimals);
+      : parseFloat(Number(card?.balance / 10 ** card?.decimals).toFixed(6));
 
   const handleFormateAmount = (item) => {
     const amount =
