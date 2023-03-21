@@ -311,7 +311,12 @@ export default function OfferCard({
   };
 
   //function handle change input
+  const regex = /^(\d*\.?\d*)$/;
   const handleChangeInputAmount = (value, selectedCard, nftAmount) => {
+    if (value != '' && !regex.test(value)) {
+      setValueInput(0);
+      return;
+    }
     if (value > cardTokenBalance) {
       value = cardTokenBalance;
     }

@@ -232,8 +232,12 @@ export default function OfferCard({
   };
 
   //function handle change input==========================================
-
+  const regex = /^(\d*\.?\d*)$/;
   const handleChangeInputAmount = (value, selectedCard) => {
+    if (value != '' && !regex.test(value)) {
+      setValueInput(valueInput);
+      return;
+    }
     if (valueInit) setValueInit(false);
     //console.log('being input ' + value);
     if (selectedCard?.contract_type?.toString() === 'ERC721') {
