@@ -312,6 +312,9 @@ export default function OfferCard({
 
   //function handle change input
   const handleChangeInputAmount = (value, selectedCard, nftAmount) => {
+    if (value > cardTokenBalance) {
+      value = cardTokenBalance;
+    }
     if (selectedCard?.contract_type?.toString() === 'ERC721') {
       //console.log('is 721');
       checkIfNFTOwned(value, selectedCard);

@@ -511,7 +511,10 @@ export default function DashboardSection({ swapType }) {
             onClick={() => {
               if (confirmAllowance()) {
                 let demanderAddress = zeroAddress;
-                if (!isPrivateInputEmpty) demanderAddress = privateInput;
+                //console.log('deman 1 ' + demanderAddress);
+                if (!isPrivateInputEmpty && privateInput != null)
+                  demanderAddress = privateInput;
+                // console.log('deman ' + demanderAddress);
                 createMutate({
                   productB: receivedData,
                   productA: dataFetch,
