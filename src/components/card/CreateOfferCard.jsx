@@ -61,8 +61,10 @@ export default function OfferCard({
   tokenBalance,
   account,
   signer,
-  confirmAllowance
+  confirmAllowance,
+  getOfferedTokenAmount
 }) {
+  const [totalOfferedTokens, setTotalOfferedTokens] = useState(0);
   const dispatch = useDispatch();
   // const initialValue = card?.newMetadata
   //   ? card?.amount
@@ -78,7 +80,17 @@ export default function OfferCard({
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
-
+  useEffect(() => {
+    if (!isDashboardR && getOfferedTokenAmount) {
+      handleAddApproveState(card);
+      let ttl = 0;
+      //console.log('accessing : ');
+      ttl = getOfferedTokenAmount(card);
+      setTotalOfferedTokens(ttl);
+      //console.log('crd ' + JSON.stringify(card));
+      //console.log('total token ' + ttl);
+    }
+  }, [isDashboardR]);
   // const useValue = card?.amount?.toString();
   const useValue = 2.5;
   const {
@@ -94,18 +106,18 @@ export default function OfferCard({
     .catch((error) => {
       console.error(error);
     }); */
-
+  const [approving, setApproving] = useState(false);
   const handleApproveClick = (token) => {
     const tokenAddress = token.token_address;
-
+    setApproving(true);
     const tokenType = token.contract_type;
     //console.log('token type ' + tokenType + ' ' + tokenAddress);
     const tokenId = token.token_id;
     const decimal = token.decimals;
-    //console.log('already approved : ' + Number(tokenAllowance.toString()));
+    console.log('already approved : ' + Number(tokenAllowance.toString()));
     const amount =
-      Number(token?.amount?.toString()) + Number(tokenAllowance.toString());
-    //console.log('to be approved : ' + amount);
+      Number(token?.amount?.toString()) + Number(totalOfferedTokens.toString());
+    console.log('to be approved : ' + amount);
 
     if (tokenAddress) {
       mutate({
@@ -117,37 +129,48 @@ export default function OfferCard({
       });
     }
   };
-
+  const [toBeApproved, setToBeApproved] = useState(0);
   const handleAddApproveState = (card) => {
     setValueInput(value);
+
     //console.log('card is ' + JSON.stringify(card));
     const newData = dataFetch.map((item, index) => {
       if (item?.token_address === card?.token_address) {
         if (card.contract_type === undefined) {
-          let balance = getAllowanceERC20(item?.token_address, account, signer)
-            .then((result) => {
-              let currentTotal =
-                Number(item.amount) * 10 ** card.decimals +
-                Number(tokenAllowance) * 10 ** card.decimals;
-              if (Number(result) >= currentTotal) {
-                let tots =
-                  Number(item.amount) +
-                  Number(tokenAllowance) * 10 ** card.decimals;
+          // result = tokenAllowance;
+          // let balance = getAllowanceERC20(item?.token_address, account, signer)
+          //.then((result) => {
+          console.log(
+            'currently approved ' + tokenAllowance + ' ' + JSON.stringify(card)
+          );
 
-                setIsApprove(true);
-                confirmAllowance();
-                return {
-                  ...item,
-                  isApproved: isApprove
-                };
-              } else {
-                setIsApprove(false);
-                //console.log('not enough approved');
-              }
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          let mustBeApproved =
+            Number(totalOfferedTokens) * 10 ** card.decimals +
+            Number(item.amount) * 10 ** card.decimals +
+            card.amount * 10 ** card.decimals;
+          console.log(
+            'must approved ' +
+              mustBeApproved +
+              ' already approed ' +
+              tokenAllowance * 10 ** card.decimals
+          );
+
+          if (Number(tokenAllowance * 10 ** card.decimals) >= mustBeApproved) {
+            console.log('passed');
+            setIsApprove(true);
+            confirmAllowance();
+            return {
+              ...item,
+              isApproved: isApprove
+            };
+          } else {
+            setIsApprove(false);
+            //console.log('not enough approved');
+          }
+          // })
+          //.catch((error) => {
+          // console.error(error);
+          //});
         }
         if (card.contract_type === 'ERC721') {
           //console.log('approving NFT ');
@@ -160,6 +183,7 @@ export default function OfferCard({
             .then((result) => {
               if (result) {
                 setIsApprove(true);
+                confirmAllowance();
                 return {
                   ...item,
                   isApproved: isApprove
@@ -183,6 +207,7 @@ export default function OfferCard({
             .then((result) => {
               if (result) {
                 setIsApprove(true);
+                confirmAllowance();
                 return {
                   ...item,
                   isApproved: isApprove
@@ -218,8 +243,9 @@ export default function OfferCard({
   };
   const [initialLoad, setInitialLoad] = useState(true);
   useEffect(() => {
-    if (!isApproveLoading && !initialLoad) {
+    if (!isApproveLoading && approving) {
       handleAddApproveState(card);
+      setApproving(false);
     }
     if (isApproveLoading) setInitialLoad(false);
     if (!isApproveLoading && initialLoad) {
@@ -262,7 +288,7 @@ export default function OfferCard({
         console.error(error);
       });
     //setTokenAllowance(0)
-  }, [card.decimals]);
+  }, [card.decimals, approving]);
 
   const checkIfNFTOwned = (id, selectedCard) => {
     if (!isDashboardR) {
@@ -332,7 +358,16 @@ export default function OfferCard({
       setValueInput(value);
       return;
     }
-    setIsApprove(false);
+    let mustProve = Number(totalOfferedTokens) + Number(value);
+    console.log('approved : ' + tokenAllowance);
+    console.log('must approved : ' + mustProve);
+    if (Number(mustProve) > Number(tokenAllowance)) {
+      setIsApprove(false);
+    } else {
+      setIsApprove(true);
+    }
+    //setIsApprove(false);
+
     //console.log('val ' + value.toString());
     let val = parseFloat(value);
     // console.log(
@@ -644,7 +679,7 @@ export default function OfferCard({
                 (isSetState === card?.token && isApproveLoading)
               }
               variant='contained'
-              disabled={(card?.isApproved && isApprove) || valueInput <= '0'}
+              disabled={isApprove || valueInput < '0'}
               sx={{
                 boxShadow: 0,
                 fontSize: 14
@@ -653,7 +688,7 @@ export default function OfferCard({
                 handleApproveClick(card);
                 handleAddApproveState(card);
               }}
-              title={card?.isApproved && isApprove ? 'Approved' : 'Approve'}
+              title={isApprove ? 'Approved' : 'Approve'}
             />
           )}
         </Stack>

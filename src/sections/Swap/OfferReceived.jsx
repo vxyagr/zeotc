@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-identical-functions */
 /* eslint-disable sonarjs/no-duplicate-string */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { ethers } from 'ethers';
@@ -24,15 +24,129 @@ import {
 import {
   useQueriesGetOffer,
   testGetSwap,
-  getSwap
+  getSwap,
+  useQueriesGetRelatedSwaps,
+  useQueryZeSwapIdList,
+  useQueriesGetSwap,
+  getAllowanceERC20,
+  getAllowanceERC1155,
+  getAllowanceERC721
 } from 'hooks/react-query/queries';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { getProductDetails } from 'redux/slice/otcTrades';
 
 import OfferCard from '../../components/card/OfferCard';
 import { Border } from '../../components/Style';
+import { filter } from 'lodash';
 
 export default function OfferReceived({ selectedCard_, refetchData }) {
+  const swap_id = selectedCard_?.swap_id;
+  const { data: zeSwapIdsList, error, isLoading } = useQueryZeSwapIdList();
+  const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
+  const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
+  const { account } = useSelectWeb3();
+  //console.log('account ' + account);
+  const allFinished = useMemo(() => {
+    //console.log('send memo ');
+    if (newZeSwapList.length !== 0) {
+      //console.log('send memo ' + newZeSwapList.length);
+      let flag = true;
+
+      newZeSwapList.forEach((e) => {
+        if (e === undefined) {
+          flag = false;
+        }
+      });
+
+      return flag;
+    }
+
+    return false;
+  }, [newZeSwapList]);
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  const getOfferedTokenAmount = (card) => {
+    //console.log('swap id ' + swap_id);
+    if (
+      !filteredZeSwapIdList ||
+      filteredZeSwapIdList.length < 1 ||
+      card === undefined
+    )
+      return 0;
+    let totalOffered = 0;
+
+    const A_ = filteredZeSwapIdList
+      .filter(
+        (swapList) =>
+          swapList.swap[2] === account && swapList.swap[0] != swap_id
+      )
+      .map((swapList, idx) => {
+        //console.log('checking prod B ');
+        const checkProductB = swapList.productB.map((item, index) => {
+          //console.log('card detail ' + JSON.stringify(card));
+          // console.log('item detail ' + JSON.stringify(item));
+
+          if (card?.token != undefined && item?.token === card?.token) {
+            //console.log('demander ' + item.metadata.name + ' ' + item.amount);
+            totalOffered += Number(item.amount);
+            /*// if (card?.contract_type && card?.contract_type === undefined) {
+          let balance = getAllowanceERC20(item.token, account, signer)
+            .then((result) => {
+              totalOffered += Number(result);
+              console.log('offered Token Total ' + totalOffered);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+          //} */
+          }
+        });
+      });
+    const B_ = filteredZeSwapIdList
+      .filter((swapList) => swapList.swap[1] === account)
+      .map((swapList, idx) => {
+        // console.log('checking prod A ');
+        const checkProductA = swapList.productB.map((item, index) => {
+          // console.log('card detail ' + JSON.stringify(card));
+          // console.log('item detail ' + JSON.stringify(item));
+
+          if (card?.token != undefined && item?.token === card?.token) {
+            console.log('creator ' + item.metadata.name + ' ' + item.amount);
+            totalOffered += parseFloat(
+              Number(item.amount / 10 ** item.metadata.decimals).toFixed(6)
+            );
+            /*// if (card?.contract_type && card?.contract_type === undefined) {
+          let balance = getAllowanceERC20(item.token, account, signer)
+            .then((result) => {
+              totalOffered += Number(result);
+              console.log('offered Token Total ' + totalOffered);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+          //} */
+          }
+        });
+      });
+    console.log('total offered ' + totalOffered);
+    return totalOffered;
+  };
+
+  useEffect(() => {
+    if (allFinished) {
+      // all the queries have executed successfully
+      setFilteredZeSwapIdList(
+        newZeSwapList.filter(
+          (item) =>
+            item.swap[0] != swap_id &&
+            item.swap.status < 2 &&
+            (item.swap[1] == account ||
+              item.swap[2] == account ||
+              item.swap[2] == '0x0000000000000000000000000000000000000000')
+        )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFinished, account]);
   const { data: signer } = useSigner();
   const [removableA, setRemovableA] = useState(true);
   const [removableB, setRemovableB] = useState(true);
@@ -40,19 +154,6 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
   useEffect(() => {
     if (selectedCard_ == undefined || signer == undefined) return;
     setSelectedCard(selectedCard_);
-    /*console.log('initial selected card ' + JSON.stringify(selectedCard_));
-    // if (selectedCard_ != undefined) {
-    let r = getSwap(selectedCard_.swap[0], signer)
-      .then((result) => {
-        //console.log('before cancel ' + JSON.stringify(zeSwapList));
-        console.log('fetched swap ' + JSON.stringify(result));
-        console.log('initial selected card ' + JSON.stringify(selectedCard_));
-        setSelectedCard(result);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    //} */
   }, [selectedCard_, signer]);
   //
   const [openReceive, setOpenReceive] = useState(false);
@@ -65,7 +166,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
 
   const [counterArr, setCounterArr] = useState([]);
 
-  const { account } = useSelectWeb3();
+  //const { account } = useSelectWeb3();
   const dispatch = useDispatch();
   const router = useRouter();
   const [productDetails, setProductDetails] = useState([]);
@@ -184,7 +285,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
 
   const status = selectedCard?.swap?.status;
   const Trade = selectedCard?.swap?.visibility;
-  const swap_id = selectedCard?.swap_id;
+
   const supplier = selectedCard?.swap?.supplier;
   const isSupplier = supplier === account;
 
@@ -307,7 +408,8 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
   const [initA, setInitA] = useState(0);
   const [initB, setInitB] = useState(0);
   const zeroAddress = '0x0000000000000000000000000000000000000000';
-  const handleApproveClick = (token) => {
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const handleApproveClick = (token, amountToApprove) => {
     setSelectedObjForSet(token.id);
 
     const tokenAddress = token?.token?.toString() || token?.token_address;
@@ -318,7 +420,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
     setIsApprove(tokenAddress);
     const tokenId = token?.token_id?.toString();
     const decimal = token?.decimals?.toString() || token?.decimals;
-    const amount = token?.amount;
+    const amount = amountToApprove;
 
     console.log('to be approved ' + amount);
 
@@ -526,6 +628,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
                 removeCard={removeCard}
                 refreshPage={refreshPage}
                 removableA={removableA}
+                getOfferedTokenAmount={getOfferedTokenAmount}
                 //onClick={() => removeOffer(card)}
               />
             );
@@ -664,6 +767,7 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
             return (
               <OfferCard
                 idx={idx}
+                prod={'productB'}
                 key={`productB__${idx}__${card?.id}`}
                 card={card}
                 // handleSetFun={!isSupplier && handleSetFun}
@@ -689,6 +793,9 @@ export default function OfferReceived({ selectedCard_, refetchData }) {
                 refreshPage={refreshPage}
                 removableB={removableB}
                 allowCounter={counterOfferStatus}
+                getOfferedTokenAmount={getOfferedTokenAmount}
+                account={account}
+                signer={signer}
               />
             );
           })}

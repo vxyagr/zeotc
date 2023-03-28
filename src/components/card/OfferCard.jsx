@@ -26,7 +26,8 @@ import {
 import {
   useTokenPrice,
   useQueryTokenBalance,
-  useQueriesGetProduct
+  useQueriesGetProduct,
+  getAllowanceERC20
 } from 'hooks/react-query/queries';
 import { addNewTokenNfts, addNewTokenNftsReceive } from 'redux/slice/otcTrades';
 
@@ -62,9 +63,28 @@ export default function OfferCard({
   refreshPage,
   removableA,
   removableB,
-  allowCounter
+  allowCounter,
+  getOfferedTokenAmount,
+  account,
+  signer
 }) {
   const dispatch = useDispatch();
+  const [tokenApproved, setTokenApproved] = useState(false);
+  const [totalOfferedTokens, setTotalOfferedTokens] = useState(0);
+  const [currentlyApprovedTokens, setCurrentlyApprovedTokens] = useState(0);
+  const [approveAmount, setApproveAmount] = useState(0);
+  useEffect(() => {
+    if (prod === 'productB' && getOfferedTokenAmount) {
+      handleAddApproveState(card);
+    }
+  }, [card]);
+  /*prod === 'productA' ? getOfferedTokenAmount() : 0;
+  console.log(
+    'offered Token for ' + card?.newMetadata
+      ? card.newMetadata?.name
+      : card?.name ||
+          card?.metadata?.name + ' ' + card.amount + ' ' + totalOfferedTokens
+  );*/
   const [passInit, setPassInit] = useState(false);
   const { data: tokenBalanceInWallet } = useQueryTokenBalance(card.token || 0);
   const [balanceInWallet, setBalanceInWallet] = useState('-');
@@ -230,7 +250,13 @@ export default function OfferCard({
       dispatch(addNewTokenNfts(newData));
     }
   };
-
+  const [approving, setApproving] = useState(false);
+  useEffect(() => {
+    if (!isApproveLoading && approving) {
+      handleAddApproveState(card);
+      setApproving(false);
+    }
+  }, [isApproveLoading]);
   //function handle change input==========================================
   const regex = /^(\d*\.?\d*)$/;
   const handleChangeInputAmount = (value, selectedCard) => {
@@ -283,6 +309,39 @@ export default function OfferCard({
   };
 
   const handleAddApproveState = (card) => {
+    let ttl = 0;
+    //console.log('accessing : ' + ttl);
+    ttl = getOfferedTokenAmount(card);
+
+    let balance = getAllowanceERC20(card.token, account, signer)
+      .then((result) => {
+        let result1 = parseFloat(
+          Number(result / 10 ** card.metadata.decimals).toFixed(6)
+        );
+
+        // console.log(
+        //  'total token offered in zeOTC for ' + card.metadata.name + ' ' + ttl
+        // );
+        let toBeApproved = Number(card.amount) + Number(ttl);
+        //toBeApproved = toBeApproved * 10 ** card.metadata.decimals;
+        // console.log('token in this card : ' + card.amount);
+        //console.log('supposed to have ' + toBeApproved + ' approved');
+        if (Number(result1) >= toBeApproved) {
+          console.log('enough');
+          setTokenApproved(true);
+        } else {
+          //console.log('not enough');
+          setApproveAmount(toBeApproved);
+          setTokenApproved(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setTotalOfferedTokens(ttl);
+  };
+
+  const handleApprovalAmount = (card) => {
     setValueInput(value);
     const newData = dataFetch.map((item, index) => {
       if (item?.token_address === card?.token_address) {
@@ -305,6 +364,7 @@ export default function OfferCard({
 
   const handleSetFun = (data) => {
     //handleChangeInputAmount(valueInput, card);
+    setIsSetting(true);
     console.log('list data ' + JSON.stringify(data.amount));
     //return;
     mutateSetProduct({
@@ -313,7 +373,13 @@ export default function OfferCard({
       ProductB: [data]
     });
   };
-
+  const [isSetting, setIsSetting] = useState(false);
+  useEffect(() => {
+    if (!isSetLoading && isSetting) {
+      setIsSetting(false);
+      handleAddApproveState(card);
+    }
+  }, [isSetLoading]);
   const cardArray = dataFetch.map((item) => {
     return item.token_id || item.token_address;
   });
@@ -562,21 +628,22 @@ export default function OfferCard({
           {handleApproveClick && card.id != undefined && (
             <MButton
               loading={
-                (isApprove === card?.token_address && isApproveLoading) ||
+                (isApprove === card?.token && isApproveLoading) ||
                 (isSetState === card?.token && isApproveLoading)
               }
               variant='contained'
-              disabled={card?.isApproved || valueInput <= '0'}
+              disabled={tokenApproved || valueInput <= '0'}
               sx={{
                 boxShadow: 0,
                 fontSize: 14
               }}
               onClick={() => {
                 handleChangeInputAmount(valueInput, card);
-                handleApproveClick(card);
-                handleAddApproveState(card);
+                setApproving(true);
+                handleApproveClick(card, approveAmount);
+                //handleAddApproveState(card);
               }}
-              title={card?.isApproved ? 'Approved' : 'Approve'}
+              title={tokenApproved ? 'Approved' : 'Approve'}
             />
           )}
         </Stack>

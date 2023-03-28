@@ -102,7 +102,7 @@ export const useERC20_ERC721_ERC1155Approve = () => {
       const amounts = amount.toString();
 
       const amount1 = ethers.utils.parseUnits(amounts, decimals);
-      //console.log('approving ERC 20 ' + amount1);
+      console.log('approving ERC 20 ' + amount1);
       tx = await contract?.approve(zeoTC_Contract.address, amount1);
     }
 

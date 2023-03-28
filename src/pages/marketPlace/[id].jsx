@@ -43,7 +43,7 @@ export default function MarketPlaceSwaping(context) {
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
-      console.log('id of swap ' + pathName);
+      //console.log('id of swap ' + pathName);
       const selectData = newZeSwapList?.filter(
         (item) => item?.swap_id === pathName
       );

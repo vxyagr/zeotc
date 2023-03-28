@@ -233,7 +233,9 @@ export default function CustomNft({ handleSelectAsset }) {
                 gap: 1
               }}
             >
-              Search NFT
+              {tokenType === 'ERC20' || tokenType === '20'
+                ? 'Search Token'
+                : 'Search NFT'}
             </LoadingButton>
           </Box>
         </Box>

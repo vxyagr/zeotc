@@ -234,13 +234,84 @@ export const useQueriesFilterMarketPlaceData = (
 
   return results?.map((result) => result.data?.[0]);
 };
+// =====================================================
+//a function to filter certain list of swaps (could be initial or counter swaps), and split the data from chain into javascript variables respectively as swap structure
+export const useQueriesGetRelatedSwaps = (
+  zeSwapIdList = [],
+  isTrade = false
+) => {
+  const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
+  //console.log('total swap ' + zeSwapIdList.length);
+  //console.log(JSON.stringify(zeSwapIdList));
+  const queryFn = async (swap_id) => {
+    const data = [];
 
+    const swap = await zeoTC_Contract.get_zeSwap(swap_id);
+    //console.log('getting swap id ' + swap_id.toString());
+    if (swap[1] === account || swap[2] === account) {
+      data[swap_id] = {
+        swap: swap,
+        swap_id
+      };
+    } else {
+      return null;
+    }
+
+    for (const offer_id of swap.offers) {
+      const offer = await zeoTC_Contract.get_offers(offer_id);
+
+      data[swap_id] = {
+        ...data[swap_id],
+        offer,
+        productA: [],
+        productB: []
+      };
+
+      for (const productA_id of offer.product_A_ids) {
+        const product = await zeoTC_Contract.get_product(productA_id);
+        let amount = product.amount.toString();
+        amount = Number(amount);
+
+        const metadata = await getMetaData(product?.token);
+
+        data[swap_id].productA.push({
+          ...product,
+          metadata
+        });
+      }
+
+      for (const productB_id of offer.product_B_ids) {
+        const product = await zeoTC_Contract.get_product(productB_id);
+        const metadata = await getMetaData(product.token);
+
+        data[swap_id].productB.push({
+          ...product,
+          metadata
+        });
+      }
+    }
+
+    return Object.values(data);
+  };
+
+  const queries = zeSwapIdList?.map((swap_id, idx) => ({
+    queryKey: [queryKeys.getQueriesSwapDetails, swap_id],
+    queryFn: () => queryFn(swap_id),
+    enabled: !!zeoTC_Contract && !!zeSwapIdList
+  }));
+  const results = useQueries({
+    queries
+  });
+
+  return results?.map((result) => result.data?.[0]);
+};
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 export const testGetSwap = async () => {
   const { zeoTC_Contract, account, uniSwap_Contract } = useSelectWeb3();
   const swap = await zeoTC_Contract.get_swap_by_offer(
     '0x11e6d8bbcf24e712b1337bab85461d8e8d1d562a2bb92747843fc36e34a3dbf7'
   );
-  console.log(JSON.stringify(swap));
+  //console.log(JSON.stringify(swap));
   return swap;
 };
 
@@ -478,7 +549,7 @@ export const useQueryGetCustomERC20 = (tokenAddress_) => {
 
   const queryFn = async () => {
     const tokensData = await getUserNFts(url);
-    console.log('axios 2 ' + tokensData.toString());
+    //console.log('axios 2 ' + tokensData.toString());
 
     return {
       tokensData

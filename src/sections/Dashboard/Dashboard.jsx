@@ -1,6 +1,6 @@
 /* eslint-disable react-redux/useSelector-prefer-selectors */
 /* eslint-disable sonarjs/no-duplicate-string */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelectWeb3 } from 'hooks/useSelectWeb3';
 import { Box, Checkbox, Divider, Typography, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,7 +17,11 @@ import {
   useERC20_ERC721_ERC1155Approve,
   useMutationCreateZeSwap
 } from 'hooks/react-query/mutation';
-import { getAllowanceERC20 } from 'hooks/react-query/queries';
+import {
+  getAllowanceERC20,
+  useQueryZeSwapIdList,
+  useQueriesGetSwap
+} from 'hooks/react-query/queries';
 import {
   addNewTokenNfts,
   addNewTokenNftsReceive,
@@ -43,11 +47,97 @@ export default function DashboardSection({ swapType }) {
   const privateInput = useSelector(
     (state) => state.web3Slice.privateInputValue
   );
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const { data: zeSwapIdsList, error, isLoading } = useQueryZeSwapIdList();
+  const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
+  const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
+  //const { account } = useSelectWeb3();
+  //console.log('account ' + account);
+  const allFinished = useMemo(() => {
+    //console.log('send memo ');
+    if (newZeSwapList.length !== 0) {
+      let flag = true;
+
+      newZeSwapList.forEach((e) => {
+        if (e === undefined) {
+          console.log('err! ');
+          flag = false;
+        }
+      });
+
+      return flag;
+    }
+
+    return false;
+  }, [newZeSwapList]);
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  const getOfferedTokenAmount = (card) => {
+    //console.log('getting offered');
+    if (
+      !filteredZeSwapIdList ||
+      filteredZeSwapIdList.length < 1 ||
+      card === undefined
+    ) {
+      console.log('null');
+      return 0;
+    }
+    let totalOffered = 0;
+    //console.log('swap id ' + JSON.stringify(filteredZeSwapIdList));
+    const A_ = filteredZeSwapIdList
+      .filter((swapList) => swapList.swap[2] === account)
+      .map((swapList, idx) => {
+        const checkProductB = swapList.productB.map((item, index) => {
+          if (
+            item.token.toString().toLowerCase() ==
+            card.token_address.toString().toLowerCase()
+          ) {
+            totalOffered += parseFloat(
+              Number(item.amount / 10 ** card.decimals).toFixed(6)
+            );
+            //console.log('demander ' + item.metadata.name + ' ' + item.amount);
+          }
+        });
+      });
+    const B_ = filteredZeSwapIdList
+      .filter((swapList) => swapList.swap[1] === account)
+      .map((swapList, idx) => {
+        // console.log('checking prod A ');
+        const checkProductA = swapList.productB.map((item, index) => {
+          if (
+            item.token.toString().toLowerCase() ==
+            card.token_address.toString().toLowerCase()
+          ) {
+            //console.log('creator ' + item.metadata.name + ' ' + item.amount);
+            totalOffered += parseFloat(
+              Number(item.amount / 10 ** card.decimals).toFixed(6)
+            );
+          }
+        });
+      });
+    console.log('total offered ' + totalOffered);
+    return totalOffered;
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+    if (allFinished) {
+      // all the queries have executed successfully
+      //console.log('filtering ' + JSON.stringify(newZeSwapList));
+      setFilteredZeSwapIdList(
+        newZeSwapList.filter(
+          (item) =>
+            item.swap.status < 2 &&
+            (item.swap[1] == account || item.swap[2] == account)
+        )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFinished, newZeSwapList]);
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   const zeroAddress = '0x0000000000000000000000000000000000000000';
   const isPrivateInputEmpty =
     swapType === 'Private' && (privateInput === null || privateInput === '');
   useEffect(() => {
-    console.log('private input ' + privateInput + ' ' + isPrivateInputEmpty);
+    //console.log('private input ' + privateInput + ' ' + isPrivateInputEmpty);
   }, [privateInput, isPrivateInputEmpty]);
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
@@ -248,7 +338,7 @@ export default function DashboardSection({ swapType }) {
   }, [receivedData, receivedData?.length]);
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
-
+  if (!allFinished) return <></>;
   return (
     <Box
       sx={{
@@ -327,6 +417,7 @@ export default function DashboardSection({ swapType }) {
                 account={account}
                 signer={signer}
                 confirmAllowance={confirmAllowance}
+                getOfferedTokenAmount={getOfferedTokenAmount}
               />
             );
           })}
