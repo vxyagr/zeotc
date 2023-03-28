@@ -62,7 +62,8 @@ export default function OfferCard({
   account,
   signer,
   confirmAllowance,
-  getOfferedTokenAmount
+  getOfferedTokenAmount,
+  allFinished
 }) {
   const [totalOfferedTokens, setTotalOfferedTokens] = useState(0);
   const dispatch = useDispatch();
@@ -81,16 +82,21 @@ export default function OfferCard({
     (state) => state.otcTrades.selectTokenNftsReceive
   );
   useEffect(() => {
+    //confirmAllowance();
+    if (!isDashboardR) confirmAllowance();
+  }, [dataFetch]);
+  useEffect(() => {
     if (!isDashboardR && getOfferedTokenAmount) {
       handleAddApproveState(card);
       let ttl = 0;
       //console.log('accessing : ');
       ttl = getOfferedTokenAmount(card);
       setTotalOfferedTokens(ttl);
+      confirmAllowance();
       //console.log('crd ' + JSON.stringify(card));
       //console.log('total token ' + ttl);
     }
-  }, [isDashboardR]);
+  }, [isDashboardR, allFinished, tokenAllowance]);
   // const useValue = card?.amount?.toString();
   const useValue = 2.5;
   const {
@@ -158,7 +164,7 @@ export default function OfferCard({
           if (Number(tokenAllowance * 10 ** card.decimals) >= mustBeApproved) {
             console.log('passed');
             setIsApprove(true);
-            confirmAllowance();
+
             return {
               ...item,
               isApproved: isApprove
@@ -246,6 +252,7 @@ export default function OfferCard({
     if (!isApproveLoading && approving) {
       handleAddApproveState(card);
       setApproving(false);
+      confirmAllowance();
     }
     if (isApproveLoading) setInitialLoad(false);
     if (!isApproveLoading && initialLoad) {
@@ -359,12 +366,21 @@ export default function OfferCard({
       return;
     }
     let mustProve = Number(totalOfferedTokens) + Number(value);
-    console.log('approved : ' + tokenAllowance);
-    console.log('must approved : ' + mustProve);
-    if (Number(mustProve) > Number(tokenAllowance)) {
-      setIsApprove(false);
-    } else {
-      setIsApprove(true);
+    let passed = Number(tokenAllowance) > Number(mustProve);
+    if (!isDashboardR) {
+      console.log('approved : ' + tokenAllowance);
+      console.log('must approved : ' + mustProve);
+      let appr = Number(mustProve) > Number(tokenAllowance);
+
+      if (passed) {
+        setIsApprove(true);
+        console.log(passed);
+        console.log('approved');
+      } else {
+        console.log('not approved');
+        console.log(passed);
+        setIsApprove(false);
+      }
     }
     //setIsApprove(false);
 
@@ -391,7 +407,8 @@ export default function OfferCard({
           if (item?.token_address === selectedCard?.token_address) {
             return {
               ...item,
-              amount: val
+              amount: val,
+              isApproved: passed
             };
           }
 

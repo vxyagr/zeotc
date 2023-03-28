@@ -51,8 +51,6 @@ export default function DashboardSection({ swapType }) {
   const { data: zeSwapIdsList, error, isLoading } = useQueryZeSwapIdList();
   const newZeSwapList = useQueriesGetSwap(zeSwapIdsList);
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
-  //const { account } = useSelectWeb3();
-  //console.log('account ' + account);
   const allFinished = useMemo(() => {
     //console.log('send memo ');
     if (newZeSwapList.length !== 0) {
@@ -211,6 +209,8 @@ export default function DashboardSection({ swapType }) {
 
       dispatch(addNewTokenNfts(newValue));
     }
+    confirmAllowance();
+    isTokenOffered();
   };
 
   const handleDate = (value) => {
@@ -228,10 +228,37 @@ export default function DashboardSection({ swapType }) {
     return amount;
   };
   const [isAllApprovd, setIsAllApprovd] = useState(false);
+  const [isTokenOfferedChecked, setIsTokenOfferedChecked] = useState(false);
+  const isTokenOffered = () => {
+    let isExist = dataFetch.length > 0 && receivedData.length > 0;
+    console.log(' length ' + dataFetch.length + ' ' + receivedData.length);
+    if (!isExist) {
+      console.log('incomplete data');
+      setIsTokenOfferedChecked(false);
+      return false;
+    }
+    let dataFetchZeroNull = true;
+    dataFetch.forEach(async (item) => {
+      if (item.amount <= 0) dataFetchZeroNull = false;
+    });
+    let receivedZeroNull = true;
+    receivedData.forEach(async (item) => {
+      if (item.amount <= 0) receivedZeroNull = false;
+    });
+    if (receivedZeroNull && dataFetchZeroNull && isExist) {
+      setIsTokenOfferedChecked(true);
+      return true;
+    } else {
+      setIsTokenOfferedChecked(false);
+      return false;
+    }
+  };
   const confirmAllowance = async () => {
     let isAllApproved = true;
     dataFetch.forEach(async (item) => {
-      //console.log('item approved? ' + item.isApproved);
+      console.log(
+        'item approved? ' + item.token_address + ' ' + item.isApproved
+      );
 
       if (!item.isApproved) {
         //console.log('not approved');
@@ -242,6 +269,7 @@ export default function DashboardSection({ swapType }) {
     });
     //console.log('done ' + isAllApproved);
     setIsAllApprovd(isAllApproved);
+    isTokenOffered();
     return isAllApproved;
   };
 
@@ -261,6 +289,8 @@ export default function DashboardSection({ swapType }) {
       setIsDisabled(true);
       //console.log('Please Approve All tokens and NFTs before create');
     }
+    confirmAllowance();
+    isTokenOffered();
   }, [dataFetch, receivedData, dataFetch.length, receivedData.length]);
 
   useEffect(() => {
@@ -338,7 +368,30 @@ export default function DashboardSection({ swapType }) {
   }, [receivedData, receivedData?.length]);
 
   const date = useSelector((state) => state.otcTrades.getCreateDate);
-  if (!allFinished) return <></>;
+  if (!allFinished)
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '450px',
+          mt: {
+            xs: 3,
+            sm: 1
+          }
+        }}
+      >
+        <Box
+          component='img'
+          src='/assets/svg/loading-spinner.svg'
+          sx={{
+            width: 75,
+            height: 75
+          }}
+        />
+      </Box>
+    );
   return (
     <Box
       sx={{
@@ -418,6 +471,7 @@ export default function DashboardSection({ swapType }) {
                 signer={signer}
                 confirmAllowance={confirmAllowance}
                 getOfferedTokenAmount={getOfferedTokenAmount}
+                allFinished={allFinished}
               />
             );
           })}
@@ -490,6 +544,7 @@ export default function DashboardSection({ swapType }) {
                 isDashboard
                 onClick={() => handleSelected(card, isReceived)}
                 isDashboardR
+                allFinished={allFinished}
               />
             );
           })}
@@ -598,7 +653,7 @@ export default function DashboardSection({ swapType }) {
           <MButton
             loading={createIsLoading}
             title='CREATE'
-            disabled={!isAllApprovd}
+            disabled={!isAllApprovd || !isTokenOfferedChecked}
             onClick={() => {
               if (confirmAllowance()) {
                 let demanderAddress = zeroAddress;
