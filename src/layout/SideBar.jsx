@@ -25,26 +25,26 @@ const LIST_ITEMS = [
     id: 1,
     title: 'Marketplace',
     icon: '/assets/svg/MarketPlace.svg',
-    link: '/',
+    link: '/'
   },
   {
     id: 2,
     title: 'Create OTC Trade',
     icon: '/assets/svg/Otc.svg',
-    link: '/dashboard',
+    link: '/dashboard'
   },
   {
     id: 3,
     title: 'My OTC Trades',
     icon: '/assets/svg/MyOtc.svg',
-    link: '/myOtcTrades',
+    link: '/myOtcTrades'
   },
   {
     id: 4,
     title: 'My Assets',
     icon: '/assets/svg/MyAssets.svg',
-    link: '/myAssets',
-  },
+    link: '/myAssets'
+  }
 ];
 // swapOfferDetails
 const openedMixin = (theme) => ({
@@ -56,7 +56,7 @@ const openedMixin = (theme) => ({
   borderRadius: 11,
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
+    duration: theme.transitions.duration.enteringScreen
   }),
   overflowX: 'hidden',
 
@@ -68,8 +68,8 @@ const openedMixin = (theme) => ({
     height: '100vh',
     marginTop: 0,
 
-    marginLeft: 15,
-  },
+    marginLeft: 15
+  }
 });
 
 const closedMixin = (theme) => ({
@@ -81,13 +81,13 @@ const closedMixin = (theme) => ({
 
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
+    duration: theme.transitions.duration.leavingScreen
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
 
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 1px)`
   },
   [theme.breakpoints.down('md')]: {
     // width: `calc(${theme.spacing(8)} + 1px)`,
@@ -96,8 +96,8 @@ const closedMixin = (theme) => ({
     border: 0,
     height: '100vh',
     // marginTop: 30,
-    marginLeft: 15,
-  },
+    marginLeft: 15
+  }
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -113,12 +113,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     background: '#000',
     // border:0
     marginLeft: 15,
-    display: 'none',
-  },
+    display: 'none'
+  }
 }));
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== 'open'
 })(({ theme, open }) => ({
   width: drawerWidth,
   flexShrink: 0,
@@ -126,19 +126,18 @@ const Drawer = styled(MuiDrawer, {
   // boxSizing: 'border-box',
   ...(open && {
     // ...openedMixin(theme),
-    '& .MuiDrawer-paper': openedMixin(theme),
+    '& .MuiDrawer-paper': openedMixin(theme)
   }),
   ...(!open && {
     // ...closedMixin(theme),
-    '& .MuiDrawer-paper': closedMixin(theme),
-  }),
+    '& .MuiDrawer-paper': closedMixin(theme)
+  })
 }));
 
 export default function SideDrawer({ setIsOpen }) {
   const theme = useTheme();
   const router = useRouter();
   const isMobile = useResponsive('down', 'md');
-
 
   let pathname = router?.pathname?.split('/');
   pathname = `/${pathname?.[1]}`;
@@ -172,7 +171,7 @@ export default function SideDrawer({ setIsOpen }) {
     <Box
       sx={{
         display: 'block',
-        width: '100%',
+        width: '100%'
       }}
     >
       <ClickAwayListener
@@ -184,7 +183,7 @@ export default function SideDrawer({ setIsOpen }) {
           <Box
             sx={{
               flexGrow: 0,
-              width: '100%',
+              width: '100%'
             }}
           >
             <Navbar
@@ -208,7 +207,7 @@ export default function SideDrawer({ setIsOpen }) {
                 sx={{
                   // marginRight: 5,
                   // mx: open || clickOpen ? 0 : 'auto',
-                  mx: open ? 0 : 'auto',
+                  mx: open ? 0 : 'auto'
                   // ...(open && { display: 'none' }),
                 }}
               >
@@ -223,7 +222,7 @@ export default function SideDrawer({ setIsOpen }) {
                   disablePadding
                   sx={{
                     display: 'block',
-                    fontSize: '14px',
+                    fontSize: '14px'
                   }}
                 >
                   <ListItemButton
@@ -234,7 +233,7 @@ export default function SideDrawer({ setIsOpen }) {
                       // justifyContent: open || clickOpen ? 'initial' : 'center',
                       justifyContent: open ? 'initial' : 'center',
                       px: 2.5,
-                      py: 1.5,
+                      py: 1.5
                     }}
                   >
                     <ListItemIcon
@@ -242,7 +241,7 @@ export default function SideDrawer({ setIsOpen }) {
                         minWidth: 0,
                         // mr: open || clickOpen ? 3 : 'auto',
                         mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
+                        justifyContent: 'center'
                       }}
                     >
                       <Box
@@ -251,7 +250,7 @@ export default function SideDrawer({ setIsOpen }) {
                             pathname === text.link
                               ? ' linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)'
                               : '#3636364d',
-                          borderRadius: '11px',
+                          borderRadius: '11px'
                         }}
                       >
                         <Box
@@ -264,7 +263,7 @@ export default function SideDrawer({ setIsOpen }) {
                             background:
                               pathname === 'swapOfferDetails' &&
                               idx === 2 &&
-                              'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)',
+                              'linear-gradient(90deg, #C732A6 0%, #460AE4 100%, #460AE4 100%)'
                           }}
                         />
                       </Box>
@@ -275,7 +274,7 @@ export default function SideDrawer({ setIsOpen }) {
                       sx={{
                         // display: open || clickOpen ? 'block' : 'none',
                         display: open ? 'block' : 'none',
-                        height: 30,
+                        height: 30
                       }}
                     />
                   </ListItemButton>

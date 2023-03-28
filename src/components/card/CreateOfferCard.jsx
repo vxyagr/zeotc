@@ -146,23 +146,14 @@ export default function OfferCard({
           // result = tokenAllowance;
           // let balance = getAllowanceERC20(item?.token_address, account, signer)
           //.then((result) => {
-          console.log(
-            'currently approved ' + tokenAllowance + ' ' + JSON.stringify(card)
-          );
 
           let mustBeApproved =
             Number(totalOfferedTokens) * 10 ** card.decimals +
             Number(item.amount) * 10 ** card.decimals +
             card.amount * 10 ** card.decimals;
-          console.log(
-            'must approved ' +
-              mustBeApproved +
-              ' already approed ' +
-              tokenAllowance * 10 ** card.decimals
-          );
 
           if (Number(tokenAllowance * 10 ** card.decimals) >= mustBeApproved) {
-            console.log('passed');
+            //console.log('passed');
             setIsApprove(true);
 
             return {
@@ -368,16 +359,16 @@ export default function OfferCard({
     let mustProve = Number(totalOfferedTokens) + Number(value);
     let passed = Number(tokenAllowance) > Number(mustProve);
     if (!isDashboardR) {
-      console.log('approved : ' + tokenAllowance);
-      console.log('must approved : ' + mustProve);
+      //console.log('approved : ' + tokenAllowance);
+      //console.log('must approved : ' + mustProve);
       let appr = Number(mustProve) > Number(tokenAllowance);
 
       if (passed) {
         setIsApprove(true);
         console.log(passed);
-        console.log('approved');
+        //console.log('approved');
       } else {
-        console.log('not approved');
+        //console.log('not approved');
         console.log(passed);
         setIsApprove(false);
       }

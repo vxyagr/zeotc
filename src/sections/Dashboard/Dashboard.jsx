@@ -42,7 +42,7 @@ export default function DashboardSection({ swapType }) {
   //const { account } = useSelectWeb3();
   const { zeoTC_Contract, account, uniSwap_Contract, signer } = useSelectWeb3();
   const dataFetch = useSelector((state) => state.otcTrades.selectNfts);
-  const router = useRouter();
+  //const router = useRouter();
 
   const privateInput = useSelector(
     (state) => state.web3Slice.privateInputValue
@@ -129,14 +129,12 @@ export default function DashboardSection({ swapType }) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allFinished, newZeSwapList]);
+  }, [allFinished]);
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   const zeroAddress = '0x0000000000000000000000000000000000000000';
   const isPrivateInputEmpty =
     swapType === 'Private' && (privateInput === null || privateInput === '');
-  useEffect(() => {
-    //console.log('private input ' + privateInput + ' ' + isPrivateInputEmpty);
-  }, [privateInput, isPrivateInputEmpty]);
+
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
@@ -148,7 +146,7 @@ export default function DashboardSection({ swapType }) {
   const [creating, setCreating] = useState(false);
   useEffect(() => {
     if (!createIsLoading && creating) {
-      router.push('/myOtcTrades');
+      // router.push('/myOtcTrades');
     }
   }, [createIsLoading]);
 
@@ -231,9 +229,9 @@ export default function DashboardSection({ swapType }) {
   const [isTokenOfferedChecked, setIsTokenOfferedChecked] = useState(false);
   const isTokenOffered = () => {
     let isExist = dataFetch.length > 0 && receivedData.length > 0;
-    console.log(' length ' + dataFetch.length + ' ' + receivedData.length);
+    //console.log(' length ' + dataFetch.length + ' ' + receivedData.length);
     if (!isExist) {
-      console.log('incomplete data');
+      //console.log('incomplete data');
       setIsTokenOfferedChecked(false);
       return false;
     }
@@ -367,7 +365,7 @@ export default function DashboardSection({ swapType }) {
     }
   }, [receivedData, receivedData?.length]);
 
-  const date = useSelector((state) => state.otcTrades.getCreateDate);
+  const date = useSelector((state) => state.otcTrades.getCreateDate); /**/
   if (!allFinished)
     return (
       <Box
