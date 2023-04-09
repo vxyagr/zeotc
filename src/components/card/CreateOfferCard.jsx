@@ -376,8 +376,10 @@ export default function OfferCard({
       return;
     }
     let mustProve = Number(totalOfferedTokens) + Number(value);
-    let ttl1 = getOfferedTokenAmount(card);
-    setTotalOfferedTokens(ttl1);
+    if (!isDashboardR) {
+      let ttl1 = getOfferedTokenAmount(card);
+      setTotalOfferedTokens(ttl1);
+    }
     let passed = Number(tokenAllowance) >= Number(mustProve);
     if (!isDashboardR) {
       //console.log('approved : ' + tokenAllowance);
