@@ -76,7 +76,7 @@ export default function DashboardSection({ swapType }) {
       filteredZeSwapIdList.length < 1 ||
       card === undefined
     ) {
-      console.log('null');
+      //console.log('null');
       return 0;
     }
     let totalOffered = 0;
@@ -100,7 +100,7 @@ export default function DashboardSection({ swapType }) {
       .filter((swapList) => swapList.swap[1] === account)
       .map((swapList, idx) => {
         // console.log('checking prod A ');
-        const checkProductA = swapList.productB.map((item, index) => {
+        const checkProductA = swapList.productA.map((item, index) => {
           if (
             item.token.toString().toLowerCase() ==
             card.token_address.toString().toLowerCase()
@@ -112,7 +112,7 @@ export default function DashboardSection({ swapType }) {
           }
         });
       });
-    console.log('total offered ' + totalOffered);
+    //console.log('total offered ' + totalOffered);
     return totalOffered;
   };
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +138,13 @@ export default function DashboardSection({ swapType }) {
   const receivedData = useSelector(
     (state) => state.otcTrades.selectTokenNftsReceive
   );
+
+  useEffect(() => {
+    if (isPrivateInputEmpty) {
+      removeReceived();
+    }
+  }, isPrivateInputEmpty);
+
   const {
     data: mutateData,
     isLoading: createIsLoading,
@@ -207,8 +214,19 @@ export default function DashboardSection({ swapType }) {
 
       dispatch(addNewTokenNfts(newValue));
     }
+    //console.log('4 confirm');
     confirmAllowance();
     isTokenOffered();
+  };
+  //////////////////////////////////////////////////////
+  const removeReceived = () => {
+    receivedData.forEach(async (item) => {
+      const newValue = receivedData.includes(item)
+        ? receivedData.filter((el) => el !== item)
+        : [...receivedData, card];
+
+      dispatch(addNewTokenNftsReceive(newValue));
+    });
   };
 
   const handleDate = (value) => {
@@ -227,6 +245,7 @@ export default function DashboardSection({ swapType }) {
   };
   const [isAllApprovd, setIsAllApprovd] = useState(false);
   const [isTokenOfferedChecked, setIsTokenOfferedChecked] = useState(false);
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const isTokenOffered = () => {
     let isExist = dataFetch.length > 0 && receivedData.length > 0;
     //console.log(' length ' + dataFetch.length + ' ' + receivedData.length);
@@ -251,12 +270,16 @@ export default function DashboardSection({ swapType }) {
       return false;
     }
   };
+  /////////////////////////////////////////////////////////////////////////////////////////
   const confirmAllowance = async () => {
     let isAllApproved = true;
     dataFetch.forEach(async (item) => {
-      console.log(
-        'item approved? ' + item.token_address + ' ' + item.isApproved
-      );
+      /* console.log(
+        'confirming allowance item approved? ' +
+          item.token_address +
+          ' ' +
+          item.isApproved
+      ); */
 
       if (!item.isApproved) {
         //console.log('not approved');
@@ -287,6 +310,7 @@ export default function DashboardSection({ swapType }) {
       setIsDisabled(true);
       //console.log('Please Approve All tokens and NFTs before create');
     }
+    // console.log('3 confirm');
     confirmAllowance();
     isTokenOffered();
   }, [dataFetch, receivedData, dataFetch.length, receivedData.length]);
@@ -470,6 +494,7 @@ export default function DashboardSection({ swapType }) {
                 confirmAllowance={confirmAllowance}
                 getOfferedTokenAmount={getOfferedTokenAmount}
                 allFinished={allFinished}
+                removeReceived={removeReceived}
               />
             );
           })}
@@ -653,22 +678,19 @@ export default function DashboardSection({ swapType }) {
             title='CREATE'
             disabled={!isAllApprovd || !isTokenOfferedChecked}
             onClick={() => {
-              if (confirmAllowance()) {
-                let demanderAddress = zeroAddress;
-                //console.log('deman 1 ' + demanderAddress);
-                if (!isPrivateInputEmpty && privateInput != null)
-                  demanderAddress = privateInput;
-                // console.log('deman ' + demanderAddress);
-                createMutate({
-                  productB: receivedData,
-                  productA: dataFetch,
-                  isChecked,
-                  demander: demanderAddress,
-                  newDate: date
-                });
-              } else {
-                //console.log('need to approve');
-              }
+              //if (confirmAllowance()) {
+              let demanderAddress = zeroAddress;
+              //console.log('deman 1 ' + demanderAddress);
+              if (!isPrivateInputEmpty && privateInput != null)
+                demanderAddress = privateInput;
+              // console.log('deman ' + demanderAddress);
+              createMutate({
+                productB: receivedData,
+                productA: dataFetch,
+                isChecked,
+                demander: demanderAddress,
+                newDate: date
+              });
             }}
             sx={{
               width: 114,

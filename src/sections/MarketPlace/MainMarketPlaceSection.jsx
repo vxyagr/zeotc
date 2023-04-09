@@ -47,7 +47,7 @@ export default function MainMarketPlaceSection() {
   const allFinished = useMemo(() => {
     if (newZeSwapList.length !== 0) {
       let flag = true;
-
+      console.log('total swaps ' + newZeSwapList.length);
       newZeSwapList.forEach((e) => {
         if (e === undefined) {
           flag = false;
@@ -63,6 +63,17 @@ export default function MainMarketPlaceSection() {
   useEffect(() => {
     if (allFinished) {
       // all the queries have executed successfully
+      let filteredSwaps = normalizeSwapList(
+        newZeSwapList.filter(
+          (item) =>
+            (item.swap[2] == account ||
+              item.swap[2] == '0x0000000000000000000000000000000000000000') &&
+            item.swap[1] != account &&
+            Number(item.swap.status) < 1
+        ),
+        sort,
+        true
+      );
       setFilteredZeSwapIdList(
         normalizeSwapList(
           newZeSwapList.filter(
@@ -76,6 +87,7 @@ export default function MainMarketPlaceSection() {
           true
         )
       );
+      console.log('filtered customized swap ' + filteredSwaps.length);
       //setFilteredZeSwapIdList(normalizeSwapList(newZeSwapList, sort, true));
     }
     //console.log('counter list ' + JSON.stringify(counterList));

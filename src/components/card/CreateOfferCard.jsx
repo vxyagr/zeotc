@@ -85,25 +85,33 @@ export default function OfferCard({
     //confirmAllowance();
     if (!isDashboardR) confirmAllowance();
   }, [dataFetch]);
-  useEffect(() => {
-    if (!isDashboardR && getOfferedTokenAmount) {
-      handleAddApproveState(card);
-      let ttl = 0;
-      //console.log('accessing : ');
-      ttl = getOfferedTokenAmount(card);
-      setTotalOfferedTokens(ttl);
-      confirmAllowance();
-      //console.log('crd ' + JSON.stringify(card));
-      //console.log('total token ' + ttl);
-    }
-  }, [isDashboardR, allFinished, tokenAllowance]);
-  // const useValue = card?.amount?.toString();
-  const useValue = 2.5;
   const {
     isLoading: isApproveLoading,
     mutate,
     data: approvedData
   } = useERC20_ERC721_ERC1155Approve();
+
+  useEffect(() => {
+    if (!isDashboardR) {
+      //console.log('setting ttl');
+      let ttl1 = getOfferedTokenAmount(card);
+      setTotalOfferedTokens(ttl1);
+    }
+    if (!isDashboardR && getOfferedTokenAmount) {
+      getOfferedTokenAmount(card);
+      handleAddApproveState(card);
+      let ttl = 0;
+      //console.log('accessing : ');
+      ttl = getOfferedTokenAmount(card);
+      setTotalOfferedTokens(ttl);
+      //console.log('2 confirm');
+      confirmAllowance();
+      //console.log('crd ' + JSON.stringify(card));
+      //console.log('total token ' + ttl);
+    }
+  }, [isDashboardR, allFinished, tokenAllowance, isApproveLoading]);
+  // const useValue = card?.amount?.toString();
+  const useValue = 2.5;
 
   /*let balance = getAllowanceERC20(card?.token_address, account, signer)
     .then((result) => {
@@ -120,10 +128,10 @@ export default function OfferCard({
     //console.log('token type ' + tokenType + ' ' + tokenAddress);
     const tokenId = token.token_id;
     const decimal = token.decimals;
-    console.log('already approved : ' + Number(tokenAllowance.toString()));
+    //console.log('already approved : ' + Number(tokenAllowance.toString()));
     const amount =
       Number(token?.amount?.toString()) + Number(totalOfferedTokens.toString());
-    console.log('to be approved : ' + amount);
+    //console.log('to be approved : ' + amount);
 
     if (tokenAddress) {
       mutate({
@@ -136,6 +144,7 @@ export default function OfferCard({
     }
   };
   const [toBeApproved, setToBeApproved] = useState(0);
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const handleAddApproveState = (card) => {
     setValueInput(value);
 
@@ -147,10 +156,18 @@ export default function OfferCard({
           // let balance = getAllowanceERC20(item?.token_address, account, signer)
           //.then((result) => {
 
+          let currentOffered = getOfferedTokenAmount(card);
+          setTotalOfferedTokens(currentOffered);
+          //console.log('current offered ' + currentOffered);
           let mustBeApproved =
-            Number(totalOfferedTokens) * 10 ** card.decimals +
-            Number(item.amount) * 10 ** card.decimals +
+            Number(currentOffered) * 10 ** card.decimals +
             card.amount * 10 ** card.decimals;
+          //console.log(
+          // 'approved ' +
+          //  Number(tokenAllowance * 10 ** card.decimals) +
+          //  ' needed ' +
+          //  mustBeApproved
+          //);
 
           if (Number(tokenAllowance * 10 ** card.decimals) >= mustBeApproved) {
             //console.log('passed');
@@ -158,7 +175,7 @@ export default function OfferCard({
 
             return {
               ...item,
-              isApproved: isApprove
+              isApproved: true
             };
           } else {
             setIsApprove(false);
@@ -241,8 +258,10 @@ export default function OfferCard({
   const [initialLoad, setInitialLoad] = useState(true);
   useEffect(() => {
     if (!isApproveLoading && approving) {
+      // console.log('handling ');
       handleAddApproveState(card);
       setApproving(false);
+      //console.log('1 confirm');
       confirmAllowance();
     }
     if (isApproveLoading) setInitialLoad(false);
@@ -357,19 +376,23 @@ export default function OfferCard({
       return;
     }
     let mustProve = Number(totalOfferedTokens) + Number(value);
-    let passed = Number(tokenAllowance) > Number(mustProve);
+    let ttl1 = getOfferedTokenAmount(card);
+    setTotalOfferedTokens(ttl1);
+    let passed = Number(tokenAllowance) >= Number(mustProve);
     if (!isDashboardR) {
       //console.log('approved : ' + tokenAllowance);
-      //console.log('must approved : ' + mustProve);
-      let appr = Number(mustProve) > Number(tokenAllowance);
+      //console.log(
+      //  'must approved : ' + Number(totalOfferedTokens) + ' ' + mustProve
+      //);
+      let appr = Number(mustProve) >= Number(tokenAllowance);
 
       if (passed) {
         setIsApprove(true);
-        console.log(passed);
+        //console.log('passed');
         //console.log('approved');
       } else {
         //console.log('not approved');
-        console.log(passed);
+        // console.log('not passed');
         setIsApprove(false);
       }
     }
