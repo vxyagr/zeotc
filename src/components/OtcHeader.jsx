@@ -34,7 +34,8 @@ const MENU_DATA = {
   ],
   'Counter Offers': [
     'pending received counter offers',
-    'pending sent counter offers'
+    'pending sent counter offers',
+    'private offers'
   ]
 };
 export default function OtcHeader({ searchFunction, sortType, setSortType }) {

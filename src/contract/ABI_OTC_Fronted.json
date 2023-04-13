@@ -379,6 +379,11 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "private_address",
+        "type": "address"
+      },
+      {
         "internalType": "bool",
         "name": "allow_counter_offer",
         "type": "bool"
@@ -662,6 +667,29 @@
       }
     ],
     "name": "set_product",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "zSwap_id",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "private_address",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expiration_in_UTC",
+        "type": "uint256"
+      }
+    ],
+    "name": "set_private_address",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -955,9 +983,9 @@
             "type": "bytes32[]"
           },
           {
-            "internalType": "bool",
-            "name": "visibility",
-            "type": "bool"
+            "internalType": "address",
+            "name": "private_address",
+            "type": "address"
           },
           {
             "internalType": "bool",
@@ -1022,9 +1050,9 @@
             "type": "bytes32[]"
           },
           {
-            "internalType": "bool",
-            "name": "visibility",
-            "type": "bool"
+            "internalType": "address",
+            "name": "private_address",
+            "type": "address"
           },
           {
             "internalType": "bool",
@@ -1089,7 +1117,7 @@
           },
           {
             "internalType": "address",
-            "name": "creator",
+            "name": "last_modifier",
             "type": "address"
           },
           {

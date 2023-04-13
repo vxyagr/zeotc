@@ -138,6 +138,7 @@ export default function MarketPlaceSection({
 
       //if(expire)
     }
+    //console.log('offer list ' + JSON.stringify(zeSwapList));
   }, [isMarketPlace, isSwap, isSwapHistory, status]);
 
   const [open, setOpen] = useState(false);

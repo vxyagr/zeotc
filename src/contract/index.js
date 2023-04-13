@@ -14,7 +14,7 @@ export { default as zeoTC_Contract_Abi } from './ABI_OTC_Fronted.json';
 
 //export const zeoTC_Contract_Address = '0xA07c374fE04ea059FD6f43Ca0Ebca00C0499f0Fe';
 export const zeoTC_Contract_Address =
-  '0xF8B9bA99536C9CfD437749Fb08B7627439cc975d';
+  '0x798787FdC787691c5565b9295f78779680845E7a';
 
 export { default as uniSwapAbi_Contact_Abi } from './ABI_UNISWAP.json';
 

@@ -52,6 +52,7 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
         (item) =>
           item.swap[1] === account.toString() &&
           item.swap[2] != '0x0000000000000000000000000000000000000000' &&
+          item.swap[5] != account.toString() &&
           Number(item.swap.status) < 2
       );
 
@@ -60,7 +61,7 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
       console.log('received counters ' + JSON.stringify(receivedSwapCounter));
 
       return receivedSwapCounter;
-    } else {
+    } else if (subMenuType === 'pending sent counter offers') {
       let sentSwapCounter = allSwapList.filter(
         (item) =>
           item.swap[1] != account.toString() &&
@@ -71,6 +72,20 @@ export default function TradesOffer({ searchValues, sort, subMenu }) {
       setFillteredOffer(sentSwapCounter);
       console.log('sent counters ' + JSON.stringify(sentSwapCounter));
       return sentSwapCounter;
+    } else {
+      let receivedSwapCounter = allSwapList.filter(
+        (item) =>
+          item.swap[1] != account.toString() &&
+          item.swap[2] != '0x0000000000000000000000000000000000000000' &&
+          item.swap[5] === account.toString() &&
+          Number(item.swap.status) < 2
+      );
+
+      setReceivedCounter(receivedSwapCounter);
+      setFillteredOffer(receivedSwapCounter);
+      console.log('received counters ' + JSON.stringify(receivedSwapCounter));
+
+      return receivedSwapCounter;
     }
     /*const sentSwapCounter = allSwapList.filter(
       (item) =>

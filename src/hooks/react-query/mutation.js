@@ -205,6 +205,7 @@ export const useMutationCreateZeSwap = () => {
       productAs,
       productBs,
       expiration_in_UTC,
+      zeroAddress,
       demander,
       isChecked
     );

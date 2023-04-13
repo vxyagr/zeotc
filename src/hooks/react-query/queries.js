@@ -179,7 +179,7 @@ export const useQueriesFilterMarketPlaceData = (
     const data = [];
 
     const swap = await zeoTC_Contract.get_zeSwap(swap_id);
-    //console.log('getting swap id ' + swap_id.toString());
+    console.log('swap fetched ' + JSON.stringify(swap));
 
     data[swap_id] = {
       swap: swap,

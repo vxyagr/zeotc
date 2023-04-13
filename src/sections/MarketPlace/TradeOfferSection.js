@@ -165,6 +165,7 @@ export default function MarketPlaceSection({
 
       //if(expire)
     }
+    //console.log('offer list ' + JSON.stringify(zeSwapList));
   }, [isMarketPlace, isSwap, isSwapHistory, status]);
 
   const [open, setOpen] = useState(false);
@@ -340,7 +341,7 @@ export default function MarketPlaceSection({
   useEffect(() => {
     if (ProductA?.length !== 0) {
       const totalAmountPool = [];
-      console.log('prod a before error ' + JSON.stringify(ProductA));
+      //console.log('prod a before error ' + JSON.stringify(ProductA));
       ProductA.forEach((item) => {
         const formatedTokenAmount = handleFormateAmount(item?.amount);
 

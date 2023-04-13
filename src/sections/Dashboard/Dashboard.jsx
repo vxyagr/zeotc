@@ -53,7 +53,7 @@ export default function DashboardSection({ swapType }) {
   const [filteredZeSwapIdList, setFilteredZeSwapIdList] = useState();
   const allFinished = useMemo(() => {
     //console.log('send memo ');
-    if (newZeSwapList.length !== 0) {
+    if (newZeSwapList.length >= 0) {
       let flag = true;
 
       newZeSwapList.forEach((e) => {
