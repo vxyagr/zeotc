@@ -66,12 +66,12 @@ export default function MainMarketPlaceSection() {
       let filteredSwaps = normalizeSwapList(
         newZeSwapList.filter(
           (item) =>
-            (item.swap[2] == account ||
-              item.swap[2] == '0x0000000000000000000000000000000000000000') &&
-            (item.swap[5] == account ||
+            item.swap[2] == account ||
+            item.swap[2] == '0x0000000000000000000000000000000000000000' ||
+            ((item.swap[5] == account ||
               item.swap[5] == '0x0000000000000000000000000000000000000000') &&
-            item.swap[1] != account &&
-            Number(item.swap.status) < 1
+              item.swap[1] != account &&
+              Number(item.swap.status) < 1)
         ),
         sort,
         true
